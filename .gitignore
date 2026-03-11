@@ -1,0 +1,15 @@
+package-lock.json
+node_modules/
+
+dist/
+
+npm-debug.log*
+*.log
+
+*.tsbuildinfo
+
+.DS_Store
+Thumbs.db
+
+.vscode/
+.idea/
