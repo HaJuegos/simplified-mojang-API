@@ -29,7 +29,7 @@ export class BaseEventManager<T> {
                 callback(args);
             } catch (e) {
                 if (e instanceof Error) {
-                    console.warn(`[CATLOG]: Error en el evento ${this.constructor.name}. Detalles:`, e, e.stack);
+                    console.warn(`[CATLOG]: Error en el evento ${this.evnName}. Detalles:`, e, e.stack);
                 }
             }
         });
