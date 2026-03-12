@@ -18,7 +18,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Instalar dependencias
-        run: npm ci
+        run: npm install
 
       - name: Compilar el código (TypeScript a JS)
         run: npm run build
