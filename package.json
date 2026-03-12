@@ -1,6 +1,6 @@
 {
     "name": "simplified-mojang-api",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "About Public repository to simplify the event logic of Mojang's Script API, for informal or professional use",
     "type": "module",
     "main": "dist/index.js",
