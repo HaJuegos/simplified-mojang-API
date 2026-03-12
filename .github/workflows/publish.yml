@@ -1,0 +1,29 @@
+name: Publicar en NPM automáticamente
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilar el código (TypeScript a JS)
+        run: npm run build
+
+      - name: Publicar la nueva versión en NPM
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
