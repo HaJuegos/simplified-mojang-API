@@ -5,7 +5,7 @@
  * @template T
  * @author HaJuegos - 11-03-2026
  */
-export interface EventRegister<T> {
+interface EventRegister<T> {
     subscribe(callback: (args: T) => void): (args: T) => void;
 }
 
