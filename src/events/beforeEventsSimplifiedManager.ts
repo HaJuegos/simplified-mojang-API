@@ -8,7 +8,7 @@ import * as mc from "@minecraft/server";
  * @author HaJuegos - 11-03-2026
  * @export
  */
-export class BeforeEventsSimplified {
+class BeforeEventsSimplified {
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
      * @constructor

@@ -4,11 +4,10 @@ import * as mc from "@minecraft/server";
 
 /**
  * Clase principal que maneja los eventos after de forma simplificada para mejor manejo de errores.
- * @export
  * @class AfterEventsSimplified
  * @author HaJuegos - 11-03-2026
  */
-export class AfterEventsSimplified {
+class AfterEventsSimplified {
     private entityDieManager: BaseEventManager<mc.EntityDieAfterEvent>;
     private playerSpawnManager: BaseEventManager<mc.PlayerSpawnAfterEvent>;
 
@@ -32,8 +31,8 @@ export class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionado cuando una entidad muere de forma simplificada.
-     * @param {(args: mc.EntityDieAfterEvent) => void} callback Los argumentos del evento y su logica.
+     * Metodo auxiliar que ejecuta los eventos relacionado cuando un jugador respawnea de forma simplificada.
+     * @param {(args: mc.PlayerSpawnAfterEvent) => void} callback Los argumentos del evento y su logica.
      * @author HaJuegos - 11-03-2026
      * @public
      */
