@@ -10,6 +10,7 @@ import * as mc from "@minecraft/server";
 class AfterEventsSimplified {
     private entityDieManager: BaseEventManager<mc.EntityDieAfterEvent>;
     private playerSpawnManager: BaseEventManager<mc.PlayerSpawnAfterEvent>;
+    private worldLoadManager: BaseEventManager<mc.WorldLoadAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -18,6 +19,7 @@ class AfterEventsSimplified {
     constructor () {
         this.entityDieManager = new BaseEventManager<mc.EntityDieAfterEvent>(mc.world.afterEvents.entityDie, "AfterEntityDie");
         this.playerSpawnManager = new BaseEventManager<mc.PlayerSpawnAfterEvent>(mc.world.afterEvents.playerSpawn, "AfterPlayerSpawn");
+        this.worldLoadManager = new BaseEventManager<mc.WorldLoadAfterEvent>(mc.world.afterEvents.worldLoad, "AfterWorldLoad");
     }
 
     /**
@@ -38,6 +40,16 @@ class AfterEventsSimplified {
      */
     public onPlayerSpawns(callback: (args: mc.PlayerSpawnAfterEvent) => void): void {
         this.playerSpawnManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un mundo se termino de cargar de forma simplificada.
+     * @param {(args: mc.WorldLoadAfterEvent) => void} callback Los argumentos del evento y su logica.
+     * @author HaJuegos - 11-03-2026
+     * @public
+     */
+    public onWorldReady(callback: (args: mc.WorldLoadAfterEvent) => void): void {
+        this.worldLoadManager.register(callback);
     }
 }
 
