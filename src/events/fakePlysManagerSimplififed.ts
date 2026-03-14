@@ -34,8 +34,8 @@ class FakePlysManager {
      * @param {?mc.Vector3} [defaultSpawnLocation] (Opcional) Coordenadas donde aparecera el jugador de pruebas. Por defecto, ira a un jugador aleatorio
      * @returns {gametest.SimulatedPlayer} Los datos del jugador falso generado.
      * @author HaJuegos - 13-03-2026
-     * @gametestEvent Es un metodo gametest, usando estructuras de pruebas por medio del comando /gametest run.
      * @public
+     * @gametestEvent Es un metodo gametest, usando estructuras de pruebas por medio del comando /gametest run.
      * @example
      * ```ts
      * // Esto genera un jugador de pruebas con sus respectivos datos para usar.

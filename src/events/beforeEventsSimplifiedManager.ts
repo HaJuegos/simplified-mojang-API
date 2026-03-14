@@ -12,6 +12,7 @@ class BeforeEventsSimplified {
     private startUpManager: BaseEventManager<mc.StartupEvent>;
     private shutDownManager: BaseEventManager<mc.ShutdownEvent>;
     private interactBlockManager: BaseEventManager<mc.PlayerInteractWithBlockBeforeEvent>;
+    private chatSendManager: BaseEventManager<mc.ChatSendBeforeEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -21,6 +22,7 @@ class BeforeEventsSimplified {
         this.startUpManager = new BaseEventManager<mc.StartupEvent>(mc.system.beforeEvents.startup, "BeforeStartup");
         this.shutDownManager = new BaseEventManager<mc.ShutdownEvent>(mc.system.beforeEvents.shutdown, "BeforeShutdown");
         this.interactBlockManager = new BaseEventManager<mc.PlayerInteractWithBlockBeforeEvent>(mc.world.beforeEvents.playerInteractWithBlock, "BeforeInteractBlock");
+        this.chatSendManager = new BaseEventManager<mc.ChatSendBeforeEvent>(mc.world.beforeEvents.chatSend, "BeforeChatSend");
     }
 
     /**
@@ -28,7 +30,7 @@ class BeforeEventsSimplified {
      * @param {(args: mc.StartupEvent) => void} callback Los argumentos del evento y su logica.
      * @author HaJuegos - 11-03-2026
      * @public
-     * @beforeEvent Es un evento que se ejecuta antes de que pase dicho evento en concreto.
+     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * beforeEventsSimplified.onAddonStarts((args) => {
@@ -45,7 +47,7 @@ class BeforeEventsSimplified {
      * @param {(args: mc.ShutdownEvent) => void} callback Los argumentos del evento y su logica.
      * @author HaJuegos - 11-03-2026
      * @public
-     * @beforeEvent Es un evento que se ejecuta antes de que pase dicho evento en concreto.
+     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * beforeEventsSimplified.onAddonStops((args) => {
@@ -62,7 +64,7 @@ class BeforeEventsSimplified {
     * @param {(args: mc.PlayerInteractWithBlockBeforeEvent) => void} callback Los argumentos del evento y su logica.
     * @author HaJuegos - 11-03-2026
     * @public
-    * @beforeEvent Es un evento que se ejecuta antes de que pase dicho evento en concreto.
+    * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
     * @example
     * ```ts
     * beforeEventsSimplified.onInteractBlock((args) => {
@@ -72,6 +74,24 @@ class BeforeEventsSimplified {
    */
     public onInteractBlock(callback: (args: mc.PlayerInteractWithBlockBeforeEvent) => void): void {
         this.interactBlockManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que controla los eventos del chat, manejando los mensajes enviados antes de que se muestren.
+     * @param {(args: mc.ChatSendBeforeEvent) => void} callback Los argumentos del evento y su logica.
+     * @author HaJuegos - 14-03-2026
+     * @public
+     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @example
+     * ```ts
+     * beforeEventsSimplified.chatManager((args) => {
+     *    console.warn(`El usuario ${args.sender.name} ha enviado el mensaje ${args.message}`);
+     *    args.cancel = true; // El mensaje que se envio por el jugador, es cancelada.
+     * });
+     * ```
+     */
+    public chatManager(callback: (args: mc.ChatSendBeforeEvent) => void): void {
+        this.chatSendManager.register(callback);
     }
 }
 

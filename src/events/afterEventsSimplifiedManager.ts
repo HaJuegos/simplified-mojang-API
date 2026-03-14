@@ -11,6 +11,7 @@ class AfterEventsSimplified {
     private entityDieManager: BaseEventManager<mc.EntityDieAfterEvent>;
     private playerSpawnManager: BaseEventManager<mc.PlayerSpawnAfterEvent>;
     private worldLoadManager: BaseEventManager<mc.WorldLoadAfterEvent>;
+    private chatSendManager: BaseEventManager<mc.ChatSendAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -20,6 +21,7 @@ class AfterEventsSimplified {
         this.entityDieManager = new BaseEventManager<mc.EntityDieAfterEvent>(mc.world.afterEvents.entityDie, "AfterEntityDie");
         this.playerSpawnManager = new BaseEventManager<mc.PlayerSpawnAfterEvent>(mc.world.afterEvents.playerSpawn, "AfterPlayerSpawn");
         this.worldLoadManager = new BaseEventManager<mc.WorldLoadAfterEvent>(mc.world.afterEvents.worldLoad, "AfterWorldLoad");
+        this.chatSendManager = new BaseEventManager<mc.ChatSendAfterEvent>(mc.world.afterEvents.chatSend, "AfterChatSend");
     }
 
     /**
@@ -27,6 +29,7 @@ class AfterEventsSimplified {
      * @param {(args: mc.EntityDieAfterEvent) => void} callback Los argumentos del evento y su logica.
      * @author HaJuegos - 11-03-2026
      * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
      * @example
      * ```ts
      * afterEventsSimplified.onEntityDie((event) => {
@@ -43,6 +46,7 @@ class AfterEventsSimplified {
      * @param {(args: mc.PlayerSpawnAfterEvent) => void} callback Los argumentos del evento y su logica.
      * @author HaJuegos - 11-03-2026
      * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
      * @example
      * ```ts
      * afterEventsSimplified.onPlayerSpawns((args) => {
@@ -59,6 +63,7 @@ class AfterEventsSimplified {
      * @param {(args: mc.WorldLoadAfterEvent) => void} callback Los argumentos del evento y su logica.
      * @author HaJuegos - 11-03-2026
      * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
      * @example
      * ```ts
      * afterEventsSimplified.onWorldReady(() => {
@@ -68,6 +73,23 @@ class AfterEventsSimplified {
      */
     public onWorldReady(callback: (args: mc.WorldLoadAfterEvent) => void): void {
         this.worldLoadManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que recibe los mensajes enviados por el chat.
+     * @param {(args: mc.ChatSendAfterEvent) => void} callback Los argumentos y logica a ejecutar en el evento.
+     * @author HaJuegos - 14-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onSendMessageChat((args) => {
+     *    console.warn(`El usuario ${args.sender.name} envio el mensaje ${args.message}`);
+     * });
+     * ```
+     */
+    public onSendMessageChat(callback: (args: mc.ChatSendAfterEvent) => void): void {
+        this.chatSendManager.register(callback);
     }
 }
 
