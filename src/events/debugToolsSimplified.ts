@@ -97,6 +97,22 @@ class DebugToolsSimplified {
 
         debug.debugDrawer.removeAll();
     }
+
+    /**
+     * Metodo que altera el estado de activo o desactivado del watchDogTerminate, en caso de lag spikes con scripts, para permitir el cierre o no del mundo o servidor cuando pase. Esto es solo recomendable usarlo en testeos, no se recomienda desactivarlo en mundos/servidores casuales o normales.
+     * @param {boolean} turnOn El estado proximo a cambiar.
+     * @author HaJuegos - 14-03-2026
+     * @public
+     * @example
+     * ```ts
+     * debugToolsSimplified.watchDogState(false) // ya no habra cierre por lag spikes o problemas con scripts
+     * ```
+     */
+    public watchDogState(turnOn: boolean): void {
+        mc.system.beforeEvents.watchdogTerminate.subscribe((arg) => {
+            arg.cancel = turnOn;
+        });
+    }
 }
 
 export const debugToolsSimplified = new DebugToolsSimplified();
