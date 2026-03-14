@@ -28,6 +28,13 @@ class BeforeEventsSimplified {
      * @param {(args: mc.StartupEvent) => void} callback Los argumentos del evento y su logica.
      * @author HaJuegos - 11-03-2026
      * @public
+     * @beforeEvent Es un evento que se ejecuta antes de que pase dicho evento en concreto.
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onAddonStarts((args) => {
+     *   console.warn('El addon esta iniciando');
+     * });
+     * ```
     */
     public onAddonStarts(callback: (args: mc.StartupEvent) => void): void {
         this.startUpManager.register(callback);
@@ -38,6 +45,13 @@ class BeforeEventsSimplified {
      * @param {(args: mc.ShutdownEvent) => void} callback Los argumentos del evento y su logica.
      * @author HaJuegos - 11-03-2026
      * @public
+     * @beforeEvent Es un evento que se ejecuta antes de que pase dicho evento en concreto.
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onAddonStops((args) => {
+     *   console.warn('El addon se esta detendiendo');
+     * });
+     * ```
     */
     public onAddonStops(callback: (args: mc.ShutdownEvent) => void): void {
         this.shutDownManager.register(callback);
@@ -48,6 +62,13 @@ class BeforeEventsSimplified {
     * @param {(args: mc.PlayerInteractWithBlockBeforeEvent) => void} callback Los argumentos del evento y su logica.
     * @author HaJuegos - 11-03-2026
     * @public
+    * @beforeEvent Es un evento que se ejecuta antes de que pase dicho evento en concreto.
+    * @example
+    * ```ts
+    * beforeEventsSimplified.onInteractBlock((args) => {
+    *   console.warn(`Se esta interactuando con el bloque ${args.block.typeId}`);
+    * });
+    * ```
    */
     public onInteractBlock(callback: (args: mc.PlayerInteractWithBlockBeforeEvent) => void): void {
         this.interactBlockManager.register(callback);

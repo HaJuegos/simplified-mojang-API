@@ -27,6 +27,12 @@ class AfterEventsSimplified {
      * @param {(args: mc.EntityDieAfterEvent) => void} callback Los argumentos del evento y su logica.
      * @author HaJuegos - 11-03-2026
      * @public
+     * @example
+     * ```ts
+     * afterEventsSimplified.onEntityDie((event) => {
+     *   console.warn(`La entidad ${args.entity.typeId} murio en ${args.location}`);
+     * });
+     * ```
      */
     public onEntityDie(callback: (args: mc.EntityDieAfterEvent) => void): void {
         this.entityDieManager.register(callback);
@@ -37,6 +43,12 @@ class AfterEventsSimplified {
      * @param {(args: mc.PlayerSpawnAfterEvent) => void} callback Los argumentos del evento y su logica.
      * @author HaJuegos - 11-03-2026
      * @public
+     * @example
+     * ```ts
+     * afterEventsSimplified.onPlayerSpawns((args) => {
+     *   console.warn(`El Jugador ${args.player.name} spawneo en ${args.player.location}`);
+     * });
+     * ```
      */
     public onPlayerSpawns(callback: (args: mc.PlayerSpawnAfterEvent) => void): void {
         this.playerSpawnManager.register(callback);
@@ -47,6 +59,12 @@ class AfterEventsSimplified {
      * @param {(args: mc.WorldLoadAfterEvent) => void} callback Los argumentos del evento y su logica.
      * @author HaJuegos - 11-03-2026
      * @public
+     * @example
+     * ```ts
+     * afterEventsSimplified.onWorldReady(() => {
+     *   console.warn(`El mundo se ha cargado correctamente`);
+     * });
+     * ```
      */
     public onWorldReady(callback: (args: mc.WorldLoadAfterEvent) => void): void {
         this.worldLoadManager.register(callback);
