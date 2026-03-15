@@ -11,3 +11,6 @@ export * from "./events/debugToolsSimplified";
 
 // @minecraft/gametest events
 export * from "./events/fakePlysManagerSimplififed";
+
+// Custom events
+export * from './events/customToolsManager';

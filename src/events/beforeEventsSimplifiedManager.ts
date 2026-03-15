@@ -13,6 +13,7 @@ class BeforeEventsSimplified {
     private shutDownManager: BaseEventManager<mc.ShutdownEvent>;
     private interactBlockManager: BaseEventManager<mc.PlayerInteractWithBlockBeforeEvent>;
     private chatSendManager: BaseEventManager<mc.ChatSendBeforeEvent>;
+    private itemUseManager: BaseEventManager<mc.ItemUseBeforeEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -23,6 +24,7 @@ class BeforeEventsSimplified {
         this.shutDownManager = new BaseEventManager<mc.ShutdownEvent>(mc.system.beforeEvents.shutdown, "BeforeShutdown");
         this.interactBlockManager = new BaseEventManager<mc.PlayerInteractWithBlockBeforeEvent>(mc.world.beforeEvents.playerInteractWithBlock, "BeforeInteractBlock");
         this.chatSendManager = new BaseEventManager<mc.ChatSendBeforeEvent>(mc.world.beforeEvents.chatSend, "BeforeChatSend");
+        this.itemUseManager = new BaseEventManager<mc.ItemUseBeforeEvent>(mc.world.beforeEvents.itemUse, "BeforeItemUse");
     }
 
     /**
@@ -92,6 +94,24 @@ class BeforeEventsSimplified {
      */
     public chatManager(callback: (args: mc.ChatSendBeforeEvent) => void): void {
         this.chatSendManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando antes de usar un item forma simplificada.
+     * @param {(args: mc.ItemUseBeforeEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 15-03-2026
+     * @public
+     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onUseItem((args) => {
+     *   console.warn(`Se esta usando el item ${args.itemStack.typeId}.`);
+     *   args.cancel = true;
+     * });
+     * ```
+     */
+    public onUseItem(callback: (args: mc.ItemUseBeforeEvent) => void): void {
+        this.itemUseManager.register(callback);
     }
 }
 

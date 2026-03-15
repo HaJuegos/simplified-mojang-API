@@ -12,6 +12,7 @@ class AfterEventsSimplified {
     private playerSpawnManager: BaseEventManager<mc.PlayerSpawnAfterEvent>;
     private worldLoadManager: BaseEventManager<mc.WorldLoadAfterEvent>;
     private chatSendManager: BaseEventManager<mc.ChatSendAfterEvent>;
+    private itemUseManager: BaseEventManager<mc.ItemUseAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -22,6 +23,7 @@ class AfterEventsSimplified {
         this.playerSpawnManager = new BaseEventManager<mc.PlayerSpawnAfterEvent>(mc.world.afterEvents.playerSpawn, "AfterPlayerSpawn");
         this.worldLoadManager = new BaseEventManager<mc.WorldLoadAfterEvent>(mc.world.afterEvents.worldLoad, "AfterWorldLoad");
         this.chatSendManager = new BaseEventManager<mc.ChatSendAfterEvent>(mc.world.afterEvents.chatSend, "AfterChatSend");
+        this.itemUseManager = new BaseEventManager<mc.ItemUseAfterEvent>(mc.world.afterEvents.itemUse, "AfterItemUse");
     }
 
     /**
@@ -76,7 +78,7 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que recibe los mensajes enviados por el chat.
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando se recibe un mensaje en el chat de forma simplificada.
      * @param {(args: mc.ChatSendAfterEvent) => void} callback Los argumentos y logica a ejecutar en el evento.
      * @author HaJuegos - 14-03-2026
      * @public
@@ -90,6 +92,23 @@ class AfterEventsSimplified {
      */
     public onSendMessageChat(callback: (args: mc.ChatSendAfterEvent) => void): void {
         this.chatSendManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando ya se usa el item de forma simplificada.
+     * @param {(args: mc.ItemUseAfterEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 15-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onUseItem((args) => {
+     *   console.warn(`Se ha usado el item ${args.itemStack.typeId}.`);
+     * });
+     * ```
+     */
+    public onUseItem(callback: (args: mc.ItemUseAfterEvent) => void): void {
+        this.itemUseManager.register(callback);
     }
 }
 
