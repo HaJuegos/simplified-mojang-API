@@ -18,6 +18,40 @@ class WorldToolsSimplified {
     }
 
     /**
+     * Metodo auxiliar que programa la ejecucion de una logica para el siguiente tick del juego. Ideal principalmente para los eventos before para saltarse la ejecucion restringida.
+     * @param {() => void} callback Los eventos o logica en cuestion a ejecutar. 
+     * @returns {Promise<void>} 
+     * @author HaJuegos - 15-03-2026
+     * @async Es un metodo asincrono, principalmente para terminar el flujo despeus de que ocurra los eventos.
+     * @public
+     * @systemEvent Metodo que usa los eventos del modulo "system" herramientas auxiliares fuera de los eventos sensores de "world".
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onUseItem((args) => {
+     *    const ply = args.source;
+     *    const item = args.itemStack;
+     *    const plyArmor = ply.getComponent(EntityComponentTypes.Equippable)
+     * 
+     *    worldToolsSimplified.setRun(() => {
+     *        // Esto ya funciona porque pasa despues de un tick y no hay restrinciones.
+     *        plyArmor.setEquipment(EquipmentSlot.Offhand, item);
+     *    });
+     * });
+     * ```
+     */
+    public async setRun(callback: () => void): Promise<void> {
+        return new Promise<void>((r) => {
+            const currentRun = mc.system.run(() => {
+                callback();
+
+                mc.system.clearRun(currentRun);
+
+                r();
+            });
+        });
+    }
+
+    /**
      * Metodo auxiliar que establece una serie de eventos con un pequeño retraso determinado. Luego de terminar el retraso, elimina la tarea para no dejarlo en memoria.
      * @param {() => void} callback Los eventos en cuestion a ejecutar.
      * @param {number} ticksDelay Los tiempos en ticks que se tardara para ejecutarse.

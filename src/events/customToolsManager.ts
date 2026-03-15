@@ -1,5 +1,6 @@
 import * as mc from '@minecraft/server';
 import { beforeEventsSimplified } from './beforeEventsSimplifiedManager';
+import { worldToolsSimplified } from './worldToolsSimplifiedManager';
 
 /**
  * Clase que contiene todos los metodos de mecanicas universales usadas en sus add-ons.
@@ -42,15 +43,17 @@ class CustomEventsSimplified {
             });
 
             if (isItemValid) {
-                if (itemOffhand) {
-                    plyArmor.setEquipment(mc.EquipmentSlot.Offhand, item);
-                    plyInv.setItem(ply.selectedSlotIndex, itemOffhand);
-                } else {
-                    plyArmor.setEquipment(mc.EquipmentSlot.Offhand, item);
-                    plyInv.setItem(ply.selectedSlotIndex, undefined);
-                }
+                worldToolsSimplified.setRun(() => {
+                    if (itemOffhand) {
+                        plyArmor.setEquipment(mc.EquipmentSlot.Offhand, item);
+                        plyInv.setItem(ply.selectedSlotIndex, itemOffhand);
+                    } else {
+                        plyArmor.setEquipment(mc.EquipmentSlot.Offhand, item);
+                        plyInv.setItem(ply.selectedSlotIndex, undefined);
+                    }
 
-                ply.playSound('armor.equip_generic');
+                    ply.playSound('armor.equip_generic');
+                });
             }
         });
     };
