@@ -37,7 +37,7 @@ class DebugToolsSimplified {
     public showHitboxes(ply: mc.Player, maxRadiusHitboxs: number = 50): void {
         const activeBoxes = new Map<mc.Entity, debug.DebugBox>();
 
-        worldToolsSimplified.setLoop(() => {
+        this.idLoopHitboxes = worldToolsSimplified.setLoop(() => {
             const nearbyMobs = ply.dimension.getEntities({
                 location: ply.location,
                 maxDistance: maxRadiusHitboxs
@@ -126,7 +126,7 @@ class DebugToolsSimplified {
 
     /**
      * Metodo que altera el estado de activo o desactivado del watchDogTerminate, en caso de lag spikes con scripts, para permitir el cierre o no del mundo o servidor cuando pase. Esto es solo recomendable usarlo en testeos, no se recomienda desactivarlo en mundos/servidores casuales o normales.
-     * @param {boolean} turnOn El estado proximo a cambiar.
+     * @param {boolean} newState El estado proximo a cambiar.
      * @author HaJuegos - 14-03-2026
      * @public
      * @example
@@ -134,9 +134,9 @@ class DebugToolsSimplified {
      * debugToolsSimplified.watchDogState(false) // ya no habra cierre por lag spikes o problemas con scripts
      * ```
      */
-    public watchDogState(turnOn: boolean): void {
+    public watchDogState(newState: boolean): void {
         mc.system.beforeEvents.watchdogTerminate.subscribe((arg) => {
-            arg.cancel = turnOn;
+            arg.cancel = newState;
         });
     }
 }
