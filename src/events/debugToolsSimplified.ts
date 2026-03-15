@@ -37,7 +37,7 @@ class DebugToolsSimplified {
     public showHitboxes(ply: mc.Player, maxRadiusHitboxs: number = 50): void {
         const activeBoxes = new Map<mc.Entity, debug.DebugBox>();
 
-        this.idLoopHitboxes = worldToolsSimplified.setLoop(() => {
+        worldToolsSimplified.setLoop(() => {
             const nearbyMobs = ply.dimension.getEntities({
                 location: ply.location,
                 maxDistance: maxRadiusHitboxs
@@ -52,8 +52,19 @@ class DebugToolsSimplified {
                     box.scale = 1;
                     box.color = { red: 255, green: 255, blue: 255 };
                     box.visibleTo = [ply];
-                    box.attachedTo = mob;
-                    box.setLocation({ x: -bb.extent.x, y: 0, z: -bb.extent.z });
+
+                    const isPlayer = mob.typeId == 'minecraft:player';
+
+                    if (isPlayer) {
+                        box.setLocation({
+                            x: mob.location.x - bb.extent.x,
+                            y: bb.center.y - bb.extent.y,
+                            z: mob.location.z - bb.extent.z
+                        });
+                    } else {
+                        box.attachedTo = mob;
+                        box.setLocation({ x: -bb.extent.x, y: 0, z: -bb.extent.z });
+                    }
 
                     debug.debugDrawer.addShape(box, ply.dimension);
 
@@ -62,11 +73,17 @@ class DebugToolsSimplified {
             }
 
             for (const [mob, box] of activeBoxes) {
+                if (!mob.isValid) {
+                    box.remove();
+                    activeBoxes.delete(mob);
+                    continue;
+                }
+
                 const dx = mob.location.x - ply.location.x;
                 const dy = mob.location.y - ply.location.y;
                 const dz = mob.location.z - ply.location.z;
 
-                if (!mob.isValid || Math.sqrt(dx * dx + dy * dy + dz * dz) > maxRadiusHitboxs) {
+                if (Math.sqrt(dx * dx + dy * dy + dz * dz) > maxRadiusHitboxs) {
                     box.remove();
                     activeBoxes.delete(mob);
                     continue;
@@ -75,7 +92,16 @@ class DebugToolsSimplified {
                 const bb = mob.getAABB();
 
                 box.bound = { x: bb.extent.x * 2, y: bb.extent.y * 2, z: bb.extent.z * 2 };
-                box.setLocation({ x: -bb.extent.x, y: 0, z: -bb.extent.z });
+
+                if (mob.typeId == 'minecraft:player') {
+                    box.setLocation({
+                        x: mob.location.x - bb.extent.x,
+                        y: bb.center.y - bb.extent.y,
+                        z: mob.location.z - bb.extent.z
+                    });
+                } else {
+                    box.setLocation({ x: -bb.extent.x, y: 0, z: -bb.extent.z });
+                }
             }
         }, 1);
     }
