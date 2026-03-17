@@ -29,10 +29,8 @@ class CustomEventsSimplified {
     public fastItemsSystem(listOfItems: mc.ItemStack[] | string[]): void {
         beforeEventsSimplified.onUseItem((args) => {
             const ply = args.source;
-            const plyInv = ply.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
-            const plyArmor = ply.getComponent(mc.EntityComponentTypes.Equippable) as mc.EntityEquippableComponent;
             const item = args.itemStack;
-            const itemOffhand = plyArmor.getEquipment(mc.EquipmentSlot.Offhand);
+            const currentSlot = ply.selectedSlotIndex;
 
             const isItemValid = listOfItems.some((listItem) => {
                 if (typeof listItem == "string") {
@@ -43,13 +41,19 @@ class CustomEventsSimplified {
             });
 
             if (isItemValid) {
+                args.cancel = true;
+
                 worldToolsSimplified.setRun(() => {
+                    const plyInv = ply.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
+                    const plyArmor = ply.getComponent(mc.EntityComponentTypes.Equippable) as mc.EntityEquippableComponent;
+                    const itemOffhand = plyArmor.getEquipment(mc.EquipmentSlot.Offhand);
+
                     if (itemOffhand) {
                         plyArmor.setEquipment(mc.EquipmentSlot.Offhand, item);
-                        plyInv.setItem(ply.selectedSlotIndex, itemOffhand);
+                        plyInv.setItem(currentSlot, itemOffhand);
                     } else {
                         plyArmor.setEquipment(mc.EquipmentSlot.Offhand, item);
-                        plyInv.setItem(ply.selectedSlotIndex, undefined);
+                        plyInv.setItem(currentSlot, undefined);
                     }
 
                     ply.playSound('armor.equip_generic');
