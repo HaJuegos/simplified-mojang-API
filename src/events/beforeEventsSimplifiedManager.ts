@@ -113,6 +113,109 @@ class BeforeEventsSimplified {
     public onUseItem(callback: (args: mc.ItemUseBeforeEvent) => void): void {
         this.itemUseManager.register(callback);
     }
+
+    /**
+     * Metodo auxiliar que registra y ejecuta los eventos relacionados cuando se quiere registrar un custom component de un bloque.
+     * @param {string} nameComponent Nombre del componente en cuestion a registrar.
+     * @param {mc.BlockCustomComponent} eventsComponent Los eventos del componente que se van a ejecutar.
+     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @author HaJuegos - 17-03-2026
+     * @public
+     * @example
+     * ```ts
+     * // Metodo casual
+     * beforeEventsSimplified.createBlockComponent('ha:custom_component', {
+     *    onBreak(arg) {
+     *       console.warn(`El bloque ${args.block.typeId} se rompio.`);
+     *    }
+     * } as mc.BlockCustomComponent);
+     * 
+     * // Metodo mas ordenado
+     * const events: mc.BlockCustomComponent = {
+     *    onBreak(arg) {
+     *       console.warn(`El bloque ${args.block.typeId} se rompio.`);
+     *    }
+     * }
+     * 
+     * beforeEventsSimplified.createBlockComponent('ha:custom_component', events);
+     * ```
+     */
+    public createBlockComponent(nameComponent: string, eventsComponent: mc.BlockCustomComponent): void {
+        this.onAddonStarts((args) => {
+            args.blockComponentRegistry.registerCustomComponent(nameComponent, eventsComponent);
+        });
+    }
+
+    /**
+     * Metodo auxiliar que registra y ejecuta los eventos relacionados cuando se quiere registrar un custom component de un item.
+     * @param {string} nameComponent Nombre del componente en cuestion a registrar.
+     * @param {mc.ItemCustomComponent} eventsComponent Los eventos del componente que se van a ejecutar.
+     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @author HaJuegos - 17-03-2026
+     * @public
+     * @example
+     * ```ts
+     * // Metodo casual
+     * beforeEventsSimplified.createItemComponent('ha:custom_component', {
+     *    onConsume(arg) {
+     *       console.warn(`El item ${args.itemStack.typeId} fue consumido.`);
+     *    }
+     * } as mc.ItemCustomComponent);
+     * 
+     * // Metodo mas ordenado
+     * const events: mc.ItemCustomComponent = {
+     *    onConsume(arg) {
+     *       console.warn(`El item ${args.itemStack.typeId} fue consumido.`);
+     *    }
+     * }
+     * 
+     * beforeEventsSimplified.createItemComponent('ha:custom_component', events);
+     * ```
+     */
+    public createItemComponent(nameComponent: string, eventsComponent: mc.ItemCustomComponent): void {
+        this.onAddonStarts((args) => {
+            args.itemComponentRegistry.registerCustomComponent(nameComponent, eventsComponent);
+        });
+    }
+
+    /**
+     * Metodo auxiliar que registra y ejecuta los eventos relacionados cuando se quiere registrar un comando custom al juego.
+     * @param {mc.CustomCommand} commandData Los datos del comando a registrar
+     * @param {(origin: mc.CustomCommandOrigin, ...args: any[]) => mc.CustomCommandResult | undefined} callback Los eventos a ejecutar despues de haber sido activado o usado el comando. 
+     * @param {?Record<string, string[]>} [customEnums] (Opcional) Opciones o valores que se registran junto con el comando en caso de ser necesario. Por ej: para que aparezca "ha juegos" al momento de poner este comando, lo concidere un valor rellenable automatico.
+     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @author HaJuegos - 17-03-2026
+     * @public
+     * @example
+     * ```ts
+     * const commandData: mc.CustomCommand = {
+     *     name: 'ha:command_test',
+     *     description: 'Este es un comando de prueba',
+     *     permissionLevel: mc.CommandPermissionLevel.Admin
+     * };
+     * 
+     * beforeEventsSimplified.createCustomCommand(commandData, ((args => {
+     *     const entity = args.sourceEntity as mc.Player;
+     * 
+     *     console.warn(`El jugador ${entity.name} ha usado el comando custom.`);
+     * })));
+     * ```
+     */
+    public createCustomCommand(
+        commandData: mc.CustomCommand,
+        callback: (origin: mc.CustomCommandOrigin, ...args: any[]) => mc.CustomCommandResult | undefined,
+        customEnums?: Record<string, string[]>
+    ): void {
+        this.onAddonStarts((args) => {
+            if (customEnums) {
+                for (const [enumName, enumValues] of Object.entries(customEnums)) {
+                    args.customCommandRegistry.registerEnum(enumName, enumValues);
+                }
+            }
+
+            args.customCommandRegistry.registerCommand(commandData, callback);
+        });
+    }
 }
 
 export const beforeEventsSimplified = new BeforeEventsSimplified();
