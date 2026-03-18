@@ -13,6 +13,7 @@ class AfterEventsSimplified {
     private worldLoadManager: BaseEventManager<mc.WorldLoadAfterEvent>;
     private chatSendManager: BaseEventManager<mc.ChatSendAfterEvent>;
     private itemUseManager: BaseEventManager<mc.ItemUseAfterEvent>;
+    private explosionManager: BaseEventManager<mc.ExplosionAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -24,6 +25,7 @@ class AfterEventsSimplified {
         this.worldLoadManager = new BaseEventManager<mc.WorldLoadAfterEvent>(mc.world.afterEvents.worldLoad, "AfterWorldLoad");
         this.chatSendManager = new BaseEventManager<mc.ChatSendAfterEvent>(mc.world.afterEvents.chatSend, "AfterChatSend");
         this.itemUseManager = new BaseEventManager<mc.ItemUseAfterEvent>(mc.world.afterEvents.itemUse, "AfterItemUse");
+        this.explosionManager = new BaseEventManager<mc.ExplosionAfterEvent>(mc.world.afterEvents.explosion, "AfterExplodes");
     }
 
     /**
@@ -109,6 +111,27 @@ class AfterEventsSimplified {
      */
     public onUseItem(callback: (args: mc.ItemUseAfterEvent) => void): void {
         this.itemUseManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando algo exploto de forma simplificada.
+     * @param {(args: mc.ExplosionAfterEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 17-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onExplodes((args) => {
+     *     const source = args.source;
+     * 
+     *     if (source && source.typeId == 'minecraft:creeper') {
+     *        console.warn(`Un creeper ha explotado.`);
+     *     }
+     * });
+     * ```
+     */
+    public onExplodes(callback: (args: mc.ExplosionAfterEvent) => void): void {
+        this.explosionManager.register(callback);
     }
 }
 

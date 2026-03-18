@@ -14,6 +14,7 @@ class BeforeEventsSimplified {
     private interactBlockManager: BaseEventManager<mc.PlayerInteractWithBlockBeforeEvent>;
     private chatSendManager: BaseEventManager<mc.ChatSendBeforeEvent>;
     private itemUseManager: BaseEventManager<mc.ItemUseBeforeEvent>;
+    private explosionManager: BaseEventManager<mc.ExplosionBeforeEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -25,6 +26,7 @@ class BeforeEventsSimplified {
         this.interactBlockManager = new BaseEventManager<mc.PlayerInteractWithBlockBeforeEvent>(mc.world.beforeEvents.playerInteractWithBlock, "BeforeInteractBlock");
         this.chatSendManager = new BaseEventManager<mc.ChatSendBeforeEvent>(mc.world.beforeEvents.chatSend, "BeforeChatSend");
         this.itemUseManager = new BaseEventManager<mc.ItemUseBeforeEvent>(mc.world.beforeEvents.itemUse, "BeforeItemUse");
+        this.explosionManager = new BaseEventManager<mc.ExplosionBeforeEvent>(mc.world.beforeEvents.explosion, "BeforeExplodes");
     }
 
     /**
@@ -112,6 +114,28 @@ class BeforeEventsSimplified {
      */
     public onUseItem(callback: (args: mc.ItemUseBeforeEvent) => void): void {
         this.itemUseManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando algo esta apunto de explotar de forma simplificada.
+     * @param {(args: mc.ExplosionBeforeEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 17-03-2026
+     * @public
+     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onExplosion((args) => {
+     *   const source = args.source;
+     * 
+     *   if (source && source.typeId == 'minecraft:creeper') {
+     *     console.warn(`Un creeper esta apunto de explotar.`);
+     *     args.cancel = true; // Ya no va a explotar.
+     *   }
+     * });
+     * ```
+     */
+    public onExplosion(callback: (args: mc.ExplosionBeforeEvent) => void): void {
+        this.explosionManager.register(callback);
     }
 
     /**

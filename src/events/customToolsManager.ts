@@ -61,6 +61,45 @@ class CustomEventsSimplified {
             }
         });
     };
+
+    /**
+     * Metodo auxiliar que simplifica la logica de reducir o dañar items manualmente, esto principalmente se creo para los custom components para la interaccion de items o bloques. Por ej: Para reducir un item a 24 manzanas para pasar a ser 23 manzanas. O dañar un poco un casco de diamante bajando su durabilidad.
+     * @param {mc.Player} ply Jugador en cuestion a quien es afectado.
+     * @param {mc.ItemStack} item Item en cuestion a eliminar o dañar.
+     * @param {mc.Container} invPly Inventario del jugador en cuestion.
+     * @author HaJuegos - 17-03-2026 
+     * @public
+     * @example
+     * ```ts
+     * // Esto hara que un item reduzca su stock o sino, sea dañado bajando su durabilidad.
+     * customEventsManager.manualDamageItem(player, item, invPlayer);
+     * ```
+     */
+    public manualDamageItem(ply: mc.Player, item: mc.ItemStack, invPly: mc.Container): void {
+        const slot = ply.selectedSlotIndex;
+        const newItem = item.clone();
+
+        if (!item.isStackable) {
+            const durability = newItem.getComponent(mc.ItemComponentTypes.Durability) as mc.ItemDurabilityComponent;
+
+            durability.damage++;
+
+            if (durability.damage >= durability.maxDurability) {
+                invPly.setItem(slot, undefined);
+                ply.playSound('random.break');
+                return;
+            }
+        } else {
+            if (item.amount <= 1) {
+                invPly.setItem(slot, undefined);
+                return;
+            } else {
+                newItem.amount--;
+            }
+        }
+
+        invPly.setItem(slot, newItem);
+    };
 }
 
 export const customEventsManager = new CustomEventsSimplified();
