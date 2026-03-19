@@ -14,6 +14,10 @@ class AfterEventsSimplified {
     private chatSendManager: BaseEventManager<mc.ChatSendAfterEvent>;
     private itemUseManager: BaseEventManager<mc.ItemUseAfterEvent>;
     private explosionManager: BaseEventManager<mc.ExplosionAfterEvent>;
+    private onProjectileHitEntityManager: BaseEventManager<mc.ProjectileHitEntityAfterEvent>;
+    private onProjectileHitBlockManager: BaseEventManager<mc.ProjectileHitBlockAfterEvent>;
+    private onHitEntityManager: BaseEventManager<mc.EntityHitEntityAfterEvent>;
+    private onEntityHurtManager: BaseEventManager<mc.EntityHurtAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -26,6 +30,10 @@ class AfterEventsSimplified {
         this.chatSendManager = new BaseEventManager<mc.ChatSendAfterEvent>(mc.world.afterEvents.chatSend, "AfterChatSend");
         this.itemUseManager = new BaseEventManager<mc.ItemUseAfterEvent>(mc.world.afterEvents.itemUse, "AfterItemUse");
         this.explosionManager = new BaseEventManager<mc.ExplosionAfterEvent>(mc.world.afterEvents.explosion, "AfterExplodes");
+        this.onProjectileHitEntityManager = new BaseEventManager<mc.ProjectileHitEntityAfterEvent>(mc.world.afterEvents.projectileHitEntity, "AfterProyectileHitEntity");
+        this.onProjectileHitBlockManager = new BaseEventManager<mc.ProjectileHitBlockAfterEvent>(mc.world.afterEvents.projectileHitBlock, "AfterProyectileHitBlock");
+        this.onHitEntityManager = new BaseEventManager<mc.EntityHitEntityAfterEvent>(mc.world.afterEvents.entityHitEntity, "AfterHitEntity");
+        this.onEntityHurtManager = new BaseEventManager<mc.EntityHurtAfterEvent>(mc.world.afterEvents.entityHurt, "AfterHurtEntity");
     }
 
     /**
@@ -132,6 +140,88 @@ class AfterEventsSimplified {
      */
     public onExplodes(callback: (args: mc.ExplosionAfterEvent) => void): void {
         this.explosionManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un proyectil golpea una entidad de forma simplificada.
+     * @param {(args: mc.ProjectileHitEntityAfterEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 18-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onProjectileHitEntity((args) => {
+     *     const sourceEntity = args.source;
+     *     const hitEntity = args.getEntityHit().entity;
+     * 
+     *     console.warn(`${source?.typeId} ha golpeado a ${hitEntity.typeId}.`);
+     * });
+     * ```
+     */
+    public onProjectileHitEntity(callback: (args: mc.ProjectileHitEntityAfterEvent) => void): void {
+        this.onProjectileHitEntityManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un proyectil golpea un bloque de forma simplificada.
+     * @param {(args: mc.ProjectileHitBlockAfterEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 18-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onProjectileHitBlock((args) => {
+     *     const sourceEntity = args.source;
+     *     const hitBlock = args.getBlockHit().entity;
+     * 
+     *     console.warn(`${source.typeId} ha golpeado al bloque ${hitBlock.typeId}.`);
+     * });
+     * ```
+     */
+    public onProjectileHitBlock(callback: (args: mc.ProjectileHitBlockAfterEvent) => void): void {
+        this.onProjectileHitBlockManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando se golpea una entidad de forma simplificada.
+     * @param {(args: mc.EntityHitEntityAfterEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 18-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onHitEntity((args) => {
+     *    const sourceEntity = args.damagingEntity;
+     *    const hitEntity = args.hitEntity;
+     * 
+     *    console.warn(`${sourceEntity.typeId} ha golpeado a ${hitEntity.typeId}`);
+     * });
+     * ```
+     */
+    public onHitEntity(callback: (args: mc.EntityHitEntityAfterEvent) => void): void {
+        this.onHitEntityManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando se lastima una entidad de forma simplificada.
+     * @param {(args: mc.EntityHurtAfterEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 18-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onHurtEntity((args) => {
+     *    const source = args.damageSource;
+     *    const sourceEntity = source.damagingEntity;
+     *    const cause = source.cause;
+     *    const hitEntity = args.hurtEntity;
+     * 
+     *    console.warn(`${sourceEntity.typeId} ha lastimado a ${hitEntity.typeId} mediante ${cause}`);
+     * });
+     * ```
+     */
+    public onHurtEntity(callback: (args: mc.EntityHurtAfterEvent) => void): void {
+        this.onEntityHurtManager.register(callback);
     }
 }
 

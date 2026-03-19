@@ -1,4 +1,6 @@
 import * as mc from '@minecraft/server';
+import * as vanilla from '@minecraft/vanilla-data';
+
 import { beforeEventsSimplified } from './beforeEventsSimplifiedManager';
 import { worldToolsSimplified } from './worldToolsSimplifiedManager';
 
@@ -66,16 +68,16 @@ class CustomEventsSimplified {
      * Metodo auxiliar que simplifica la logica de reducir o dañar items manualmente, esto principalmente se creo para los custom components para la interaccion de items o bloques. Por ej: Para reducir un item a 24 manzanas para pasar a ser 23 manzanas. O dañar un poco un casco de diamante bajando su durabilidad.
      * @param {mc.Player} ply Jugador en cuestion a quien es afectado.
      * @param {mc.ItemStack} item Item en cuestion a eliminar o dañar.
-     * @param {mc.Container} invPly Inventario del jugador en cuestion.
      * @author HaJuegos - 17-03-2026 
      * @public
      * @example
      * ```ts
      * // Esto hara que un item reduzca su stock o sino, sea dañado bajando su durabilidad.
-     * customEventsManager.manualDamageItem(player, item, invPlayer);
+     * customEventsManager.manualDamageItem(player, item);
      * ```
      */
-    public manualDamageItem(ply: mc.Player, item: mc.ItemStack, invPly: mc.Container): void {
+    public manualDamageItem(ply: mc.Player, item: mc.ItemStack): void {
+        const invPly = ply.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
         const slot = ply.selectedSlotIndex;
         const newItem = item.clone();
 
@@ -100,6 +102,55 @@ class CustomEventsSimplified {
 
         invPly.setItem(slot, newItem);
     };
+
+    /**
+     * Metodo auxiliar que simplifica la logica de detectar en el inventario del jugador, si tiene uno o varios items en concreto.
+     * @param {mc.Player} plySource Jugador en cuestion.
+     * @param {(string | string[] | vanilla.MinecraftItemTypes | vanilla.MinecraftItemTypes[] )} itemsToDetect Item o items a buscar. 
+     * @returns {boolean} Devuelve true en caso de tener ese item, sino, sera false.
+     * @author HaJuegos - 18-03-2026
+     * @public
+     * @example
+     * ```ts
+     * // Esto es true si el jugador tiene un item en su inventario.
+     * customEventsManager.plyHasItems(player, vanilla.MinecraftItemTypes.TotemOfUndying);
+     * ```
+     */
+    public plyHasItems(plySource: mc.Player, itemsToDetect: string | string[] | vanilla.MinecraftItemTypes | vanilla.MinecraftItemTypes[]): boolean {
+        const invPly = plySource.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
+        const armorPly = plySource.getComponent(mc.EntityComponentTypes.Equippable) as mc.EntityEquippableComponent;
+        const targetItems = Array.isArray(itemsToDetect) ? itemsToDetect : [itemsToDetect];
+
+        if (invPly) {
+            for (let i = 0; i < invPly.size; i++) {
+                const item = invPly.getItem(i);
+
+                if (item && targetItems.some((target) => item.typeId.includes(target as string))) {
+                    return true;
+                }
+            }
+        }
+
+        if (armorPly) {
+            const equipmentSlots = [
+                mc.EquipmentSlot.Head,
+                mc.EquipmentSlot.Chest,
+                mc.EquipmentSlot.Legs,
+                mc.EquipmentSlot.Feet,
+                mc.EquipmentSlot.Offhand
+            ];
+
+            for (const slot of equipmentSlots) {
+                const item = armorPly.getEquipment(slot);
+
+                if (item && targetItems.some((target) => item.typeId.includes(target as string))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
 
 export const customEventsManager = new CustomEventsSimplified();
