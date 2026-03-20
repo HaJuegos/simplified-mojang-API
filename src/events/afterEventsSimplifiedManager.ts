@@ -18,6 +18,7 @@ class AfterEventsSimplified {
     private onProjectileHitBlockManager: BaseEventManager<mc.ProjectileHitBlockAfterEvent>;
     private onHitEntityManager: BaseEventManager<mc.EntityHitEntityAfterEvent>;
     private onEntityHurtManager: BaseEventManager<mc.EntityHurtAfterEvent>;
+    private onHealthEntityChangeManager: BaseEventManager<mc.EntityHealthChangedAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -34,6 +35,7 @@ class AfterEventsSimplified {
         this.onProjectileHitBlockManager = new BaseEventManager<mc.ProjectileHitBlockAfterEvent>(mc.world.afterEvents.projectileHitBlock, "AfterProyectileHitBlock");
         this.onHitEntityManager = new BaseEventManager<mc.EntityHitEntityAfterEvent>(mc.world.afterEvents.entityHitEntity, "AfterHitEntity");
         this.onEntityHurtManager = new BaseEventManager<mc.EntityHurtAfterEvent>(mc.world.afterEvents.entityHurt, "AfterHurtEntity");
+        this.onHealthEntityChangeManager = new BaseEventManager<mc.EntityHealthChangedAfterEvent>(mc.world.afterEvents.entityHealthChanged, "AfterHealthChangeEntity");
     }
 
     /**
@@ -222,6 +224,23 @@ class AfterEventsSimplified {
      */
     public onHurtEntity(callback: (args: mc.EntityHurtAfterEvent) => void): void {
         this.onEntityHurtManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando la vida de una entidad cambia de forma simplificada.
+     * @param {(args: mc.EntityHealthChangedAfterEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 19-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onHealthEntityChange((args) => {
+     *    console.warn(`${args.entity.typeId} tenia ${args.oldValue} de vida y ahora tiene ${args.newValue}.`);
+     * });
+     * ```
+     */
+    public onHealthEntityChange(callback: (args: mc.EntityHealthChangedAfterEvent) => void): void {
+        this.onHealthEntityChangeManager.register(callback);
     }
 }
 

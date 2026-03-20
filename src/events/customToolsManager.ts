@@ -3,6 +3,7 @@ import * as vanilla from '@minecraft/vanilla-data';
 
 import { beforeEventsSimplified } from './beforeEventsSimplifiedManager';
 import { worldToolsSimplified } from './worldToolsSimplifiedManager';
+import { afterEventsSimplified } from './afterEventsSimplifiedManager';
 
 /**
  * Clase que contiene todos los metodos de mecanicas universales usadas en sus add-ons.
@@ -22,7 +23,6 @@ class CustomEventsSimplified {
      * @param {(mc.ItemStack[] | string[])} listOfItems La lista de items a validar para este sistema.
      * @author HaJuegos - 15-03-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * customEventsManager.fastItemsSystem(['totem']); // Ahora el totem es conciderado un fast item para cambiar a la mano secundaria con un click.
@@ -150,6 +150,33 @@ class CustomEventsSimplified {
         }
 
         return false;
+    }
+
+    /**
+     * Metodo auxiliar que simplifica loa logica al detectar el uso de un totem en un jugaodor, ejecutando los eventos relacionados.
+     * @param {(ply: mc.Player) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 19-03-2026
+     * @public
+     * @example
+     * ```ts
+     * // Este evento solo se va a ejecutar cuando un jugador usa un totem.
+     * customEventsManager.playerUseTotemSystem((args) => {
+     *     const ply = args.player;
+     *     
+     *     console.warn(`${ply.name} ha usado un totem.`);
+     * });
+     * ```
+     */
+    public onPlayerUseTotem(callback: (player: mc.Player) => void): void {
+        afterEventsSimplified.onHealthEntityChange((args) => {
+            const entity = args.entity;
+            const newValue = args.newValue;
+            const oldValue = args.oldValue;
+
+            if (entity instanceof mc.Player && oldValue <= 0 && newValue >= 1) {
+                callback(entity);
+            }
+        });
     }
 }
 
