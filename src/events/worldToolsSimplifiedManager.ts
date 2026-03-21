@@ -125,7 +125,7 @@ class WorldToolsSimplified {
     /**
      * Metodo auxiliar que envia un mensaje global al mundo en formato string o rawmessage.
      * @public
-     * @param {(string | mc.RawMessage)} message Mensaje o RawMessage en concreto a enviar. 
+     * @param {string | mc.RawMessage | (string | mc.RawMessage)[]} message Mensaje o RawMessage en concreto a enviar. 
      * @author HaJuegos - 12-03-2026
      * @example
      * ```ts
@@ -136,7 +136,7 @@ class WorldToolsSimplified {
      * worldToolsSimplified.sendMessageGlobal({ rawtext: 'chat.test.message' });
      * ```
      */
-    public sendMessageGlobal(message: string | mc.RawMessage): void {
+    public sendMessageGlobal(message: string | mc.RawMessage | (string | mc.RawMessage)[]): void {
         mc.world.sendMessage(message);
     }
 

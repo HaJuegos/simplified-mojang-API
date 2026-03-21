@@ -19,6 +19,12 @@ class AfterEventsSimplified {
     private onHitEntityManager: BaseEventManager<mc.EntityHitEntityAfterEvent>;
     private onEntityHurtManager: BaseEventManager<mc.EntityHurtAfterEvent>;
     private onHealthEntityChangeManager: BaseEventManager<mc.EntityHealthChangedAfterEvent>;
+    private onChangeDimensionManager: BaseEventManager<mc.PlayerDimensionChangeAfterEvent>;
+    private interactEntityManager: BaseEventManager<mc.PlayerInteractWithEntityAfterEvent>;
+    private interactBlockManager: BaseEventManager<mc.PlayerInteractWithBlockAfterEvent>;
+    private entitySpawnsManager: BaseEventManager<mc.EntitySpawnAfterEvent>;
+    private effectAddManager: BaseEventManager<mc.EffectAddAfterEvent>;
+    private placeBlockManager: BaseEventManager<mc.PlayerPlaceBlockAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -36,6 +42,12 @@ class AfterEventsSimplified {
         this.onHitEntityManager = new BaseEventManager<mc.EntityHitEntityAfterEvent>(mc.world.afterEvents.entityHitEntity, "AfterHitEntity");
         this.onEntityHurtManager = new BaseEventManager<mc.EntityHurtAfterEvent>(mc.world.afterEvents.entityHurt, "AfterHurtEntity");
         this.onHealthEntityChangeManager = new BaseEventManager<mc.EntityHealthChangedAfterEvent>(mc.world.afterEvents.entityHealthChanged, "AfterHealthChangeEntity");
+        this.onChangeDimensionManager = new BaseEventManager<mc.PlayerDimensionChangeAfterEvent>(mc.world.afterEvents.playerDimensionChange, "AfterChangeDimension");
+        this.interactEntityManager = new BaseEventManager<mc.PlayerInteractWithEntityAfterEvent>(mc.world.afterEvents.playerInteractWithEntity, "AfterInteractEntity");
+        this.interactBlockManager = new BaseEventManager<mc.PlayerInteractWithBlockAfterEvent>(mc.world.afterEvents.playerInteractWithBlock, "AfterInteractBlock");
+        this.entitySpawnsManager = new BaseEventManager<mc.EntitySpawnAfterEvent>(mc.world.afterEvents.entitySpawn, "AfterEntitySpawns");
+        this.effectAddManager = new BaseEventManager<mc.EffectAddAfterEvent>(mc.world.afterEvents.effectAdd, "AfterEffectAdd");
+        this.placeBlockManager = new BaseEventManager<mc.PlayerPlaceBlockAfterEvent>(mc.world.afterEvents.playerPlaceBlock, "AfterPlaceBlock");
     }
 
     /**
@@ -241,6 +253,118 @@ class AfterEventsSimplified {
      */
     public onHealthEntityChange(callback: (args: mc.EntityHealthChangedAfterEvent) => void): void {
         this.onHealthEntityChangeManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador cambia de dimension de forma simplificada.
+     * @param {(args: mc.PlayerDimensionChangeAfterEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 20-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onChangeDimension((args) => {
+     *     const ply = args.player;
+     *     const fromDime = args.fromDimension;
+     *     const toDime = args.toDimension;
+     * 
+     *     console.warn(`${ply.name} estaba en el ${fromDime.id} y ahora esta en ${toDime.id}.`);
+     * });
+     * ```
+     */
+    public onChangeDimension(callback: (args: mc.PlayerDimensionChangeAfterEvent) => void): void {
+        this.onChangeDimensionManager.register(callback);
+    };
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador interactuo con una entidad de forma simplificada.
+     * @param {(args: mc.PlayerInteractWithEntityAfterEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 20-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onInteractEntity((args) => {
+     *     const ply = args.player;
+     *     const hitEntity = args.target;
+     * 
+     *     console.warn(`${ply.name} interactuo con ${hitEntity.typeId}.`);
+     * });
+     * ```
+     */
+    public onInteractEntity(callback: (args: mc.PlayerInteractWithEntityAfterEvent) => void): void {
+        this.interactEntityManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador interactuo con un bloque de forma simplificada.
+     * @param {(args: mc.PlayerInteractWithBlockAfterEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 20-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onInteractBlock((args) => {
+     *     const ply = args.player;
+     *     const block = args.block;
+     * 
+     *     console.warn(`${ply.name} interactuo con el bloque ${block.typeId}.`);
+     * });
+     * ```
+     */
+    public onInteractBlock(callback: (args: mc.PlayerInteractWithBlockAfterEvent) => void): void {
+        this.interactBlockManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad spawnea de forma simplificada.
+     * @param {(args: mc.EntitySpawnAfterEvent) => void} callback Los eventos relacionados.
+     * @author HaJuegos - 20-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onEntitySpawns((args) => {
+     *     console.warn(`${args.entity.typeId} ha spawneado en el mundo`);
+     * });
+     * ```
+     */
+    public onEntitySpawns(callback: (args: mc.EntitySpawnAfterEvent) => void): void {
+        this.entitySpawnsManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un efecto es añadido en una entidad o jugador de forma simplificada.
+     * @param {(args: mc.EffectAddAfterEvent) => void} callback Los eventos relacionados.
+     * @author HaJuegos - 20-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onAddsEffect((args) => {
+     *     console.warn(`${args.entity.typeId} ahora tiene el efecto ${args.effect.displayName}.`);
+     * });
+     * ```
+     */
+    public onAddsEffect(callback: (args: mc.EffectAddAfterEvent) => void): void {
+        this.effectAddManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un bloque es colocando de forma simplificada.
+     * @param {(args: mc.PlayerPlaceBlockAfterEvent) => void} callback Los eventos relacionados.
+     * @author HaJuegos - 20-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onPlaceBlock((args) => {
+     *     console.warn(`${args.player.name} coloco el bloque ${args.block.typeId}.`);
+     * });
+     * ```
+     */
+    public onPlaceBlock(callback: (args: mc.PlayerPlaceBlockAfterEvent) => void): void {
+        this.placeBlockManager.register(callback);
     }
 }
 

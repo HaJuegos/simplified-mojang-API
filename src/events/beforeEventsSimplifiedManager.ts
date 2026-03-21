@@ -15,6 +15,9 @@ class BeforeEventsSimplified {
     private chatSendManager: BaseEventManager<mc.ChatSendBeforeEvent>;
     private itemUseManager: BaseEventManager<mc.ItemUseBeforeEvent>;
     private explosionManager: BaseEventManager<mc.ExplosionBeforeEvent>;
+    private interactEntityManager: BaseEventManager<mc.PlayerInteractWithEntityBeforeEvent>;
+    private effectAddManager: BaseEventManager<mc.EffectAddBeforeEvent>;
+    private placeBlockManager: BaseEventManager<mc.PlayerPlaceBlockBeforeEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -27,6 +30,9 @@ class BeforeEventsSimplified {
         this.chatSendManager = new BaseEventManager<mc.ChatSendBeforeEvent>(mc.world.beforeEvents.chatSend, "BeforeChatSend");
         this.itemUseManager = new BaseEventManager<mc.ItemUseBeforeEvent>(mc.world.beforeEvents.itemUse, "BeforeItemUse");
         this.explosionManager = new BaseEventManager<mc.ExplosionBeforeEvent>(mc.world.beforeEvents.explosion, "BeforeExplodes");
+        this.interactEntityManager = new BaseEventManager<mc.PlayerInteractWithEntityBeforeEvent>(mc.world.beforeEvents.playerInteractWithEntity, "BeforeInteractEntity");
+        this.effectAddManager = new BaseEventManager<mc.EffectAddBeforeEvent>(mc.world.beforeEvents.effectAdd, "BeforeAddEffect");
+        this.placeBlockManager = new BaseEventManager<mc.PlayerPlaceBlockBeforeEvent>(mc.world.beforeEvents.playerPlaceBlock, "BeforePlayerPlaceBlock");
     }
 
     /**
@@ -137,6 +143,66 @@ class BeforeEventsSimplified {
     public onExplosion(callback: (args: mc.ExplosionBeforeEvent) => void): void {
         this.explosionManager.register(callback);
     }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador va a interactuar con una entidad de forma simplificada.
+     * @param {(args: mc.PlayerInteractWithEntityBeforeEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 20-03-2026
+     * @public
+     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onInteractEntity((args) => {
+     *     const ply = args.player;
+     *     const hitEntity = args.target;
+     * 
+     *     console.warn(`${ply.name} esta interactuando con ${hitEntity.typeId}.`);
+     * 
+     *     args.cancel = true; // ya no se puede.
+     * });
+     * ```
+     */
+    public onInteractEntity(callback: (args: mc.PlayerInteractWithEntityBeforeEvent) => void): void {
+        this.interactEntityManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un efecto esta apunto de darse a una entidad de forma simplificada.
+     * @param {(args: mc.EffectAddBeforeEvent) => void} callback Los eventos relacionados.
+     * @author HaJuegos - 20-03-2026
+     * @public
+     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onEffectAdds((args) => {
+     *     console.warn(`${args.entity.typeId} tendra el efecto ${args.effect.displayName}.`);
+     *     args.cancel = true; // Ahora ya no sucede.
+     * });
+     * ```
+     */
+    public onEffectAdds(callback: (args: mc.EffectAddBeforeEvent) => void): void {
+        this.effectAddManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador va a colocar un bloque de forma simplificada.
+     * @param {(args: mc.PlayerPlaceBlockBeforeEvent) => void} callback Los eventos relacionados.
+     * @author HaJuegos - 20-03-2026
+     * @public
+     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onPlaceBlock((args) => {
+     *     console.warn(`${args.player.name} va a colocar el bloque ${args.block.typeId}.`);
+     *     args.cancel = true; // Ahora ya no puede colocarlo
+     * });
+     * ```
+     */
+    public onPlaceBlock(callback: (args: mc.PlayerPlaceBlockBeforeEvent) => void): void {
+        this.placeBlockManager.register(callback);
+    }
+
+    // Metodos no auxiliares
 
     /**
      * Metodo auxiliar que registra y ejecuta los eventos relacionados cuando se quiere registrar un custom component de un bloque.
