@@ -25,6 +25,7 @@ class AfterEventsSimplified {
     private entitySpawnsManager: BaseEventManager<mc.EntitySpawnAfterEvent>;
     private effectAddManager: BaseEventManager<mc.EffectAddAfterEvent>;
     private placeBlockManager: BaseEventManager<mc.PlayerPlaceBlockAfterEvent>;
+    private breakBlockManager: BaseEventManager<mc.PlayerBreakBlockAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -48,6 +49,7 @@ class AfterEventsSimplified {
         this.entitySpawnsManager = new BaseEventManager<mc.EntitySpawnAfterEvent>(mc.world.afterEvents.entitySpawn, "AfterEntitySpawns");
         this.effectAddManager = new BaseEventManager<mc.EffectAddAfterEvent>(mc.world.afterEvents.effectAdd, "AfterEffectAdd");
         this.placeBlockManager = new BaseEventManager<mc.PlayerPlaceBlockAfterEvent>(mc.world.afterEvents.playerPlaceBlock, "AfterPlaceBlock");
+        this.breakBlockManager = new BaseEventManager<mc.PlayerBreakBlockAfterEvent>(mc.world.afterEvents.playerBreakBlock, "AfterBreakBlock");
     }
 
     /**
@@ -365,6 +367,23 @@ class AfterEventsSimplified {
      */
     public onPlaceBlock(callback: (args: mc.PlayerPlaceBlockAfterEvent) => void): void {
         this.placeBlockManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un bloque es roto de forma simplificada.
+     * @param {(args: mc.PlayerBreakBlockAfterEvent) => void} callback Los eventos relacionados.
+     * @author HaJuegos - 23-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onBreakBlock((args) => {
+     *     console.warn(`${args.player.name} rompio el bloque ${args.block.typeId}.`);
+     * });
+     * ```
+     */
+    public onBreakBlock(callback: (args: mc.PlayerBreakBlockAfterEvent) => void): void {
+        this.breakBlockManager.register(callback);
     }
 }
 

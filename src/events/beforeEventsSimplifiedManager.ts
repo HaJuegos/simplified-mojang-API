@@ -18,6 +18,7 @@ class BeforeEventsSimplified {
     private interactEntityManager: BaseEventManager<mc.PlayerInteractWithEntityBeforeEvent>;
     private effectAddManager: BaseEventManager<mc.EffectAddBeforeEvent>;
     private placeBlockManager: BaseEventManager<mc.PlayerPlaceBlockBeforeEvent>;
+    private breakBlockManager: BaseEventManager<mc.PlayerBreakBlockBeforeEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -33,6 +34,7 @@ class BeforeEventsSimplified {
         this.interactEntityManager = new BaseEventManager<mc.PlayerInteractWithEntityBeforeEvent>(mc.world.beforeEvents.playerInteractWithEntity, "BeforeInteractEntity");
         this.effectAddManager = new BaseEventManager<mc.EffectAddBeforeEvent>(mc.world.beforeEvents.effectAdd, "BeforeAddEffect");
         this.placeBlockManager = new BaseEventManager<mc.PlayerPlaceBlockBeforeEvent>(mc.world.beforeEvents.playerPlaceBlock, "BeforePlayerPlaceBlock");
+        this.breakBlockManager = new BaseEventManager<mc.PlayerBreakBlockBeforeEvent>(mc.world.beforeEvents.playerBreakBlock, "BeforePlayerBreakBlock");
     }
 
     /**
@@ -200,6 +202,24 @@ class BeforeEventsSimplified {
      */
     public onPlaceBlock(callback: (args: mc.PlayerPlaceBlockBeforeEvent) => void): void {
         this.placeBlockManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador va a romper un bloque de forma simplificada. 
+     * @param {(args: mc.PlayerBreakBlockBeforeEvent) => void} callback Los eventos relacionados.
+     * @author HaJuegos - 23-03-2026
+     * @public
+     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onBreakBlock((args) => {
+     *     console.warn(`${args.player.name} va a romper el bloque ${args.block.typeId}.`);
+     *     args.cancel = true; // Ahora ya no puede romperlo
+     * });
+     * ```
+     */
+    public onBreakBlock(callback: (args: mc.PlayerBreakBlockBeforeEvent) => void): void {
+        this.breakBlockManager.register(callback);
     }
 
     // Metodos no auxiliares
