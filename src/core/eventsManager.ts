@@ -24,6 +24,8 @@ export class BaseEventManager<T> {
      * @author HaJuegos - 11-03-2026
      */
     public register(callback: (args: T) => void): void {
+        const registrationTrace = new Error().stack;
+
         this.evnSignal.subscribe((args) => {
             try {
                 callback(args);
@@ -42,6 +44,14 @@ export class BaseEventManager<T> {
 
                 console.warn(customMessage);
                 console.warn(err.stack);
+
+                if (registrationTrace) {
+                    console.warn("\n[CATLOG TIP]: TRACE DE ORIGEN (Archivo real donde creaste este evento)");
+
+                    const cleanTrace = registrationTrace.split('\n').slice(1).join('\n');
+
+                    console.warn(cleanTrace);
+                }
             }
         });
     }
