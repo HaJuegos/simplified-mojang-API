@@ -52,19 +52,8 @@ class DebugToolsSimplified {
                     box.scale = 1;
                     box.color = { red: 255, green: 255, blue: 255 };
                     box.visibleTo = [ply];
-
-                    const isPlayer = mob.typeId == 'minecraft:player';
-
-                    if (isPlayer) {
-                        box.setLocation({
-                            x: mob.location.x - bb.extent.x,
-                            y: bb.center.y - bb.extent.y,
-                            z: mob.location.z - bb.extent.z
-                        });
-                    } else {
-                        box.attachedTo = mob;
-                        box.setLocation({ x: -bb.extent.x, y: 0, z: -bb.extent.z });
-                    }
+                    box.attachedTo = mob;
+                    box.setLocation({ x: 0, y: bb.extent.y, z: 0 });
 
                     debug.debugDrawer.addShape(box, ply.dimension);
 
@@ -92,16 +81,7 @@ class DebugToolsSimplified {
                 const bb = mob.getAABB();
 
                 box.bound = { x: bb.extent.x * 2, y: bb.extent.y * 2, z: bb.extent.z * 2 };
-
-                if (mob.typeId == 'minecraft:player') {
-                    box.setLocation({
-                        x: mob.location.x - bb.extent.x,
-                        y: bb.center.y - bb.extent.y,
-                        z: mob.location.z - bb.extent.z
-                    });
-                } else {
-                    box.setLocation({ x: -bb.extent.x, y: 0, z: -bb.extent.z });
-                }
+                box.setLocation({ x: 0, y: bb.extent.y, z: 0 });
             }
         }, 1);
     }
