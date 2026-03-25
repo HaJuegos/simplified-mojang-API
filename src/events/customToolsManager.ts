@@ -77,6 +77,8 @@ class CustomEventsSimplified {
      * ```
      */
     public manualDamageItem(ply: mc.Player, item: mc.ItemStack): void {
+        if (ply.getGameMode() != (mc.GameMode.Adventure || mc.GameMode.Survival)) return;
+
         const invPly = ply.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
         const slot = ply.selectedSlotIndex;
         const newItem = item.clone();
@@ -104,19 +106,23 @@ class CustomEventsSimplified {
     };
 
     /**
-     * Metodo auxiliar que simplifica la logica de detectar en el inventario del jugador, si tiene uno o varios items en concreto.
+     * Metodo auxiliar que simplifica la logica de detectar en el inventario del jugador, si tiene uno o varios items en concreto de forma explicita o no.
      * @param {mc.Player} plySource Jugador en cuestion.
      * @param {(string | string[] | vanilla.MinecraftItemTypes | vanilla.MinecraftItemTypes[] )} itemsToDetect Item o items a buscar. 
+     * @param {boolean?} exactItems (Opcional) Busca explicitamente el nombre del item palabra por palabra. Por defecto esta apagado, entonces buscara items sin importar si tienen diferencias. Por ej: Si se busca 'diamond'; minecraft:diamond y minecraft:diamond_sword serian true.
      * @returns {boolean} Devuelve true en caso de tener ese item, sino, sera false.
      * @author HaJuegos - 18-03-2026
      * @public
      * @example
      * ```ts
-     * // Esto es true si el jugador tiene un item en su inventario.
-     * customEventsManager.plyHasItems(player, vanilla.MinecraftItemTypes.TotemOfUndying);
+     * // Esto es true si el jugador tiene un item llamado totem o mas de forma no explicita.
+     * customEventsManager.plyHasItems(player, 'totem');
+     * 
+     * // Esto es true si el jugador tiene un totem de la inmortalidad de forma explicita.
+     * customEventsManager.plyHasItems(player, vanilla.MinecraftItemTypes.TotemOfUndying, true);
      * ```
      */
-    public plyHasItems(plySource: mc.Player, itemsToDetect: string | string[] | vanilla.MinecraftItemTypes | vanilla.MinecraftItemTypes[]): boolean {
+    public plyHasItems(plySource: mc.Player, itemsToDetect: string | string[] | vanilla.MinecraftItemTypes | vanilla.MinecraftItemTypes[], exactItems: boolean = false): boolean {
         const invPly = plySource.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
         const armorPly = plySource.getComponent(mc.EntityComponentTypes.Equippable) as mc.EntityEquippableComponent;
         const targetItems = Array.isArray(itemsToDetect) ? itemsToDetect : [itemsToDetect];
@@ -125,8 +131,12 @@ class CustomEventsSimplified {
             for (let i = 0; i < invPly.size; i++) {
                 const item = invPly.getItem(i);
 
-                if (item && targetItems.some((target) => item.typeId.includes(target as string))) {
-                    return true;
+                if (item) {
+                    const itemFound = !exactItems ? targetItems.some((target) => item.typeId.includes(target as string)) : targetItems.some((target) => item.typeId == target);
+
+                    if (itemFound) {
+                        return true;
+                    }
                 }
             }
         }
@@ -143,8 +153,12 @@ class CustomEventsSimplified {
             for (const slot of equipmentSlots) {
                 const item = armorPly.getEquipment(slot);
 
-                if (item && targetItems.some((target) => item.typeId.includes(target as string))) {
-                    return true;
+                if (item) {
+                    const itemFound = !exactItems ? targetItems.some((target) => item.typeId.includes(target as string)) : targetItems.some((target) => item.typeId == target);
+
+                    if (itemFound) {
+                        return true;
+                    }
                 }
             }
         }
