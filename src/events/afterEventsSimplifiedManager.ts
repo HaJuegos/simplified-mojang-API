@@ -26,6 +26,7 @@ class AfterEventsSimplified {
     private effectAddManager: BaseEventManager<mc.EffectAddAfterEvent>;
     private placeBlockManager: BaseEventManager<mc.PlayerPlaceBlockAfterEvent>;
     private breakBlockManager: BaseEventManager<mc.PlayerBreakBlockAfterEvent>;
+    private dataEventsManager: BaseEventManager<mc.DataDrivenEntityTriggerAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -50,6 +51,7 @@ class AfterEventsSimplified {
         this.effectAddManager = new BaseEventManager<mc.EffectAddAfterEvent>(mc.world.afterEvents.effectAdd, "AfterEffectAdd");
         this.placeBlockManager = new BaseEventManager<mc.PlayerPlaceBlockAfterEvent>(mc.world.afterEvents.playerPlaceBlock, "AfterPlaceBlock");
         this.breakBlockManager = new BaseEventManager<mc.PlayerBreakBlockAfterEvent>(mc.world.afterEvents.playerBreakBlock, "AfterBreakBlock");
+        this.dataEventsManager = new BaseEventManager<mc.DataDrivenEntityTriggerAfterEvent>(mc.world.afterEvents.dataDrivenEntityTrigger, "AfterDataEvents");
     }
 
     /**
@@ -384,6 +386,28 @@ class AfterEventsSimplified {
      */
     public onBreakBlock(callback: (args: mc.PlayerBreakBlockAfterEvent) => void): void {
         this.breakBlockManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad ejecuta uno o varios de sus eventos de su JSON para cambiar componentes, o tambien por comandos como /event. De forma mas simple, sirve como un log de cuales component groups cambio la entidad en ese instante.
+     * @param {(args: mc.DataDrivenEntityTriggerAfterEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 26-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.getEntityEvents((args) => {
+     *     const entity = args.entity;
+     *     const events = args.getModifiers();
+     * 
+     *     if (entity.typeId == 'minecraft:player' && entity instanceof mc.Player) {
+     *        console.warn(`${entity.name} ha cambiado de componentes: ${JSON.stringify(events)}`);
+     *     }
+     * });
+     * ```
+     */
+    public getEntityEvents(callback: (args: mc.DataDrivenEntityTriggerAfterEvent) => void): void {
+        this.dataEventsManager.register(callback);
     }
 }
 
