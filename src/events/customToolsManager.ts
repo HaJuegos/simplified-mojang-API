@@ -192,6 +192,47 @@ class CustomEventsSimplified {
             }
         });
     }
+
+    /**
+     * Metodo auxiliar que simplifica la logica de randomizar el inventario de un jugador, cambiando totalmente las ubicaciones de los items en el mismo inventario.
+     * @param {mc.Player} ply Jugador en cuestion.
+     * @author HaJuegos - 30-03-2026
+     * @public
+     * @example
+     * ```ts
+     * // Ahora el inventario estara totalmente desordenado. Solo el inventario, no armadura.
+     * customEventsManager.randomizeInvPly(player);
+     * ```
+     */
+    public randomizeInvPly(ply: mc.Player): void {
+        const inv = ply.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
+        const validItems: mc.ItemStack[] = [];
+
+        for (let i = 0; i < inv.size; i++) {
+            const item = inv.getItem(i);
+
+            if (item) {
+                validItems.push(item);
+                inv.setItem(i, undefined);
+            }
+        }
+
+        if (validItems.length == 0) return;
+
+        const randomSlots: number[] = Array.from({ length: inv.size }, (_, i) => i);
+
+        for (let i = randomSlots.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+
+            [randomSlots[i], randomSlots[j]] = [randomSlots[j], randomSlots[i]];
+        }
+
+        for (let i = 0; i < validItems.length; i++) {
+            const targetSlot = randomSlots[i];
+
+            inv.setItem(targetSlot, validItems[i]);
+        }
+    }
 }
 
 export const customEventsManager = new CustomEventsSimplified();
