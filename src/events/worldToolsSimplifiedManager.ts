@@ -1,5 +1,7 @@
 import * as mc from "@minecraft/server";
+
 import { BaseEventManager } from "../core/eventsManager";
+import { CatLogHandler } from "../core/errorHandler";
 
 /**
  * Clase principal que otorga simplificaciones de las llamadas de world y sus utilidades de sus llamadas y/o variables.
@@ -40,13 +42,20 @@ class WorldToolsSimplified {
      * ```
      */
     public async setRun(callback: () => void): Promise<void> {
-        return new Promise<void>((r) => {
+        return new Promise<void>((resolve) => {
+            const registrationTrace = new Error().stack;
+
             const currentRun = mc.system.run(() => {
-                callback();
+                try {
+                    callback();
 
-                mc.system.clearRun(currentRun);
+                    mc.system.clearRun(currentRun);
 
-                r();
+                    resolve();
+                } catch (e) {
+                    CatLogHandler.handleError(e, 'WorldsetRun', registrationTrace);
+                    resolve();
+                }
             });
         });
     }
@@ -70,12 +79,20 @@ class WorldToolsSimplified {
      */
     public async setDelay(callback: () => void, ticksDelay: number): Promise<void> {
         return new Promise<void>((resolve) => {
+            const registrationTrace = new Error().stack;
+
             const currentJob = mc.system.runTimeout(() => {
-                callback();
+                try {
+                    callback();
 
-                mc.system.clearRun(currentJob);
+                    mc.system.clearRun(currentJob);
 
-                resolve();
+                    resolve();
+                } catch (e) {
+
+                    CatLogHandler.handleError(e, 'worldSetDelay', registrationTrace);
+                    resolve();
+                }
             }, ticksDelay);
         });
     };
@@ -156,6 +173,169 @@ class WorldToolsSimplified {
      */
     public listenerScriptEvents(callback: ((args: mc.ScriptEventCommandMessageAfterEvent) => void)): void {
         this.scriptEventManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que obtiene un objective de scoreboard, en caso de no encontrarlo, pues lo crea. Para devolver el mismo objectivo de forma simplificada.
+     * @param {string} idObj ID del objectivo a encontrar o crear en cuestion.
+     * @param {?string} [nameDisplayObj] (Opcional) Nombre del objectivo a colocar cuando se cree.
+     * @returns {(mc.ScoreboardObjective | undefined)} Devuelve el objectivo si todo salio correcto, sino sera un error. 
+     * @author HaJuegos - 31-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * // Esto obtiene y crea el objectivo en caso de no estar creado.
+     * const obj = worldToolsSimplified.getOrCreateScorebordObj('conteo', 'Conteo');
+     * ```
+     */
+    public getOrCreateScorebordObj(idObj: string, nameDisplayObj?: string): mc.ScoreboardObjective | undefined {
+        const registrationTrace = new Error().stack;
+
+        try {
+            const scoreboard = mc.world.scoreboard;
+            let obj = scoreboard.getObjective(idObj);
+
+            if (!obj) {
+                obj = scoreboard.addObjective(idObj, nameDisplayObj);
+            }
+
+            return obj;
+        } catch (e) {
+            CatLogHandler.handleError(e, 'getOrCreateObj', registrationTrace);
+            return;
+        }
+    }
+
+    /**
+     * Metodo auxiliar que obtiene el score de un jugador en concreto de un objective de scoreboard. En caso de que el objective no este creado, se creara. De forma simplificada.
+     * @param {mc.Player} targetPly Jugador en concreto a obtener su score.
+     * @param {string} idObj ID del objectivo el concreto a obtener el score.
+     * @param {?string} [nameDisplayObj] (Opcional) Nombre del objectivo en caso de que el mismo no este creado, a asignar.
+     * @returns {(number | undefined)} Devuelve el score total que tiene el jugador si todo esta bien, sino sera un error.
+     * @author HaJuegos - 31-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * // Esto crea el objective en caso de no estar creado y luego, obtiene el score que tiene el jugador, en este caso seria 0.
+     * const score = worldToolsSimplified.getPlyScoreInObj(ply, 'conteo', 'Conteo');
+     * ```
+     */
+    public getPlyScoreInObj(targetPly: mc.Player, idObj: string, nameDisplayObj?: string): number | undefined {
+        const registrationTrace = new Error().stack;
+
+        try {
+            const scoreboard = mc.world.scoreboard;
+            let obj = scoreboard.getObjective(idObj);
+
+            if (!obj) {
+                obj = scoreboard.addObjective(idObj, nameDisplayObj);
+            }
+
+            const score = obj.getScore(targetPly) ?? 0;
+
+            return score;
+        } catch (e) {
+            CatLogHandler.handleError(e, 'getPlyScore', registrationTrace);
+            return;
+        }
+    }
+
+    /**
+     * Metodo auxiliar que modifica el score de un jugador en concreto en un ojectivo. En caso de que no este creado el objectivo, se creara automaticamente. De forma simplificada.
+     * @param {mc.Player} targetPly Jugador en concreto a modificar.
+     * @param {string} idObj ID del objectivo en concreto.
+     * @param {('set' | 'add')} changeMode Metodo especifico a modificar del jugador. En caso de set, es que seria un valor no acumulable. Por ej: si antes tenia uno y se establece 2, pues sera 2 sin mas; Caso contrario con add, que es acumulativo y sirve formulas negativas. Por ej: Misma situacion, donde tienes 1 y adicionas 1 mas, pues dara 2.
+     * @param {number} newScore El nuevo valor a añadir o cambiar.
+     * @param {?string} [nameDisplayObj] (Opcional) Nombre del objectivo en caso de no estar creado.
+     * @returns {(number | undefined)} El nuevo score cambiado del jugador si todo sale correcto, sino sera un error.
+     * @author HaJuegos - 31-03-2026
+     * @public
+     * @example
+     * ```ts
+     * // Este metodo realizara lo siguiente: En caso de que conteo no exista como objectivo, lo crea, luego, establece al jugador en concreto 1 en el objectivo y por ultimo, devuelve dicho valor modificado.
+     * const newScore = worldToolsSimplified.changePlyScoreInObj(player, 'conteo', 'set', 1, 'Conteo');
+     * ```
+     */
+    public changePlyScoreInObj(targetPly: mc.Player, idObj: string, changeMode: 'set' | 'add', newScore: number, nameDisplayObj?: string): number | undefined {
+        const registrationTrace = new Error().stack;
+
+        try {
+            const scoreboard = mc.world.scoreboard;
+            let obj = scoreboard.getObjective(idObj);
+
+            if (!obj) {
+                obj = scoreboard.addObjective(idObj, nameDisplayObj);
+            }
+
+            if (changeMode == 'set') {
+                obj.setScore(targetPly, newScore);
+            } else {
+                obj.addScore(targetPly, newScore);
+            }
+
+            return obj.getScore(targetPly) ?? 0;
+        } catch (e) {
+            CatLogHandler.handleError(e, 'changePlyScore', registrationTrace);
+            return;
+        }
+    };
+
+    /**
+     * Metodo auxiliar que muestra un objective creado en concreto, en caso de no estar creado, lo hara; A una zona de la pantalla, ya sea como sidebar o list de forma simplificada. 
+     * @param {string} idObj ID del objective en cuestion a obtener o crear.
+     * @param {mc.DisplaySlotId} displaySlot Slot donde se establecera el objectivo. 
+     * @param {?string} [nameDisplayObj] (Opcional) Nombre del objectivo que tendra en caso de que no este creado.
+     * @param {?mc.ObjectiveSortOrder} [order] (Opcional) Orden del mismo objectivo.
+     * @author HaJuegos - 31-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * // Esto mostrara a conteo en el sidebar de la pantalla de orden desendente. En caso de no estar creado, lo crea primero.
+     * worldToolsSimplified.setObjInDisplay('conteo', mc.DisplaySlotId.Sidebar, 'Conteo', mc.ObjectiveSortOrder.Descending);
+     * ```
+     */
+    public setObjInDisplay(idObj: string, displaySlot: mc.DisplaySlotId, nameDisplayObj?: string, order?: mc.ObjectiveSortOrder): void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            const scoreboard = mc.world.scoreboard;
+            let obj = scoreboard.getObjective(idObj);
+
+            if (!obj) {
+                obj = scoreboard.addObjective(idObj, nameDisplayObj);
+            }
+
+            scoreboard.setObjectiveAtDisplaySlot(displaySlot, { objective: obj, sortOrder: order });
+        } catch (e) {
+            CatLogHandler.handleError(e, 'setObjInDisplay', registrationTrace);
+        }
+    }
+
+    /**
+     * Metodo auxiliar que limpia los objectives asignados a una parte de la pantallas de forma simplificada.
+     * @param {mc.DisplaySlotId} displaySlot El slot a limpiar en cuesiton.
+     * @author HaJuegos - 31-03-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * // Se quita al objective que se mostraba en sidebar.
+     * worldToolsSimplified.removeDisplaySlot(mc.DisplaySlotId.Sidebar);
+     * ```
+     */
+    public removeDisplaySlot(displaySlot: mc.DisplaySlotId): void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            const scoreboard = mc.world.scoreboard;
+
+            scoreboard.clearObjectiveAtDisplaySlot(displaySlot);
+        } catch (e) {
+            CatLogHandler.handleError(e, 'removeDisplayObj', registrationTrace);
+        }
     }
 
     /**

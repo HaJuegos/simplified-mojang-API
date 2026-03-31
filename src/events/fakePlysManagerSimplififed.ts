@@ -1,5 +1,6 @@
 import * as mc from "@minecraft/server";
 import * as gametest from "@minecraft/server-gametest";
+import { CatLogHandler } from "../core/errorHandler";
 
 /**
  * Clase hijo que controla los eventos simplificados sobre jugadores falsos por medio de scripts.
@@ -43,18 +44,21 @@ class FakePlysManager {
      * ```
      */
     public createFakePly(namePly: string, gamemodePly: mc.GameMode, defaultSpawnLocation?: mc.Vector3): gametest.SimulatedPlayer | undefined {
-        if (this.testContext) {
-            const fakePly = this.testContext.spawnSimulatedPlayer({ x: 0, y: 1, z: 0 }, namePly, gamemodePly);
+        const registrationTrace = new Error().stack;
+
+        try {
+            const fakePly = this.testContext?.spawnSimulatedPlayer({ x: 0, y: 1, z: 0 }, namePly, gamemodePly);
 
             if (defaultSpawnLocation) {
-                fakePly.teleport(defaultSpawnLocation);
+                fakePly?.teleport(defaultSpawnLocation);
             } else {
-                fakePly.runCommand(`tp @r[name=!"${fakePly.name}"]`);
+                fakePly?.runCommand(`tp @r[name=!"${fakePly.name}"]`);
             }
 
             return fakePly;
-        } else {
-            throw new Error(`No se pudo generar el jugador de pruebas ${namePly}`);
+        } catch (e) {
+            CatLogHandler.handleError(e, 'createFakePly', registrationTrace);
+            return;
         }
     }
 }

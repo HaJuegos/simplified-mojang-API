@@ -4,6 +4,7 @@ import * as vanilla from '@minecraft/vanilla-data';
 import { beforeEventsSimplified } from './beforeEventsSimplifiedManager';
 import { worldToolsSimplified } from './worldToolsSimplifiedManager';
 import { afterEventsSimplified } from './afterEventsSimplifiedManager';
+import { CatLogHandler } from '../core/errorHandler';
 
 /**
  * Clase que contiene todos los metodos de mecanicas universales usadas en sus add-ons.
@@ -77,32 +78,38 @@ class CustomEventsSimplified {
      * ```
      */
     public manualDamageItem(ply: mc.Player, item: mc.ItemStack): void {
-        if (ply.getGameMode() != (mc.GameMode.Adventure || mc.GameMode.Survival)) return;
+        const registrationTrace = new Error().stack;
 
-        const invPly = ply.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
-        const slot = ply.selectedSlotIndex;
-        const newItem = item.clone();
+        try {
+            if (ply.getGameMode() != (mc.GameMode.Adventure || mc.GameMode.Survival)) return;
 
-        if (!item.isStackable) {
-            const durability = newItem.getComponent(mc.ItemComponentTypes.Durability) as mc.ItemDurabilityComponent;
+            const invPly = ply.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
+            const slot = ply.selectedSlotIndex;
+            const newItem = item.clone();
 
-            durability.damage++;
+            if (!item.isStackable) {
+                const durability = newItem.getComponent(mc.ItemComponentTypes.Durability) as mc.ItemDurabilityComponent;
 
-            if (durability.damage >= durability.maxDurability) {
-                invPly.setItem(slot, undefined);
-                ply.playSound('random.break');
-                return;
-            }
-        } else {
-            if (item.amount <= 1) {
-                invPly.setItem(slot, undefined);
-                return;
+                durability.damage++;
+
+                if (durability.damage >= durability.maxDurability) {
+                    invPly.setItem(slot, undefined);
+                    ply.playSound('random.break');
+                    return;
+                }
             } else {
-                newItem.amount--;
+                if (item.amount <= 1) {
+                    invPly.setItem(slot, undefined);
+                    return;
+                } else {
+                    newItem.amount--;
+                }
             }
-        }
 
-        invPly.setItem(slot, newItem);
+            invPly.setItem(slot, newItem);
+        } catch (e) {
+            CatLogHandler.handleError(e, 'manualDamageItem', registrationTrace);
+        }
     };
 
     /**
@@ -123,44 +130,50 @@ class CustomEventsSimplified {
      * ```
      */
     public plyHasItems(plySource: mc.Player, itemsToDetect: string | string[] | vanilla.MinecraftItemTypes | vanilla.MinecraftItemTypes[], exactItems: boolean = false): boolean {
-        const invPly = plySource.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
-        const armorPly = plySource.getComponent(mc.EntityComponentTypes.Equippable) as mc.EntityEquippableComponent;
-        const targetItems = Array.isArray(itemsToDetect) ? itemsToDetect : [itemsToDetect];
+        const registrationTrace = new Error().stack;
 
-        if (invPly) {
-            for (let i = 0; i < invPly.size; i++) {
-                const item = invPly.getItem(i);
+        try {
+            const invPly = plySource.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
+            const armorPly = plySource.getComponent(mc.EntityComponentTypes.Equippable) as mc.EntityEquippableComponent;
+            const targetItems = Array.isArray(itemsToDetect) ? itemsToDetect : [itemsToDetect];
 
-                if (item) {
-                    const itemFound = !exactItems ? targetItems.some((target) => item.typeId.includes(target as string)) : targetItems.some((target) => item.typeId == target);
+            if (invPly) {
+                for (let i = 0; i < invPly.size; i++) {
+                    const item = invPly.getItem(i);
 
-                    if (itemFound) {
-                        return true;
+                    if (item) {
+                        const itemFound = !exactItems ? targetItems.some((target) => item.typeId.includes(target as string)) : targetItems.some((target) => item.typeId == target);
+
+                        if (itemFound) {
+                            return true;
+                        }
                     }
                 }
             }
-        }
 
-        if (armorPly) {
-            const equipmentSlots = [
-                mc.EquipmentSlot.Head,
-                mc.EquipmentSlot.Chest,
-                mc.EquipmentSlot.Legs,
-                mc.EquipmentSlot.Feet,
-                mc.EquipmentSlot.Offhand
-            ];
+            if (armorPly) {
+                const equipmentSlots = [
+                    mc.EquipmentSlot.Head,
+                    mc.EquipmentSlot.Chest,
+                    mc.EquipmentSlot.Legs,
+                    mc.EquipmentSlot.Feet,
+                    mc.EquipmentSlot.Offhand
+                ];
 
-            for (const slot of equipmentSlots) {
-                const item = armorPly.getEquipment(slot);
+                for (const slot of equipmentSlots) {
+                    const item = armorPly.getEquipment(slot);
 
-                if (item) {
-                    const itemFound = !exactItems ? targetItems.some((target) => item.typeId.includes(target as string)) : targetItems.some((target) => item.typeId == target);
+                    if (item) {
+                        const itemFound = !exactItems ? targetItems.some((target) => item.typeId.includes(target as string)) : targetItems.some((target) => item.typeId == target);
 
-                    if (itemFound) {
-                        return true;
+                        if (itemFound) {
+                            return true;
+                        }
                     }
                 }
             }
+        } catch (e) {
+            CatLogHandler.handleError(e, 'plyHasItems', registrationTrace);
         }
 
         return false;
@@ -205,32 +218,38 @@ class CustomEventsSimplified {
      * ```
      */
     public randomizeInvPly(ply: mc.Player): void {
-        const inv = ply.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
-        const validItems: mc.ItemStack[] = [];
+        const registrationTrace = new Error().stack;
 
-        for (let i = 0; i < inv.size; i++) {
-            const item = inv.getItem(i);
+        try {
+            const inv = ply.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
+            const validItems: mc.ItemStack[] = [];
 
-            if (item) {
-                validItems.push(item);
-                inv.setItem(i, undefined);
+            for (let i = 0; i < inv.size; i++) {
+                const item = inv.getItem(i);
+
+                if (item) {
+                    validItems.push(item);
+                    inv.setItem(i, undefined);
+                }
             }
-        }
 
-        if (validItems.length == 0) return;
+            if (validItems.length == 0) return;
 
-        const randomSlots: number[] = Array.from({ length: inv.size }, (_, i) => i);
+            const randomSlots: number[] = Array.from({ length: inv.size }, (_, i) => i);
 
-        for (let i = randomSlots.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
+            for (let i = randomSlots.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
 
-            [randomSlots[i], randomSlots[j]] = [randomSlots[j], randomSlots[i]];
-        }
+                [randomSlots[i], randomSlots[j]] = [randomSlots[j], randomSlots[i]];
+            }
 
-        for (let i = 0; i < validItems.length; i++) {
-            const targetSlot = randomSlots[i];
+            for (let i = 0; i < validItems.length; i++) {
+                const targetSlot = randomSlots[i];
 
-            inv.setItem(targetSlot, validItems[i]);
+                inv.setItem(targetSlot, validItems[i]);
+            }
+        } catch (e) {
+            CatLogHandler.handleError(e, 'randomizeInvPly', registrationTrace);
         }
     }
 }

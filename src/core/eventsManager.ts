@@ -1,3 +1,4 @@
+import { CatLogHandler } from "./errorHandler";
 
 /**
  * Interfaz que establece los datos de registro de un evento en concreto.
@@ -30,28 +31,7 @@ export class BaseEventManager<T> {
             try {
                 callback(args);
             } catch (e) {
-                const err = e as Error;
-
-                let customMessage = `[CATLOG]: Error en el evento ${this.evnName}. Detalles: ${err.message}`;
-
-                if (err.message.includes("restricted execution")) {
-                    customMessage += "\n[CATLOG INFO]: Ocurrio un error de restricciones en ejecucion temprana, seguramente porque se ejecuto una logica en un evento before.";
-                    customMessage += "\n[CATLOG TIP]: Envuelve tu logica dentro de un 'worldToolsSimplified.setRun()' para solucionar este problema o convierte el metodo en async.";
-                } else if (err.message.includes("early execution")) {
-                    customMessage += "\n[CATLOG INFO]: Ocurrio un error de ejecucion anticipada, seguramente porque la logica espera datos, cuando aun lo estan.";
-                    customMessage += "\n[CATLOG TIP]: Mueve este codigo al evento 'onWorldReady' para asegurarte de que los datos ya existan.";
-                }
-
-                console.warn(customMessage);
-                console.warn(err.stack);
-
-                if (registrationTrace) {
-                    console.warn("\n[CATLOG TIP]: TRACE DE ORIGEN (Archivo real donde creaste este evento)");
-
-                    const cleanTrace = registrationTrace.split('\n').slice(1).join('\n');
-
-                    console.warn(cleanTrace);
-                }
+                CatLogHandler.handleError(e, `Evento ${this.evnName}`, registrationTrace);
             }
         });
     }
