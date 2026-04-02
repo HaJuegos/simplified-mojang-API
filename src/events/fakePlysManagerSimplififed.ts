@@ -1,6 +1,8 @@
 import * as mc from "@minecraft/server";
 import * as gametest from "@minecraft/server-gametest";
+
 import { CatLogHandler } from "../core/errorHandler";
+import { worldToolsSimplified } from "./worldToolsSimplifiedManager";
 
 /**
  * Clase hijo que controla los eventos simplificados sobre jugadores falsos por medio de scripts.
@@ -14,6 +16,14 @@ class FakePlysManager {
      * @private
      */
     private testContext?: gametest.Test;
+
+    /**
+     * Variable privada para verificar si el gametest run ya esta puesto en el mundo.
+     * @type {boolean}
+     * @author HaJuegos - 02-04-2026
+     * @private
+     */
+    private isPlaced: boolean = false;
 
     /**
      * Eventos iniciales de la clase cuando es inicializada o llamada.
@@ -45,6 +55,15 @@ class FakePlysManager {
      */
     public createFakePly(namePly: string, gamemodePly: mc.GameMode, defaultSpawnLocation?: mc.Vector3): gametest.SimulatedPlayer | undefined {
         const registrationTrace = new Error().stack;
+
+        worldToolsSimplified.setRun(() => {
+            const dime = mc.world.getDimension('overworld');
+
+            if (!this.isPlaced) {
+                dime.runCommand(`gametest run ha:fakeplys`);
+                this.isPlaced = true;
+            }
+        });
 
         try {
             const fakePly = this.testContext?.spawnSimulatedPlayer({ x: 0, y: 1, z: 0 }, namePly, gamemodePly);
