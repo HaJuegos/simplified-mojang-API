@@ -27,6 +27,7 @@ class AfterEventsSimplified {
     private placeBlockManager: BaseEventManager<mc.PlayerPlaceBlockAfterEvent>;
     private breakBlockManager: BaseEventManager<mc.PlayerBreakBlockAfterEvent>;
     private dataEventsManager: BaseEventManager<mc.DataDrivenEntityTriggerAfterEvent>;
+    private changeInvManager: BaseEventManager<mc.PlayerInventoryItemChangeAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -52,6 +53,7 @@ class AfterEventsSimplified {
         this.placeBlockManager = new BaseEventManager<mc.PlayerPlaceBlockAfterEvent>(mc.world.afterEvents.playerPlaceBlock, "AfterPlaceBlock");
         this.breakBlockManager = new BaseEventManager<mc.PlayerBreakBlockAfterEvent>(mc.world.afterEvents.playerBreakBlock, "AfterBreakBlock");
         this.dataEventsManager = new BaseEventManager<mc.DataDrivenEntityTriggerAfterEvent>(mc.world.afterEvents.dataDrivenEntityTrigger, "AfterDataEvents");
+        this.changeInvManager = new BaseEventManager<mc.PlayerInventoryItemChangeAfterEvent>(mc.world.afterEvents.playerInventoryItemChange, "AfterInvChangeOnPly");
     }
 
     /**
@@ -408,6 +410,29 @@ class AfterEventsSimplified {
      */
     public getEntityEvents(callback: (args: mc.DataDrivenEntityTriggerAfterEvent) => void): void {
         this.dataEventsManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un item se remueve o añade a un inventario de un jugador de forma simplificada.
+     * @param {(args: mc.PlayerInventoryItemChangeAfterEvent) => void} callback Los eventos relacionados a ejecutar.
+     * @author HaJuegos - 01-04-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onPlyInvChange((args) => {
+     *     const previusItem = args.beforeItemStack;
+     *     const newItem = args.itemStack;
+     *     const ply = args.player;
+     *     const slotI = args.slot;
+     *     const invType = args.inventoryType;
+     * 
+     *     console.warn(`${ply.name} previamente tenia el item ${previusItem.typeId} en el slot ${slotI} en el inventario ${invType}; Y ahora tiene el item ${newItem.typeId} en su lugar`);
+     * });
+     * ```
+     */
+    public onPlyInvChange(callback: (args: mc.PlayerInventoryItemChangeAfterEvent) => void): void {
+        this.changeInvManager.register(callback);
     }
 }
 
