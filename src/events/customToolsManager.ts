@@ -269,12 +269,14 @@ class CustomEventsSimplified {
      *     timerID: 'ha:timer_unique', // Identificador unico del timer, por si se usa en mas de una ocasión
      *     initialMns: 2, // Los Minutos iniciales del timer o minutos a mostrar del timer.
      *     forceRestart: true, // (Opcional) Si es necesario en caso de cambio del valor, por ej, nuevos valores de minutos o segundos, pues hace que el timer se reinicie.
+     *     
+     *     // (Opcional) Eventos relacionales cuando el timer pasa un segundo.
      *     onSecondPass: (ply, timer) => {
-     *         console.log('ha pasado un segundo.')
-     *     }, // (Opcional) Eventos relacionales cuando el timer pasa un segundo.
+     *         console.log(`Ha pasado un segundo, el tiempo ahora esta en ${timer}`);
+     *     },
      * };
      * 
-     * // Inicia el timer para el jugador.
+     * // Inicia el timer para el jugador en concreto. NOTA: Es un timer interno, no tiene interfaz. Para mostrar el valor del timer, usar los eventos como: onSecondPass.
      * customEventsManager.startTimerLocal(paramsTimer);
      * ```
      */

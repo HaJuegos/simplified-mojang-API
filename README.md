@@ -15,7 +15,7 @@ It's an informal or professional repository designed to simplify the logic of th
 Just run this in your terminal:
 
 ```bash
-npm install simplified-mojang-api
+npm install simplified-mojang-api@latest (In case of errors, use --force)
 ```
 
 > (Make sure you also have the base @minecraft/server stuff installed!)
@@ -76,6 +76,29 @@ import { fakePlysSimplified } from "simplified-mojang-api";
 
 // Spawns a fake player named "Dummy" in Survival mode
 fakePlysSimplified.createFakePly("Dummy", mc.GameMode.Survival);
+```
+
+### Real-Time Timer
+
+> Creates a timer that's saved directly on the player and runs in real-time, no need to mess with scoreboard ticks! Set an initial value and you're good to go—super easy and fast to use.
+
+```ts
+import { customEventsManager } from "simplified-mojang-api";
+
+const paramsTimer: CustomTimerParam = {
+    sourcePly: player, // The player who gets the timer
+    timerId: "ha:timer_unique", // Unique ID for the timer, just in case you run more than one
+    initialMns: 2, // Starting minutes for the timer, or the minutes to display
+    forceRestart: true, // (Optional) Need to update the time? E.g., new minutes or seconds? Set this to true to restart the timer.
+
+    // (Optional) Events triggered every time a second goes by.
+    onSecondPass: (ply, timer) => {
+        console.log(`A second has passed! The timer now is ${timer}`);
+    },
+};
+
+// Starts the timer for the player. HEADS UP: this is an under-the-hood timer so it's invisible by default. To show it on a UI, use events like onSecondPass.
+customEventsManager.startTimerLocal(paramsTimer);
 ```
 
 ## Contributing
