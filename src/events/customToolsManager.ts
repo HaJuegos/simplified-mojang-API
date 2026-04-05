@@ -1,16 +1,20 @@
 import * as mc from '@minecraft/server';
 import * as vanilla from '@minecraft/vanilla-data';
 
+import { CatLogHandler } from '../core/errorHandler';
+import { CustomTimerParam } from '../core/customTypes';
+
 import { beforeEventsSimplified } from './beforeEventsSimplifiedManager';
 import { worldToolsSimplified } from './worldToolsSimplifiedManager';
 import { afterEventsSimplified } from './afterEventsSimplifiedManager';
-import { CatLogHandler } from '../core/errorHandler';
 
 /**
  * Clase que contiene todos los metodos de mecanicas universales usadas en sus add-ons.
  * @author HaJuegos - 15-03-2026
  */
 class CustomEventsSimplified {
+    private activePlys = new Map<string, number>();
+
     /**
      * Eventos principales de la clase cuando es llamada o inicializada.
      * @constructor
@@ -250,6 +254,165 @@ class CustomEventsSimplified {
             }
         } catch (e) {
             CatLogHandler.handleError(e, 'randomizeInvPly', registrationTrace);
+        }
+    }
+
+    /**
+     * Metodo auxiliar que genera un timer basado en tiempo real. Este consiste en minutos iniciales (tambien horas) iniciando el timer guardando los valores en tiempo real en el jugador asignado que va a ver el timer. Devolviendo y ejecutando codigo basado en el timer.
+     * @param {CustomTimerParam} paramsTimer Los parametros y eventos a ejecutar mientras el timer se ejecuta.
+     * @author HaJuegos - 05-04-2026 
+     * @public
+     * @example
+     * ```ts
+     * const paramsTimer: CustomTimerParam = {
+     *     sourcePLy: player, // Jugador que tiene el timer
+     *     timerID: 'ha:timer_unique', // Identificador unico del timer, por si se usa en mas de una ocasión
+     *     initialMns: 2, // Los Minutos iniciales del timer o minutos a mostrar del timer.
+     *     forceRestart: true, // (Opcional) Si es necesario en caso de cambio del valor, por ej, nuevos valores de minutos o segundos, pues hace que el timer se reinicie.
+     *     onSecondPass: (ply, timer) => {
+     *         console.log('ha pasado un segundo.')
+     *     }, // (Opcional) Eventos relacionales cuando el timer pasa un segundo.
+     * };
+     * 
+     * // Inicia el timer para el jugador.
+     * customEventsManager.startTimerLocal(paramsTimer);
+     * ```
+     */
+    public startTimerLocal(paramsTimer: CustomTimerParam): void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            const { sourcePly, timerId, initialMns, initialHrs, forceRestart, onTimerStarts, onSecondPass, onMinutePass, onHourPass, onTimerEnds } = paramsTimer;
+
+            const mapKey = `${sourcePly.id}_${timerId}`;
+            const propKey = timerId;
+            let isnewTimer = false;
+
+            if (this.activePlys.has(mapKey)) {
+                if (forceRestart) {
+                    const oldID = this.activePlys.get(mapKey)!;
+
+                    worldToolsSimplified.stopLoop(oldID);
+
+                    this.activePlys.delete(mapKey);
+
+                    sourcePly.setDynamicProperty(timerId, undefined);
+                    isnewTimer = true;
+                } else {
+                    return;
+                }
+            }
+
+            const hrsMs = (initialHrs || 0) * 3600000;
+            const mnsMs = initialMns * 60000;
+            const totalRequestedMs = hrsMs + mnsMs;
+
+            let endTime = sourcePly.getDynamicProperty(propKey) as number | undefined;
+
+            if (endTime == undefined) {
+                endTime = Date.now() + totalRequestedMs;
+                sourcePly.setDynamicProperty(propKey, endTime);
+                isnewTimer = true;
+            } else {
+                const remainSaved = Math.max(0, endTime - Date.now());
+                const savedMinutes = Math.floor(remainSaved / 60000);
+
+                if (Math.abs(savedMinutes - initialMns) >= 1) {
+                    endTime = Date.now() + totalRequestedMs;
+                    sourcePly.setDynamicProperty(propKey, endTime);
+                }
+            }
+
+            let lastSecond = -1;
+            let lastMinute = -1;
+            let lastHour = -1;
+
+            /**
+             * Funcion interna auxiliar que formatea el timer para formar el reloj y tambien para ejecutar los eventos relacionados cuando el timer cambia de tiempo. Ya sea minutos, segundos o horas. Por defecto, solo muestra los minutos y segundos, si hay horas en el timer, lo mostrara solo si es necesario. El formato es asi: '00:00:00'.
+             * @param {number} remainMs El tiempo pediente para mostrar al jugador.
+             * @returns {string} El reloj formateado a mostrar.
+             * @author HaJuegos - 05-04-2026
+             */
+            const formatTime = (remainMs: number) => {
+                if (remainMs < 0) remainMs = 0;
+
+                const totalSeconds = Math.floor(remainMs / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+
+                const mStr = minutes.toString().padStart(2, '0');
+                const sSrt = seconds.toString().padStart(2, '0');
+
+                let currentTime = `${mStr}:${sSrt}`;
+
+                if ((initialHrs != undefined && initialHrs > 0) || hours > 0) {
+                    const hStr = hours.toString().padStart(2, '0');
+
+                    currentTime = `${hStr}:${mStr}:${sSrt}`;
+                }
+
+                if (lastSecond != -1) {
+                    if (seconds != lastSecond && onSecondPass) {
+                        onSecondPass(sourcePly, currentTime);
+                    }
+
+                    if (minutes != lastMinute && onMinutePass) {
+                        onMinutePass(sourcePly, currentTime);
+                    }
+
+                    if (hours != lastHour && onHourPass) {
+                        onHourPass(sourcePly, currentTime);
+                    }
+                }
+
+                lastSecond = seconds;
+                lastMinute = minutes;
+                lastHour = hours;
+
+                return currentTime;
+            };
+
+            const initialRemaining = endTime - Date.now();
+            const initialFormat = formatTime(initialRemaining);
+
+            if (isnewTimer && onTimerStarts) {
+                onTimerStarts(sourcePly);
+            }
+
+            if (onSecondPass) {
+                onSecondPass(sourcePly, initialFormat);
+            };
+
+            const loopId = worldToolsSimplified.setLoop(() => {
+                if (!sourcePly.isValid) {
+                    worldToolsSimplified.stopLoop(loopId);
+
+                    this.activePlys.delete(mapKey);
+
+                    return;
+                }
+
+                const currentRemaing = endTime! - Date.now();
+
+                if (currentRemaing <= 0) {
+                    sourcePly.setDynamicProperty(propKey, undefined);
+
+                    this.activePlys.delete(mapKey);
+
+                    worldToolsSimplified.stopLoop(loopId);
+
+                    if (onTimerEnds) {
+                        onTimerEnds(sourcePly);
+                    };
+                } else {
+                    formatTime(currentRemaing);
+                }
+            }, worldToolsSimplified.convertSecondsToTicks(1));
+
+            this.activePlys.set(mapKey, loopId);
+        } catch (e) {
+            CatLogHandler.handleError(e, 'customStartTimerLocal', registrationTrace);
         }
     }
 }

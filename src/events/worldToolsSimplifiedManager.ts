@@ -114,7 +114,15 @@ class WorldToolsSimplified {
      * ```
      */
     public setLoop(callback: () => void, loopTicks: number): number {
-        return mc.system.runInterval(callback, loopTicks);
+        const registrationTrace = new Error().stack;
+
+        return mc.system.runInterval(() => {
+            try {
+                callback();
+            } catch (e) {
+                CatLogHandler.handleError(e, 'worldSetLoop', registrationTrace);
+            }
+        }, loopTicks);
     };
 
     /**

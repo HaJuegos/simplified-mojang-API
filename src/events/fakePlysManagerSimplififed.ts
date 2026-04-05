@@ -46,6 +46,7 @@ class FakePlysManager {
      * @returns {gametest.SimulatedPlayer} Los datos del jugador falso generado.
      * @author HaJuegos - 13-03-2026
      * @public
+     * @async Es asincrono debido a que habra un al momento de spawnear el jugador falso. En caso de que no este creado el gametest run.
      * @gametestEvent Es un metodo gametest, usando estructuras de pruebas por medio del comando /gametest run.
      * @example
      * ```ts
@@ -53,7 +54,7 @@ class FakePlysManager {
      * const fakePly = fakePlysSimplified.createFakePly('Jugador Prueba', mc.GameMode.Survival);
      * ```
      */
-    public createFakePly(namePly: string, gamemodePly: mc.GameMode, defaultSpawnLocation?: mc.Vector3): gametest.SimulatedPlayer | undefined {
+    public async createFakePly(namePly: string, gamemodePly: mc.GameMode, defaultSpawnLocation?: mc.Vector3): Promise<gametest.SimulatedPlayer | undefined> {
         const registrationTrace = new Error().stack;
 
         worldToolsSimplified.setRun(() => {
@@ -65,20 +66,24 @@ class FakePlysManager {
             }
         });
 
-        try {
-            const fakePly = this.testContext?.spawnSimulatedPlayer({ x: 0, y: 1, z: 0 }, namePly, gamemodePly);
+        return new Promise((resolve) => {
+            worldToolsSimplified.setDelay(() => {
+                try {
+                    const fakePly = this.testContext?.spawnSimulatedPlayer({ x: 0, y: 1, z: 0 }, namePly, gamemodePly);
 
-            if (defaultSpawnLocation) {
-                fakePly?.teleport(defaultSpawnLocation);
-            } else {
-                fakePly?.runCommand(`tp @r[name=!"${fakePly.name}"]`);
-            }
+                    if (defaultSpawnLocation) {
+                        fakePly?.teleport(defaultSpawnLocation);
+                    } else {
+                        fakePly?.runCommand(`tp @r[name=!"${fakePly?.name}"]`);
+                    }
 
-            return fakePly;
-        } catch (e) {
-            CatLogHandler.handleError(e, 'createFakePly', registrationTrace);
-            return;
-        }
+                    resolve(fakePly);
+                } catch (e) {
+                    CatLogHandler.handleError(e, 'createFakePly', registrationTrace);
+                    resolve(undefined);
+                }
+            }, worldToolsSimplified.convertSecondsToTicks(1));
+        });
     }
 }
 
