@@ -1,0 +1,30 @@
+name: Suggest a New Feature
+description: Suggest an idea or a new tool for the API.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We love new ideas! Let us know which native method you'd like us to simplify or what new tool you need
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Is your suggestion related to a problem?
+      description: A clear explanation of why you need this. For example: “It always frustrates me to have to write 20 lines of code just to do X...”
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the solution you'd like
+      description: What do you think the code would look like if we used this new API function?
+      value: |
+        ```ts
+        // I wish something like that
+        customEventsManager.triggerEvent(player);
+        ```
+    validations:
+      required: true
