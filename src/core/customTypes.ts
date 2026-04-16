@@ -1,6 +1,68 @@
 import * as mc from "@minecraft/server";
 
 /**
+ * Los parametros disponibles para la creacion de un formulario custom en concreto.
+ * @interface CustomFormParams
+ * @author HaJuegos - 16-04-2026
+ */
+export interface CustomFormParams {
+    /**
+     * (Opcional) Jugador en concreto a mostrar el formulario creado.
+     * @type {?mc.Player}
+     */
+    showPly?: mc.Player;
+
+    /**
+     * Texto o traduccion del titulo del formulario en concreto a crear.
+     * @type {(string | mc.RawMessage)}
+     */
+    titleForm: string | mc.RawMessage;
+
+    /**
+     * (Opcional) El texto de tipo body para el formulario.
+     * @type {?(string | mc.RawMessage)}
+     */
+    bodyText?: string | mc.RawMessage;
+
+    /**
+     * (Opcional) El texto de tipo header para el formulario.
+     * @type {?(string | mc.RawMessage)}
+     */
+    headerText?: string | mc.RawMessage;
+
+    /**
+     * (Opcional) El texto de tipo label para el formulario.
+     * @type {?(string | mc.RawMessage)}
+     */
+    labelText?: string | mc.RawMessage;
+
+    /**
+     * (Opcional) Los Botones en concreto a integrar en el formulario.
+     * @type {?(ButtonFormBase | ButtonFormBase[])}
+     */
+    buttonsForm?: ButtonFormBase | ButtonFormBase[];
+}
+
+/**
+ * Los parametros disponibles para la creacion de los botones para un formulario en cuestion.
+ * @interface ButtonFormBase
+ * @author HaJuegos - 15-04-2026
+ */
+export interface ButtonFormBase {
+    /**
+     * Texto o traduccion del boton en concreto.
+     * @type {(mc.RawMessage | string)}
+     */
+    buttomText: mc.RawMessage | string;
+
+    /**
+     * (Opcional) Ruta del icono en concreto a poner en el boton.
+     * @type {?string}
+     */
+    iconButtomUI?: string;
+}
+
+/**
  * Los parametros disponibles al momento de crear un timer a tiempo real.
  * @interface CustomTimerParam
  * @author HaJuegos - 05-04-2026

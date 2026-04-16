@@ -1,8 +1,9 @@
-import * as mc from '@minecraft/server';
 import * as vanilla from '@minecraft/vanilla-data';
+import * as mc from '@minecraft/server';
+import * as ui from '@minecraft/server-ui';
 
 import { CatLogHandler } from '../core/errorHandler';
-import { CustomTimerParam } from '../core/customTypes';
+import { CustomFormParams, CustomTimerParam } from '../core/customTypes';
 
 import { beforeEventsSimplified } from './beforeEventsSimplifiedManager';
 import { worldToolsSimplified } from './worldToolsSimplifiedManager';
@@ -13,6 +14,12 @@ import { afterEventsSimplified } from './afterEventsSimplifiedManager';
  * @author HaJuegos - 15-03-2026
  */
 class CustomEventsSimplified {
+    /**
+     * Variable que controla los timers basados en tiempo local por jugador.
+     * @type {Map<string, number>}
+     * @author HaJuegos - 15-04-2026
+     * @private
+     */
     private activePlys = new Map<string, number>();
 
     /**
@@ -21,6 +28,50 @@ class CustomEventsSimplified {
      */
     constructor () {
 
+    }
+
+    /**
+     * Metodo auxiliar que simplifica la logica de la creacion de un formulario UI custom en cuestion.
+     * @param {CustomFormParams} formParams Los parametros del formulario en concreto necesarios para crear el formulario.
+     * @author HaJuegos - 16-04-2026
+     * @public
+     * @example
+     * ```ts
+     * // Esto crea el formulario y luego lo muestra al jugador.
+     * const form = customEventsManager.createFormUI({ showPly: player, titleForm: 'Formulario de Prueba' });
+     * ```
+     */
+    public createFormUI(formParams: CustomFormParams): ui.ActionFormData | void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            const baseForm = new ui.ActionFormData().title(formParams.titleForm);
+            const buttonList = formParams.buttonsForm ? (Array.isArray(formParams.buttonsForm) ? formParams.buttonsForm : [formParams.buttonsForm]) : [];
+
+            if (formParams.headerText) {
+                baseForm.header(formParams.headerText);
+            }
+
+            if (formParams.bodyText) {
+                baseForm.body(formParams.bodyText);
+            }
+
+            if (formParams.labelText) {
+                baseForm.label(formParams.labelText);
+            }
+
+            if (formParams.showPly) {
+                baseForm.show(formParams.showPly);
+            }
+
+            buttonList.forEach((button) => {
+                baseForm.button(button.buttomText, button.iconButtomUI);
+            });
+
+            return baseForm;
+        } catch (e) {
+            CatLogHandler.handleError(e, 'createFormUI', registrationTrace);
+        }
     }
 
     /**

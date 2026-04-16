@@ -14,3 +14,6 @@ export * from "./events/fakePlysManagerSimplififed";
 
 // Custom events
 export * from './events/customToolsManager';
+
+// Custom types
+export * from './core/customTypes';
