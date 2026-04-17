@@ -60,13 +60,13 @@ class CustomEventsSimplified {
                 baseForm.label(formParams.labelText);
             }
 
-            if (formParams.showPly) {
-                baseForm.show(formParams.showPly);
-            }
-
             buttonList.forEach((button) => {
                 baseForm.button(button.buttomText, button.iconButtomUI);
             });
+
+            if (formParams.showPly) {
+                baseForm.show(formParams.showPly);
+            }
 
             return baseForm;
         } catch (e) {
