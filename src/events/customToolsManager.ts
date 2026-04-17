@@ -26,22 +26,32 @@ class CustomEventsSimplified {
      * Eventos principales de la clase cuando es llamada o inicializada.
      * @constructor
      */
-    constructor () {
-
-    }
+    constructor () { }
 
     /**
      * Metodo auxiliar que simplifica la logica de la creacion de un formulario UI custom en cuestion.
      * @param {CustomFormParams} formParams Los parametros del formulario en concreto necesarios para crear el formulario.
+     * @returns {Promise<ui.ActionFormData | void>} Se devuelve el mismo formulario creado en caso de que todo este bien.
      * @author HaJuegos - 16-04-2026
+     * @async Este metodo es asincrono debido a las acciones que puede realizar el usuario cuando se muestre o no el formulario. Principalmente para los eventos.
      * @public
      * @example
      * ```ts
-     * // Esto crea el formulario y luego lo muestra al jugador.
-     * const form = customEventsManager.createFormUI({ showPly: player, titleForm: 'Formulario de Prueba' });
+     * // Esto crea el formulario y luego lo muestra al jugador. Y al momento de abrir el formulario en el jugador, se manda un log.
+     * const form = this.createCustomClassicFormUI(
+     *      {
+     *          titleForm: 'Formulario de Prueba',
+     *          showPly: {
+     *              targetPly: player,
+     *              onShow: (ply) => {
+     *                  console.log(`${ply.name} abrio el formulario.`);
+     *              }
+     *          }
+     *      }
+     *  );
      * ```
      */
-    public createFormUI(formParams: CustomFormParams): ui.ActionFormData | void {
+    public async createCustomClassicFormUI(formParams: CustomFormParams): Promise<ui.ActionFormData | void> {
         const registrationTrace = new Error().stack;
 
         try {
@@ -65,12 +75,35 @@ class CustomEventsSimplified {
             });
 
             if (formParams.showPly) {
-                baseForm.show(formParams.showPly);
+                const targetInfo = formParams.showPly;
+                const ply = targetInfo.targetPly;
+
+                if (targetInfo.onCreate) {
+                    targetInfo.onCreate(ply);
+                }
+
+                try {
+                    const action = await baseForm.show(ply);
+
+                    if (action.canceled) {
+                        if (targetInfo.onClose) {
+                            targetInfo.onClose(ply, action.cancelationReason as ui.FormCancelationReason);
+                        }
+                    } else {
+                        if (targetInfo.onClickBtn && action.selection != undefined) {
+                            targetInfo.onClickBtn(ply, action.selection);
+                        }
+                    }
+                } catch (e) {
+                    if (targetInfo.onErrForm) {
+                        targetInfo.onErrForm(ply, ui.FormCancelationReason.UserBusy);
+                    }
+                }
             }
 
             return baseForm;
         } catch (e) {
-            CatLogHandler.handleError(e, 'createFormUI', registrationTrace);
+            CatLogHandler.handleError(e, 'createCustomClassicFormUI', registrationTrace);
         }
     }
 

@@ -1,4 +1,5 @@
 import * as mc from "@minecraft/server";
+import * as ui from "@minecraft/server-ui";
 
 /**
  * Los parametros disponibles para la creacion de un formulario custom en concreto.
@@ -6,12 +7,6 @@ import * as mc from "@minecraft/server";
  * @author HaJuegos - 16-04-2026
  */
 export interface CustomFormParams {
-    /**
-     * (Opcional) Jugador en concreto a mostrar el formulario creado.
-     * @type {?mc.Player}
-     */
-    showPly?: mc.Player;
-
     /**
      * Texto o traduccion del titulo del formulario en concreto a crear.
      * @type {(string | mc.RawMessage)}
@@ -41,6 +36,48 @@ export interface CustomFormParams {
      * @type {?(ButtonFormBase | ButtonFormBase[])}
      */
     buttonsForm?: ButtonFormBase | ButtonFormBase[];
+
+    /**
+     * (Opcional) Todos los eventos disponibles para cuando el formulario se crea y se muestra al jugador.
+     * @type {?{
+     *     targetPly: mc.Player;
+     *     onShow?: (ply: mc.Player) => void;
+     *     onClose?: (ply: mc.Player, reasonClose: ui.FormCancelationReason) => void;
+     *     onClickBtn?: (ply: mc.Player, indexBtn: number) => void;
+     *     onErrForm?: (ply: mc.Player, reasonClose: ui.FormCancelationReason) => void;
+     * }}
+     */
+    showPly?: {
+        /**
+         * Jugador en concreto a mostrar el formulario.
+         * @type {mc.Player}
+         */
+        targetPly: mc.Player;
+
+        /**
+         * (Opcional) Los eventos relacionados cuando el formulario se crea.
+         * @type {?(ply: mc.Player) => void}
+         */
+        onCreate?: (ply: mc.Player) => void;
+
+        /**
+         * (Opcional) Los eventos relacionados cuando el formulario se cierra.
+         * @type {?(ply: mc.Player, reasonClose: ui.FormCancelationReason) => void}
+         */
+        onClose?: (ply: mc.Player, reasonClose: ui.FormCancelationReason) => void;
+
+        /**
+         * (Opcional) Los eventos relacionados cuando se da click a un boton en el formulario.
+         * @type {?(ply: mc.Player, indexBtn: number) => void}
+         */
+        onClickBtn?: (ply: mc.Player, indexBtn: number) => void;
+
+        /**
+         * (Opcional) Los eventos relacionados si el formulario tiene un error para mostrarse.
+         * @type {?(ply: mc.Player, reasonClose: ui.FormCancelationReason) => void}
+         */
+        onErrForm?: (ply: mc.Player, reasonClose: ui.FormCancelationReason) => void;
+    };
 }
 
 /**
