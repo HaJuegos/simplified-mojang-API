@@ -220,7 +220,7 @@ class WorldToolsSimplified {
      * @param {mc.Player} targetPly Jugador en concreto a obtener su score.
      * @param {string} idObj ID del objectivo el concreto a obtener el score.
      * @param {?string} [nameDisplayObj] (Opcional) Nombre del objectivo en caso de que el mismo no este creado, a asignar.
-     * @returns {(number | undefined)} Devuelve el score total que tiene el jugador si todo esta bien, sino sera un error.
+     * @returns {number} Devuelve el score total que tiene el jugador si todo esta bien, sino siempre sera 0.
      * @author HaJuegos - 31-03-2026
      * @public
      * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
@@ -230,7 +230,7 @@ class WorldToolsSimplified {
      * const score = worldToolsSimplified.getPlyScoreInObj(ply, 'conteo', 'Conteo');
      * ```
      */
-    public getPlyScoreInObj(targetPly: mc.Player, idObj: string, nameDisplayObj?: string): number | undefined {
+    public getPlyScoreInObj(targetPly: mc.Player, idObj: string, nameDisplayObj?: string): number {
         const registrationTrace = new Error().stack;
 
         try {
@@ -241,12 +241,16 @@ class WorldToolsSimplified {
                 obj = scoreboard.addObjective(idObj, nameDisplayObj);
             }
 
+            if (!obj.hasParticipant(targetPly)) {
+                return 0;
+            }
+
             const score = obj.getScore(targetPly) ?? 0;
 
             return score;
         } catch (e) {
             CatLogHandler.handleError(e, 'getPlyScore', registrationTrace);
-            return;
+            return 0;
         }
     }
 
