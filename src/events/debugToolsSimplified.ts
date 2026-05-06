@@ -50,7 +50,7 @@ class DebugToolsSimplified {
 
                     box.bound = { x: bb.extent.x * 2, y: bb.extent.y * 2, z: bb.extent.z * 2 };
                     box.scale = 1;
-                    box.color = { red: 255, green: 255, blue: 255 };
+                    box.color = { red: 255, green: 255, blue: 255, alpha: 1 };
                     box.visibleTo = [ply];
                     box.attachedTo = mob;
                     box.setLocation({ x: 0, y: bb.extent.y, z: 0 });
