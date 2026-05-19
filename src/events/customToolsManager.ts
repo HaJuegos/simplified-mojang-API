@@ -3,7 +3,7 @@ import * as mc from '@minecraft/server';
 import * as ui from '@minecraft/server-ui';
 
 import { CatLogHandler } from '../core/errorHandler';
-import { CustomFormParams, CustomTimerParam } from '../core/customTypes';
+import { CustomFormParams, CustomTimerParam, LockItemsInvParams } from '../core/customTypes';
 
 import { beforeEventsSimplified } from './beforeEventsSimplifiedManager';
 import { worldToolsSimplified } from './worldToolsSimplifiedManager';
@@ -499,6 +499,192 @@ class CustomEventsSimplified {
             this.activePlys.set(mapKey, loopId);
         } catch (e) {
             CatLogHandler.handleError(e, 'customStartTimerLocal', registrationTrace);
+        }
+    }
+
+    /**
+     * Metodo auxiliar que fuerza la eliminacion y dropeo de un item en concreto de un slot del inventario de un jugador.
+     * @param {mc.Player} ply Jugador en concreto a conciderar.
+     * @param {(number | number[])} slots El o los slots en concreto a cambiar eliminar.
+     * @param {?mc.ItemStack} itemToRemplace (Opcional) Un item a poner en su lugar al item a dropear o eliminar.
+     * @returns {void}
+     * @author HaJuegos - 18-05-2026
+     * @public
+     * @example
+     * ```ts
+     * // Cuando este evento se ejecute, los items de los slots "0,1,2,3" seran dropeados y eliminados del jugador. (Si hay items en esos slots)
+     * customEventsManager.dropItemsPly(ply, [0,1,2,3]);
+     * ```
+     */
+    public dropItemsPly(ply: mc.Player, slots: number | number[], itemToRemplace?: mc.ItemStack): void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            const coords = ply.location;
+            const dime = ply.dimension;
+            const inv = ply.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
+            const finalSlots = Array.isArray(slots) ? slots : [slots];
+
+            for (const slot of finalSlots) {
+                const item = inv.getItem(slot);
+
+                if (item) {
+                    const spawnCoords = { x: coords.x, y: coords.y + 1, z: coords.z };
+                    const itemEntity = dime.spawnItem(item, spawnCoords);
+
+                    inv.setItem(slot, itemToRemplace);
+
+                    const force = 0.5;
+                    const randomX = (Math.random() - 0.5) * force;
+                    const randomZ = (Math.random() - 0.5) * force;
+
+                    itemEntity.applyImpulse({ x: randomX, y: force, z: randomZ });
+                }
+            }
+        } catch (e) {
+            CatLogHandler.handleError(e, 'dropItemsPly', registrationTrace);
+        }
+    }
+
+    /**
+     * Metodo auxiliar que fuerza la eliminacion y dropeo de un item en concreto de un slot del equipamento de un jugador.
+     * @param {mc.Player} ply Jugador en concreto a conciderar.
+     * @param {(mc.EquipmentSlot | mc.EquipmentSlot[])} slots El o los slots en concreto a cambiar eliminar.
+     * @param {?mc.ItemStack} itemToRemplace (Opcional) Un item a poner en su lugar al item a dropear o eliminar.
+     * @returns {void}
+     * @author HaJuegos - 18-05-2026
+     * @public
+     * @example
+     * ```ts
+     * // Cuando este evento se ejecute, los items de los slots "Helmet, Chestplate y Leggings" seran dropeados y eliminados del jugador. (Si hay items en esos slots)
+     * customEventsManager.dropArmorsPly(ply, [mc.EquipmentSlot.Head, mc.EquipmentSlot.Chest, mc.EquipmentSlot.Legs]);
+     * ```
+     */
+    public dropArmorsPly(ply: mc.Player, slots: mc.EquipmentSlot | mc.EquipmentSlot[], itemToRemplace?: mc.ItemStack): void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            const coords = ply.location;
+            const dime = ply.dimension;
+            const armorInv = ply.getComponent(mc.EntityComponentTypes.Equippable) as mc.EntityEquippableComponent;
+            const finalSlots = Array.isArray(slots) ? slots : [slots];
+
+            for (const slot of finalSlots) {
+                const item = armorInv.getEquipment(slot);
+
+                if (item) {
+                    const spawnCoords = { x: coords.x, y: coords.y + 1, z: coords.z };
+                    const itemEntity = dime.spawnItem(item, spawnCoords);
+
+                    armorInv.setEquipment(slot, itemToRemplace);
+
+                    const force = 0.5;
+                    const randomX = (Math.random() - 0.5) * force;
+                    const randomZ = (Math.random() - 0.5) * force;
+
+                    itemEntity.applyImpulse({ x: randomX, y: force, z: randomZ });
+                }
+            }
+        } catch (e) {
+            CatLogHandler.handleError(e, 'dropArmorsPly', registrationTrace);
+        }
+    }
+
+    /**
+     * Metodo auxiliar que permite el cambio de estado y propiedades a uno o varios items de uno o varios inventarios a un jugador en concreto. Simplificando los lockMode de los items.
+     * @param {LockItemsInvParams} params Los parametros en concreto para integrar.
+     * @returns {void}
+     * @author HaJuegos - 19-05-2026
+     * @public
+     * @example
+     * ```ts
+     * const params: LockItemsInvParams = {
+     *      ply: source, // Jugador en concreto
+     *      invType: 'inv', // Inventario a cambiar
+     *      lockMethod: mc.ItemLockMode.Inventory, // Tipo de bloqueo a realizar a los items
+     *      keepInDeath: true, // Se asigna la propiedad 'keepInDeath' adicionalmente
+     *      itemsSelection: {
+     *          randomSlots: {
+     *              minSlots: 1,
+     *              maxSlots: 4
+     *          }
+     *      }
+     *  }
+     * 
+     * customEventsManager.lockItemsPly(params)
+     * ```
+     */
+    public lockItemsPly(params: LockItemsInvParams): void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            const { ply, invType, lockMethod, keepInDeath, itemsSelection } = params;
+            const inv = ply.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
+            const armorInv = ply.getComponent(mc.EntityComponentTypes.Equippable) as mc.EntityEquippableComponent;
+
+            let selectItems: { type: 'inv' | 'armor', slot: number | mc.EquipmentSlot, item: mc.ItemStack; }[] = [];
+
+            /**
+             * Funcion auxiliar que valida si se debe quitar el bloqueo de los items o no, dependiendo el argumento del metodo.
+             * @param {mc.ItemLockMode} currentLock El bloqueo actual del item a analizar. 
+             * @param {mc.ItemLockMode} targetLock El bloqueo a asignar al item.
+             * @returns {boolean} Devuelve un boolean dependiendo el caso para desbloquear o bloquear. Dependiendo el argumento del metodo.
+             * @author HaJuegos - 19-05-2026
+             */
+            const validChange = (currentLock: mc.ItemLockMode, targetLock: mc.ItemLockMode): boolean => {
+                return currentLock != targetLock;
+            };
+
+            if (invType == 'inv' || invType == 'both') {
+                const slots = itemsSelection.specificSlots ? itemsSelection.specificSlots as number[] : Array.from({ length: inv.size }, (_, i) => i);
+
+                for (const slot of slots) {
+                    const item = inv.getItem(slot);
+
+                    if (item && validChange(item.lockMode, lockMethod)) {
+                        selectItems.push({ type: 'inv', slot: slot, item: item });
+                    }
+                }
+            }
+
+            if (invType == 'armor' || invType == 'both') {
+                const allSlots = [mc.EquipmentSlot.Head, mc.EquipmentSlot.Chest, mc.EquipmentSlot.Legs, mc.EquipmentSlot.Feet, mc.EquipmentSlot.Offhand];
+                const slots = itemsSelection.specificSlots ? itemsSelection.specificSlots as mc.EquipmentSlot[] : allSlots;
+
+                for (const slot of slots) {
+                    const item = armorInv.getEquipment(slot);
+
+                    if (item && validChange(item.lockMode, lockMethod)) {
+                        selectItems.push({ type: 'armor', slot: slot, item: item });
+                    }
+                }
+            }
+
+            if (itemsSelection.randomSlots) {
+                const { minSlots, maxSlots } = itemsSelection.randomSlots;
+                const selecTotal = Math.floor(Math.random() * (maxSlots - minSlots + 1)) + minSlots;
+
+                selectItems.sort(() => Math.random() - 0.5);
+                selectItems = selectItems.slice(0, selecTotal);
+            }
+
+            for (const itemData of selectItems) {
+                const { type, slot, item } = itemData;
+
+                item.lockMode = lockMethod;
+
+                if (keepInDeath != undefined) {
+                    item.keepOnDeath = keepInDeath;
+                }
+
+                if (type == 'inv') {
+                    inv.setItem(slot as number, item);
+                } else {
+                    armorInv.setEquipment(slot as mc.EquipmentSlot, item);
+                }
+            }
+        } catch (e) {
+            CatLogHandler.handleError(e, 'lockItemsPly', registrationTrace);
         }
     }
 }

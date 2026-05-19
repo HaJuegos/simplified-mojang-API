@@ -2,6 +2,74 @@ import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 
 /**
+ * Todos los parametros disponibles para la seleccion de bloqueo especifico para los items.
+ * @interface LockItemsInvParams
+ * @author HaJuegos - 18-05-2026
+ */
+export interface LockItemsInvParams {
+    /**
+     * Jugador en concreto a considerar.
+     * @type {mc.Player}
+     */
+    ply: mc.Player;
+
+    /**
+     * El tipo de inventario a afectar en concreto.
+     * @type {('inv' | 'armor' | 'both')}
+     */
+    invType: 'inv' | 'armor' | 'both';
+
+    /**
+     * Tipo de bloqueo en concreto a insertar a los items.
+     * @type {mc.ItemLockMode}
+     */
+    lockMethod: mc.ItemLockMode;
+
+    /**
+     * (Opcional) Insertar la propiedad de mantener el item al morir el jugador.
+     * @type {?boolean}
+     */
+    keepInDeath?: boolean;
+
+    /**
+     * Tipo de seleccion de los items por slot a bloquear o insertar.
+     * @type {{
+     *         allSlots?: boolean;
+     *         specificSlots?: number[];
+     *         randomSlots?: {
+     *             minSlots: number;
+     *             maxSlots: number;
+     *         };
+     *     }}
+     */
+    itemsSelection: {
+        /**
+         * (Opcional) Si es verdadero, todos los items de todos los slots se veran afectados.
+         * @type {?boolean}
+         */
+        allSlots?: boolean;
+
+        /**
+         * (Opcional) Si es verdadero, solo los items de estos slots en especifico se veran afectados.
+         * @type {?number[]}
+         */
+        specificSlots?: number[] | mc.EquipmentSlot[];
+
+        /**
+         * (Opcional) Si se elije esta opcion, la seleccion de items sera aleatoria, elije un minimo y maximo de slots a seleccionar de forma aleatoria.
+         * @type {?{
+         *             minSlots: number;
+         *             maxSlots: number;
+         *         }}
+         */
+        randomSlots?: {
+            minSlots: number;
+            maxSlots: number;
+        };
+    };
+}
+
+/**
  * Los parametros disponibles para la creacion de un formulario custom en concreto.
  * @interface CustomFormParams
  * @author HaJuegos - 16-04-2026

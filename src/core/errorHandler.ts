@@ -18,7 +18,7 @@ export class CatLogHandler {
     public static handleError(e: any, ctxName: string, registrationTrace?: string): void {
         const error = e as Error;
 
-
+        let isInfoLevel = false;
         let logMessage = `\n§c=== [CATLOG ERROR] ===§r\n`;
 
         logMessage += `§eContexto:§r ${ctxName}\n`;
@@ -29,7 +29,9 @@ export class CatLogHandler {
         } else if (error.message.includes("early execution")) {
             logMessage += `§b[TIP]:§r Mueve este codigo al evento 'onWorldReady' para asegurarte de que los datos existan.\n`;
         } else if (error.message.includes("Entity being invalid") || error.message.includes("has the Entity been removed")) {
-            logMessage += `§b[TIP]:§r La entidad ya fue eliminada del mundo. Verifica si es valida con 'if(entity?.isValid())' antes de intentar algo con ella.\n`;
+            logMessage += `§b[TIP]:§r La entidad ya fue eliminada del mundo. Verifica si es valida con 'if (entity.isValid)' antes de intentar algo con ella.\n`;
+        } else if (error.message.includes('not in a chunk currently loaded')) {
+            isInfoLevel = true;
         }
 
         const execStack = error.stack?.split('\n').find(line => line.includes('at ') && !line.includes('BaseEventManager') && !line.includes('CatlogErrorHandler') && !line.includes('WorldToolsSimplified'));
@@ -52,6 +54,10 @@ export class CatLogHandler {
 
         logMessage += `§c========================§r`;
 
-        console.warn(logMessage);
+        if (isInfoLevel) {
+            console.info(logMessage);
+        } else {
+            console.warn(logMessage);
+        }
     }
 }
