@@ -507,6 +507,7 @@ class CustomEventsSimplified {
      * @param {mc.Player} ply Jugador en concreto a conciderar.
      * @param {(number | number[])} slots El o los slots en concreto a cambiar eliminar.
      * @param {?mc.ItemStack} itemToRemplace (Opcional) Un item a poner en su lugar al item a dropear o eliminar.
+     * @param {?(string[] | vanilla.MinecraftItemTypes[] | mc.ItemStack[])} whitelistItems (Opcional) Lista de items que no se pueden dropear o eliminar en este sistema.
      * @returns {void}
      * @author HaJuegos - 18-05-2026
      * @public
@@ -516,7 +517,7 @@ class CustomEventsSimplified {
      * customEventsManager.dropItemsPly(ply, [0,1,2,3]);
      * ```
      */
-    public dropItemsPly(ply: mc.Player, slots: number | number[], itemToRemplace?: mc.ItemStack): void {
+    public dropItemsPly(ply: mc.Player, slots: number | number[], itemToRemplace?: mc.ItemStack, whitelistItems?: string[] | vanilla.MinecraftItemTypes[] | mc.ItemStack[]): void {
         const registrationTrace = new Error().stack;
 
         try {
@@ -527,18 +528,32 @@ class CustomEventsSimplified {
 
             for (const slot of finalSlots) {
                 const item = inv.getItem(slot);
+                let whitelisted = false;
+
+                if (item && whitelistItems) {
+                    whitelisted = whitelistItems.some(wItem => {
+                        const id = typeof wItem == 'string' ? wItem : wItem.typeId;
+
+                        return id == item.typeId;
+                    });
+                }
+
+                if (whitelisted) continue;
 
                 if (item) {
                     const spawnCoords = { x: coords.x, y: coords.y + 1, z: coords.z };
                     const itemEntity = dime.spawnItem(item, spawnCoords);
-
-                    inv.setItem(slot, itemToRemplace);
-
                     const force = 0.5;
                     const randomX = (Math.random() - 0.5) * force;
                     const randomZ = (Math.random() - 0.5) * force;
 
                     itemEntity.applyImpulse({ x: randomX, y: force, z: randomZ });
+                }
+
+                if (itemToRemplace) {
+                    inv.setItem(slot, itemToRemplace);
+                } else if (item) {
+                    inv.setItem(slot, undefined);
                 }
             }
         } catch (e) {
@@ -551,6 +566,7 @@ class CustomEventsSimplified {
      * @param {mc.Player} ply Jugador en concreto a conciderar.
      * @param {(mc.EquipmentSlot | mc.EquipmentSlot[])} slots El o los slots en concreto a cambiar eliminar.
      * @param {?mc.ItemStack} itemToRemplace (Opcional) Un item a poner en su lugar al item a dropear o eliminar.
+     * @param {?(string[] | vanilla.MinecraftItemTypes[] | mc.ItemStack[])} whitelistItems (Opcional) Lista de items que no se pueden dropear o eliminar en este sistema.
      * @returns {void}
      * @author HaJuegos - 18-05-2026
      * @public
@@ -560,7 +576,7 @@ class CustomEventsSimplified {
      * customEventsManager.dropArmorsPly(ply, [mc.EquipmentSlot.Head, mc.EquipmentSlot.Chest, mc.EquipmentSlot.Legs]);
      * ```
      */
-    public dropArmorsPly(ply: mc.Player, slots: mc.EquipmentSlot | mc.EquipmentSlot[], itemToRemplace?: mc.ItemStack): void {
+    public dropArmorsPly(ply: mc.Player, slots: mc.EquipmentSlot | mc.EquipmentSlot[], itemToRemplace?: mc.ItemStack, whitelistItems?: string[] | vanilla.MinecraftItemTypes[] | mc.ItemStack[]): void {
         const registrationTrace = new Error().stack;
 
         try {
@@ -571,18 +587,32 @@ class CustomEventsSimplified {
 
             for (const slot of finalSlots) {
                 const item = armorInv.getEquipment(slot);
+                let whitelisted = false;
+
+                if (item && whitelistItems) {
+                    whitelisted = whitelistItems.some(wItem => {
+                        const id = typeof wItem == 'string' ? wItem : wItem.typeId;
+
+                        return id == item.typeId;
+                    });
+                }
+
+                if (whitelisted) continue;
 
                 if (item) {
                     const spawnCoords = { x: coords.x, y: coords.y + 1, z: coords.z };
                     const itemEntity = dime.spawnItem(item, spawnCoords);
-
-                    armorInv.setEquipment(slot, itemToRemplace);
-
                     const force = 0.5;
                     const randomX = (Math.random() - 0.5) * force;
                     const randomZ = (Math.random() - 0.5) * force;
 
                     itemEntity.applyImpulse({ x: randomX, y: force, z: randomZ });
+                }
+
+                if (itemToRemplace) {
+                    armorInv.setEquipment(slot, itemToRemplace);
+                } else if (item) {
+                    armorInv.setEquipment(slot, undefined);
                 }
             }
         } catch (e) {
