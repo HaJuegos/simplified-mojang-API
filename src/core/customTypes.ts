@@ -1,4 +1,5 @@
 import * as mc from "@minecraft/server";
+import * as vanilla from "@minecraft/vanilla-data";
 import * as ui from "@minecraft/server-ui";
 
 /**
@@ -66,6 +67,12 @@ export interface LockItemsInvParams {
             minSlots: number;
             maxSlots: number;
         };
+
+        /**
+         * (Opcional) Si se asigna esta opcion, sera una lista de items que no se veran afectados por este sistema.
+         * @type {?(string[] | vanilla.MinecraftItemTypes[] | mc.ItemStack[])}
+         */
+        whitelistItems?: string[] | vanilla.MinecraftItemTypes[] | mc.ItemStack[];
     };
 }
 

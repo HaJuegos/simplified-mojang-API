@@ -665,13 +665,29 @@ class CustomEventsSimplified {
                 return currentLock != targetLock;
             };
 
+            /**
+             * Funcion auxiliar que valida si un item no debe ser afectado por este sistema, dependiendo el argumento del metodo.
+             * @param {mc.ItemStack} item Item en cuestion a validar. 
+             * @returns {boolean} Devuelve un boolean dependiendo el caso para usar o no este item en el sistema.
+             * @author HaJuegos - 19-05-2026
+             */
+            const checkWhitelist = (item: mc.ItemStack): boolean => {
+                if (!itemsSelection.whitelistItems) return false;
+
+                return itemsSelection.whitelistItems.some(wItem => {
+                    const id = typeof wItem == 'string' ? wItem : wItem.typeId;
+
+                    return id == item.typeId;
+                });
+            };
+
             if (invType == 'inv' || invType == 'both') {
                 const slots = itemsSelection.specificSlots ? itemsSelection.specificSlots as number[] : Array.from({ length: inv.size }, (_, i) => i);
 
                 for (const slot of slots) {
                     const item = inv.getItem(slot);
 
-                    if (item && validChange(item.lockMode, lockMethod)) {
+                    if (item && !checkWhitelist(item) && validChange(item.lockMode, lockMethod)) {
                         selectItems.push({ type: 'inv', slot: slot, item: item });
                     }
                 }
@@ -684,7 +700,7 @@ class CustomEventsSimplified {
                 for (const slot of slots) {
                     const item = armorInv.getEquipment(slot);
 
-                    if (item && validChange(item.lockMode, lockMethod)) {
+                    if (item && !checkWhitelist(item) && validChange(item.lockMode, lockMethod)) {
                         selectItems.push({ type: 'armor', slot: slot, item: item });
                     }
                 }
