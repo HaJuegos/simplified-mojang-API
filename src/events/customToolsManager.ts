@@ -188,12 +188,14 @@ class CustomEventsSimplified {
                 const durability = newItem.getComponent(mc.ItemComponentTypes.Durability);
 
                 if (durability) {
-                    durability.damage += specificDamageDurability;
+                    const finalDurability = durability.damage + specificDamageDurability;
 
-                    if (durability.damage >= durability.maxDurability) {
+                    if (finalDurability >= durability.maxDurability) {
                         broke = true;
 
                         ply.playSound('random.break');
+                    } else {
+                        durability.damage = finalDurability;
                     }
                 }
             } else {
