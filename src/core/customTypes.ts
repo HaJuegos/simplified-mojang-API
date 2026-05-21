@@ -3,11 +3,54 @@ import * as vanilla from "@minecraft/vanilla-data";
 import * as ui from "@minecraft/server-ui";
 
 /**
+ * Todos los argumentos disponibles para especificar la funcionalidad de dañar un item o reducir su cantidad.
+ * @interface ManualDamageItemParams
+ * @author HaJuegos - 20-05-2026
+ */
+interface ManualDamageItemParams {
+    /**
+     * Jugador en concreto que es afectado.
+     * @type {mc.Player}
+     */
+    ply: mc.Player;
+
+    /**
+     * Item en concreto que es afectado. Dependiendo el tipo, baja de durabilidad o baja el stack.
+     * @type {mc.ItemStack}
+     */
+    item: mc.ItemStack;
+
+    /**
+     * (Opcional, por defecto estara 'inv') El tipo de inventario a consultar y cambiar el item afectado.
+     * @type {?('inv' | 'armor')}
+     */
+    specificInv?: 'inv' | 'armor';
+
+    /**
+     * (Opcional, por defecto, sera el slot de la mano) El slot en especifico a afectar su respectivo item.
+     * @type {?(number | mc.EquipmentSlot)}
+     */
+    specificSlot?: number | mc.EquipmentSlot;
+
+    /**
+     * (Opcional, por defecto sera 1) La cantidad especifica a reducir el item si es el caso.
+     * @type {?number}
+     */
+    specificAmount?: number;
+
+    /**
+     * (Opcional, por defecto sera 1) La cantidad de daño especifica a la durabilidad del item si es el caso.
+     * @type {?number}
+     */
+    specificDamageDurability?: number;
+}
+
+/**
  * Todos los parametros disponibles para la seleccion de bloqueo especifico para los items.
  * @interface LockItemsInvParams
  * @author HaJuegos - 18-05-2026
  */
-export interface LockItemsInvParams {
+interface LockItemsInvParams {
     /**
      * Jugador en concreto a considerar.
      * @type {mc.Player}
@@ -81,7 +124,7 @@ export interface LockItemsInvParams {
  * @interface CustomFormParams
  * @author HaJuegos - 16-04-2026
  */
-export interface CustomFormParams {
+interface CustomFormParams {
     /**
      * Texto o traduccion del titulo del formulario en concreto a crear.
      * @type {(string | mc.RawMessage)}
@@ -160,7 +203,7 @@ export interface CustomFormParams {
  * @interface ButtonFormBase
  * @author HaJuegos - 15-04-2026
  */
-export interface ButtonFormBase {
+interface ButtonFormBase {
     /**
      * Texto o traduccion del boton en concreto.
      * @type {(mc.RawMessage | string)}
@@ -180,7 +223,7 @@ export interface ButtonFormBase {
  * @author HaJuegos - 05-04-2026
  * @export
  */
-export interface CustomTimerParam {
+interface CustomTimerParam {
     /**
      * El jugador en concreto a considerar para crear el timer.
      * @type {mc.Player}
@@ -241,3 +284,11 @@ export interface CustomTimerParam {
      */
     onTimerEnds?: (ply: mc.Player) => void;
 }
+
+export type {
+    ManualDamageItemParams,
+    LockItemsInvParams,
+    CustomFormParams,
+    ButtonFormBase,
+    CustomTimerParam
+};
