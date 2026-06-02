@@ -288,27 +288,26 @@ class CustomEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que simplifica loa logica al detectar el uso de un totem en un jugaodor, ejecutando los eventos relacionados.
-     * @param {(ply: mc.Player) => void} callback Los eventos relacionados a ejecutar.
+     * Metodo auxiliar que simplifica la logica al detectar el uso de un totem, ejecutando los eventos relacionados.
+     * @param {(entity: mc.Entity | mc.Player) => void} callback Los eventos relacionados a ejecutar.
      * @author HaJuegos - 19-03-2026
      * @public
      * @example
      * ```ts
-     * // Este evento solo se va a ejecutar cuando un jugador usa un totem.
-     * customEventsManager.playerUseTotemSystem((args) => {
-     *     const ply = args.player;
-     *     
-     *     console.warn(`${ply.name} ha usado un totem.`);
+     * // Este evento solo se va a ejecutar cuando una entidad o jugador usa un totem.
+     * customEventsManager.onEntityUseTotem((entity) => { 
+     *     console.warn(`${entity.typeId} ha usado un totem.`);
+     *     console.warn(`${entity.name} ha usado un totem.`);
      * });
      * ```
      */
-    public onPlayerUseTotem(callback: (player: mc.Player) => void): void {
+    public onEntityUseTotem(callback: (entity: mc.Entity | mc.Player) => void): void {
         afterEventsSimplified.onHealthEntityChange((args) => {
             const entity = args.entity;
             const newValue = args.newValue;
             const oldValue = args.oldValue;
 
-            if (entity instanceof mc.Player && oldValue <= 0 && newValue >= 1) {
+            if (oldValue <= 0 && newValue >= 1) {
                 callback(entity);
             }
         });
