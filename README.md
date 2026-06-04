@@ -15,7 +15,14 @@ It's an informal or professional repository designed to simplify the logic of th
 Just run this in your terminal:
 
 ```bash
-npm install simplified-mojang-api@latest (In case of errors, use --legacy-peer-deps)
+# In case of errors, use --legacy-peer-deps
+npm install simplified-mojang-api@latest
+```
+
+or
+
+```bash
+pnpm install simplified-mojang-api@latest
 ```
 
 > (Make sure you also have the base @minecraft/server stuff installed!)

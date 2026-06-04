@@ -19,7 +19,7 @@
     ],
     "scripts": {
         "build": "tsc",
-        "prepare": "npm run build"
+        "prepare": "tsc"
     },
     "author": "HaJuegos",
     "license": "MIT",
