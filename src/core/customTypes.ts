@@ -237,16 +237,22 @@ interface CustomTimerParam {
     timerId: string;
 
     /**
-     * Los minutos iniciales del timer al momento de crear el timer o al actualizar el valor.
+     * (Opcional) Los minutos iniciales del timer al momento de crear el timer o al actualizar el valor.
      * @type {number}
      */
-    initialMns: number;
+    initialMns?: number;
 
     /**
      * (Opcional) Las horas iniciales del timer al momento de crear el timer o al actualizar el valor.
      * @type {?number}
      */
     initialHrs?: number;
+
+    /**
+     * (Opcional) Los segundos iniciales del timer al momento de crear el timer o al actualizar el valor.
+     * @type {?number}
+     */
+    initialScnds?: number;
 
     /**
      * (Opcional) Fuerza al timer a volver a comenzar considerando el valor inicial de minutos o horas. 

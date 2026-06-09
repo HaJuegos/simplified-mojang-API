@@ -387,7 +387,7 @@ class CustomEventsSimplified {
         const registrationTrace = new Error().stack;
 
         try {
-            const { sourcePly, timerId, initialMns, initialHrs, forceRestart, onTimerStarts, onSecondPass, onMinutePass, onHourPass, onTimerEnds } = paramsTimer;
+            const { sourcePly, timerId, initialScnds, initialMns, initialHrs, forceRestart, onTimerStarts, onSecondPass, onMinutePass, onHourPass, onTimerEnds } = paramsTimer;
 
             const mapKey = `${sourcePly.id}_${timerId}`;
             const propKey = timerId;
@@ -409,8 +409,9 @@ class CustomEventsSimplified {
             }
 
             const hrsMs = (initialHrs || 0) * 3600000;
-            const mnsMs = initialMns * 60000;
-            const totalRequestedMs = hrsMs + mnsMs;
+            const mnsMs = (initialMns || 0) * 60000;
+            const scndsMs = (initialScnds || 0) * 1000;
+            const totalRequestedMs = hrsMs + mnsMs + scndsMs;
 
             let endTime = sourcePly.getDynamicProperty(propKey) as number | undefined;
 
@@ -420,9 +421,10 @@ class CustomEventsSimplified {
                 isnewTimer = true;
             } else {
                 const remainSaved = Math.max(0, endTime - Date.now());
-                const savedMinutes = Math.floor(remainSaved / 60000);
+                const savedTotalSeconds = Math.floor(remainSaved / 1000);
+                const requestedTotalSeconds = Math.floor(totalRequestedMs / 1000);
 
-                if (Math.abs(savedMinutes - initialMns) >= 1) {
+                if (Math.abs(savedTotalSeconds - requestedTotalSeconds) >= 2) {
                     endTime = Date.now() + totalRequestedMs;
                     sourcePly.setDynamicProperty(propKey, endTime);
                 }
