@@ -9,11 +9,20 @@ import { worldToolsSimplified } from './worldToolsSimplifiedManager';
  */
 class DebugToolsSimplified {
     /**
-     * ID global del looping de las hitboxes en caso de activarse.
-     * @type {?number}
+     * Variable que almacena los jugadores con las hitboxes activas.
+     * @type {Map<string, number>}
      * @private
+     * @author HaJuegos - 15-06-2026
      */
-    private idLoopHitboxes?: number;
+    private playerHitboxLoops = new Map<string, number>();
+
+    /**
+     * Variable que almacena las hitboxes activas de un jugador activo con las hitboxes activas.
+     * @type {Map<string, Map<mc.Entity, debug.DebugBox>>}
+     * @private
+     * @author HaJuegos - 15-06-2026
+     */
+    private playerActiveBoxes = new Map<string, Map<mc.Entity, debug.DebugBox>>();
 
     /**
      * Eventos iniciales de la clase cuando es llamada o inicializada.
@@ -35,9 +44,20 @@ class DebugToolsSimplified {
      * ```
      */
     public showHitboxes(ply: mc.Player, maxRadiusHitboxs: number = 50): void {
+        const plyId = ply.id;
+
+        if (this.playerHitboxLoops.has(plyId)) {
+            this.stopHitboxes(ply);
+        }
+
         const activeBoxes = new Map<mc.Entity, debug.DebugBox>();
 
-        this.idLoopHitboxes = worldToolsSimplified.setLoop(() => {
+        const loopId = worldToolsSimplified.setLoop(() => {
+            if (!ply.isValid) {
+                this.stopHitboxes(ply);
+                return;
+            }
+
             const nearbyMobs = ply.dimension.getEntities({
                 location: ply.location,
                 maxDistance: maxRadiusHitboxs
@@ -84,6 +104,8 @@ class DebugToolsSimplified {
                 box.setLocation({ x: 0, y: bb.extent.y, z: 0 });
             }
         }, 1);
+
+        this.playerHitboxLoops.set(plyId, loopId);
     }
 
     /**
@@ -92,16 +114,37 @@ class DebugToolsSimplified {
      * @public
      * @example
      * ```ts
-     * debugToolsSimplified.stopHitBoxes(); // Quita todas las hitboxes a todos.
+     * debugToolsSimplified.stopHitBoxes(); // Quita TODAS las hitboxes del mundo.
+     * debugToolsSimplified.stopHitBoxes(ply); // Quita todas las hitboxes de ese jugador en concreto.
      * ```
      */
-    public stopHitboxes(): void {
-        if (this.idLoopHitboxes != undefined) {
-            worldToolsSimplified.stopLoop(this.idLoopHitboxes);
-            this.idLoopHitboxes = undefined;
-        }
+    public stopHitboxes(ply?: mc.Player): void {
+        if (ply) {
+            const loopId = this.playerHitboxLoops.get(ply.id);
 
-        debug.debugDrawer.removeAll();
+            if (loopId != undefined) {
+                worldToolsSimplified.stopLoop(loopId);
+                this.playerHitboxLoops.delete(ply.id);
+            }
+
+            const activeBoxes = this.playerActiveBoxes.get(ply.id);
+
+            if (activeBoxes) {
+                for (const [mob, box] of activeBoxes) {
+                    box.remove();
+                }
+
+                this.playerActiveBoxes.delete(ply.id);
+            }
+        } else {
+            for (const [plyId, loopId] of this.playerHitboxLoops) {
+                worldToolsSimplified.stopLoop(loopId);
+            }
+
+            this.playerHitboxLoops.clear();
+            this.playerActiveBoxes.clear();
+            debug.debugDrawer.removeAll();
+        }
     }
 
     /**

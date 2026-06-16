@@ -137,13 +137,20 @@ class CustomEventsSimplified {
                 worldToolsSimplified.setRun(() => {
                     const plyInv = ply.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
                     const plyArmor = ply.getComponent(mc.EntityComponentTypes.Equippable) as mc.EntityEquippableComponent;
+
+                    const itemCurrentlyInSlot = plyInv.getItem(currentSlot);
+
+                    if (!itemCurrentlyInSlot || itemCurrentlyInSlot.typeId != item.typeId) {
+                        return;
+                    }
+
                     const itemOffhand = plyArmor.getEquipment(mc.EquipmentSlot.Offhand);
 
                     if (itemOffhand) {
-                        plyArmor.setEquipment(mc.EquipmentSlot.Offhand, item);
+                        plyArmor.setEquipment(mc.EquipmentSlot.Offhand, itemCurrentlyInSlot);
                         plyInv.setItem(currentSlot, itemOffhand);
                     } else {
-                        plyArmor.setEquipment(mc.EquipmentSlot.Offhand, item);
+                        plyArmor.setEquipment(mc.EquipmentSlot.Offhand, itemCurrentlyInSlot);
                         plyInv.setItem(currentSlot, undefined);
                     }
 
