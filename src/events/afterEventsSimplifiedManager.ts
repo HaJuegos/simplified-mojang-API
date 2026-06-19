@@ -28,6 +28,8 @@ class AfterEventsSimplified {
     private breakBlockManager: BaseEventManager<mc.PlayerBreakBlockAfterEvent>;
     private dataEventsManager: BaseEventManager<mc.DataDrivenEntityTriggerAfterEvent>;
     private changeInvManager: BaseEventManager<mc.PlayerInventoryItemChangeAfterEvent>;
+    private onGetItem: BaseEventManager<mc.EntityItemPickupAfterEvent>;
+    private onDropItem: BaseEventManager<mc.EntityItemDropAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -54,6 +56,8 @@ class AfterEventsSimplified {
         this.breakBlockManager = new BaseEventManager<mc.PlayerBreakBlockAfterEvent>(mc.world.afterEvents.playerBreakBlock, "AfterBreakBlock");
         this.dataEventsManager = new BaseEventManager<mc.DataDrivenEntityTriggerAfterEvent>(mc.world.afterEvents.dataDrivenEntityTrigger, "AfterDataEvents");
         this.changeInvManager = new BaseEventManager<mc.PlayerInventoryItemChangeAfterEvent>(mc.world.afterEvents.playerInventoryItemChange, "AfterInvChangeOnPly");
+        this.onGetItem = new BaseEventManager<mc.EntityItemPickupAfterEvent>(mc.world.afterEvents.entityItemPickup, "AfterEntityPickItem");
+        this.onDropItem = new BaseEventManager<mc.EntityItemDropAfterEvent>(mc.world.afterEvents.entityItemDrop, "AfterEntityDropItem");
     }
 
     /**
@@ -433,6 +437,46 @@ class AfterEventsSimplified {
      */
     public onPlyInvChange(callback: (args: mc.PlayerInventoryItemChangeAfterEvent) => void): void {
         this.changeInvManager.register(callback);
+    }
+
+    /**
+     * Meteodo auxiliar que ejecuta los eventos relacionados cuando una entidad obtiene items de forma simplificada.
+     * @param {(args: mc.EntityItemPickupAfterEvent) => void} callback Los eventos relacionados.
+     * @author HaJuegos - 19-06-2026
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onGetItemEntity((args) => {
+     *      const item = args.items;
+     *      const entity = args.entity;
+     *      
+     *      console.log(`${entity.typeId} ha agarrado los items ${JSON.stringify(item)}.`);
+     * });
+     * ```
+     */
+    public onGetItemEntity(callback: (args: mc.EntityItemPickupAfterEvent) => void): void {
+        this.onGetItem.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad dropea items de forma simplificada.
+     * @param {(args: mc.EntityItemDropAfterEvent) => void} callback Los eventos relacionados.
+     * @author HaJuegos - 19-06-2026 
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onDropItemEntity((args) => {
+     *      const item = args.items;
+     *      const entity = args.entity;
+     *      
+     *      console.log(`${entity.typeId} ha dropeado los items ${JSON.stringify(item)}.`);
+     * });
+     * ```
+     */
+    public onDropItemEntity(callback: (args: mc.EntityItemDropAfterEvent) => void): void {
+        this.onDropItem.register(callback);
     }
 }
 

@@ -19,6 +19,8 @@ class BeforeEventsSimplified {
     private effectAddManager: BaseEventManager<mc.EffectAddBeforeEvent>;
     private placeBlockManager: BaseEventManager<mc.PlayerPlaceBlockBeforeEvent>;
     private breakBlockManager: BaseEventManager<mc.PlayerBreakBlockBeforeEvent>;
+    private entityHurtManager: BaseEventManager<mc.EntityHurtBeforeEvent>;
+    private entityItemPickUpManager: BaseEventManager<mc.EntityItemPickupBeforeEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -35,6 +37,8 @@ class BeforeEventsSimplified {
         this.effectAddManager = new BaseEventManager<mc.EffectAddBeforeEvent>(mc.world.beforeEvents.effectAdd, "BeforeAddEffect");
         this.placeBlockManager = new BaseEventManager<mc.PlayerPlaceBlockBeforeEvent>(mc.world.beforeEvents.playerPlaceBlock, "BeforePlayerPlaceBlock");
         this.breakBlockManager = new BaseEventManager<mc.PlayerBreakBlockBeforeEvent>(mc.world.beforeEvents.playerBreakBlock, "BeforePlayerBreakBlock");
+        this.entityHurtManager = new BaseEventManager<mc.EntityHurtBeforeEvent>(mc.world.beforeEvents.entityHurt, "BeforeEtntityHurt");
+        this.entityItemPickUpManager = new BaseEventManager<mc.EntityItemPickupBeforeEvent>(mc.world.beforeEvents.entityItemPickup, "BeforeEntityItemPickup");
     }
 
     /**
@@ -220,6 +224,52 @@ class BeforeEventsSimplified {
      */
     public onBreakBlock(callback: (args: mc.PlayerBreakBlockBeforeEvent) => void): void {
         this.breakBlockManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad va a ser lastimada de forma simplificada.
+     * @param {(args: mc.EntityHurtBeforeEvent) => void} callback Los eventos relacionados.
+     * @author HaJuegos - 19-06-2026
+     * @public
+     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onEntityHurt((args) => {
+     *      const hurtEntity = args.hurtEntity;
+     *      const source = args.damageSource;
+     *      const sourceEntity = source.damagingEntity;
+     * 
+     *      if (hurtEntity && sourceEntity) {
+     *          console.log(`${sourceEntity.typeId} va a lastimar a ${hurtEntity.typeId}.`);
+     * 
+     *          args.cancel = true; // Ya no funciona       
+     *      }
+     * });
+     * ```
+     */
+    public onEntityHurt(callback: (args: mc.EntityHurtBeforeEvent) => void): void {
+        this.entityHurtManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad va a agarrar un item forma simplificada.
+     * @param {(args: mc.EntityItemPickupBeforeEvent) => void} callback Los eventos relacionados.
+     * @author HaJuegos - 19-06-2026
+     * @public
+     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onItemPickupEntity((args) => {
+     *      const item = args.item;
+     *      const entity = args.entity;
+     * 
+     *      console.log(`${entity.typeId} va a obtener el item ${item.typeId}.`);
+     *      args.cancel = true; // Ya no funciona      
+     * });
+     * ```
+     */
+    public onItemPickupEntity(callback: (args: mc.EntityItemPickupBeforeEvent) => void): void {
+        this.entityItemPickUpManager.register(callback);
     }
 
     // Metodos no auxiliares
