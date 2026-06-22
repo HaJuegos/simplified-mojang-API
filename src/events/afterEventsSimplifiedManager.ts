@@ -30,6 +30,8 @@ class AfterEventsSimplified {
     private changeInvManager: BaseEventManager<mc.PlayerInventoryItemChangeAfterEvent>;
     private onGetItem: BaseEventManager<mc.EntityItemPickupAfterEvent>;
     private onDropItem: BaseEventManager<mc.EntityItemDropAfterEvent>;
+    private playerJoinsManager: BaseEventManager<mc.PlayerJoinAfterEvent>;
+    private playerLeavesManager: BaseEventManager<mc.PlayerLeaveAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -58,6 +60,8 @@ class AfterEventsSimplified {
         this.changeInvManager = new BaseEventManager<mc.PlayerInventoryItemChangeAfterEvent>(mc.world.afterEvents.playerInventoryItemChange, "AfterInvChangeOnPly");
         this.onGetItem = new BaseEventManager<mc.EntityItemPickupAfterEvent>(mc.world.afterEvents.entityItemPickup, "AfterEntityPickItem");
         this.onDropItem = new BaseEventManager<mc.EntityItemDropAfterEvent>(mc.world.afterEvents.entityItemDrop, "AfterEntityDropItem");
+        this.playerJoinsManager = new BaseEventManager<mc.PlayerJoinAfterEvent>(mc.world.afterEvents.playerJoin, "AfterPlayerJoins");
+        this.playerLeavesManager = new BaseEventManager<mc.PlayerLeaveAfterEvent>(mc.world.afterEvents.playerLeave, "AfterPlayerLeaves");
     }
 
     /**
@@ -477,6 +481,44 @@ class AfterEventsSimplified {
      */
     public onDropItemEntity(callback: (args: mc.EntityItemDropAfterEvent) => void): void {
         this.onDropItem.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador se une al mundo de forma simplificada.
+     * @param {(args: mc.PlayerJoinAfterEvent) => void} callback Los eventos relacionados.
+     * @author HaJuegos - 21-06-2026 
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onPlayerJoinsWorld((args) => {
+     *      const name = args.playerName;
+     *      
+     *      console.log(`${name} entro al mundo.`);
+     * });
+     * ```
+     */
+    public onPlayerJoinsWorld(callback: (args: mc.PlayerJoinAfterEvent) => void): void {
+        this.playerJoinsManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador se va del mundo de forma simplificada.
+     * @param {(args: mc.PlayerLeaveAfterEvent) => void} callback Los eventos relacionados.
+     * @author HaJuegos - 21-06-2026 
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onPlayerLeavesWorld((args) => {
+     *      const name = args.playerName;
+     *
+     *      console.log(`${name} salio del mundo.`);
+     * });
+     * ```
+     */
+    public onPlayerLeavesWorld(callback: (args: mc.PlayerLeaveAfterEvent) => void): void {
+        this.playerLeavesManager.register(callback);
     }
 }
 
