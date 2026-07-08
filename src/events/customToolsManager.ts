@@ -110,20 +110,23 @@ class CustomEventsSimplified {
     /**
      * Metodo auxiliar que simplifica la logica de los fast items, cuando usas tu item con tu tecla de interaccion, este cambiara a tu mano secundaria. 
      * @param {(mc.ItemStack[] | string[])} listOfItems La lista de items a validar para este sistema.
+     * @returns {void}
      * @author HaJuegos - 15-03-2026
+     * @version 2 Cambio de obtencion de items permitidos para hacerlo dinamico si es requerido.
      * @public
      * @example
      * ```ts
-     * customEventsManager.fastItemsSystem(['totem']); // Ahora el totem es conciderado un fast item para cambiar a la mano secundaria con un click.
+     * customEventsManager.fastItemsSystem(() => ['totem']); // Ahora el totem es conciderado un fast item para cambiar a la mano secundaria con un click.
      * ```
      */
-    public fastItemsSystem(listOfItems: mc.ItemStack[] | string[]): void {
+    public fastItemsSystem(listOfItems: () => mc.ItemStack[] | string[]): void {
         beforeEventsSimplified.onUseItem((args) => {
             const ply = args.source;
             const item = args.itemStack;
             const currentSlot = ply.selectedSlotIndex;
+            const currentList = listOfItems();
 
-            const isItemValid = listOfItems.some((listItem) => {
+            const isItemValid = currentList.some((listItem) => {
                 if (typeof listItem == "string") {
                     return item.typeId.includes(listItem);
                 } else {
