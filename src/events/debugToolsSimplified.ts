@@ -52,6 +52,8 @@ class DebugToolsSimplified {
 
         const activeBoxes = new Map<mc.Entity, debug.DebugBox>();
 
+        this.playerActiveBoxes.set(plyId, activeBoxes);
+
         const loopId = worldToolsSimplified.setLoop(() => {
             if (!ply.isValid) {
                 this.stopHitboxes(ply);
@@ -103,7 +105,7 @@ class DebugToolsSimplified {
                 box.bound = { x: bb.extent.x * 2, y: bb.extent.y * 2, z: bb.extent.z * 2 };
                 box.setLocation({ x: 0, y: bb.extent.y, z: 0 });
             }
-        }, 1);
+        }, worldToolsSimplified.convertSecondsToTicks(1));
 
         this.playerHitboxLoops.set(plyId, loopId);
     }
@@ -120,29 +122,38 @@ class DebugToolsSimplified {
      */
     public stopHitboxes(ply?: mc.Player): void {
         if (ply) {
-            const loopId = this.playerHitboxLoops.get(ply.id);
+            const plyId = ply.id;
+            const loopId = this.playerHitboxLoops.get(plyId);
 
             if (loopId != undefined) {
                 worldToolsSimplified.stopLoop(loopId);
-                this.playerHitboxLoops.delete(ply.id);
+                this.playerHitboxLoops.delete(plyId);
             }
 
-            const activeBoxes = this.playerActiveBoxes.get(ply.id);
+            const activeBoxes = this.playerActiveBoxes.get(plyId);
 
             if (activeBoxes) {
-                for (const [mob, box] of activeBoxes) {
+                for (const box of activeBoxes.values()) {
                     box.remove();
                 }
 
-                this.playerActiveBoxes.delete(ply.id);
+                this.playerActiveBoxes.delete(plyId);
             }
         } else {
-            for (const [plyId, loopId] of this.playerHitboxLoops) {
+            for (const loopId of this.playerHitboxLoops.values()) {
                 worldToolsSimplified.stopLoop(loopId);
             }
 
             this.playerHitboxLoops.clear();
+
+            for (const activeBoxes of this.playerActiveBoxes.values()) {
+                for (const box of activeBoxes.values()) {
+                    box.remove();
+                }
+            }
+
             this.playerActiveBoxes.clear();
+
             debug.debugDrawer.removeAll();
         }
     }
