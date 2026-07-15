@@ -1,6 +1,6 @@
 {
     "name": "simplified-mojang-api",
-    "version": "0.0.51",
+    "version": "0.0.52",
     "description": "About Public repository to simplify the event logic of Mojang's Script API, for informal or professional use",
     "type": "module",
     "main": "dist/index.js",
@@ -41,7 +41,8 @@
         "@minecraft/server-graphics": "1.0.0-beta.1.26.30-stable",
         "@minecraft/server-net": "1.0.0-beta.1.26.30-stable",
         "@minecraft/server-ui": "2.2.0-beta.1.26.30-stable",
-        "@minecraft/vanilla-data": "1.26.2",
+        "@minecraft/vanilla-data": "1.26.30",
+
         "@types/node": "^25.4.0",
         "esbuild": "^0.28.1",
         "nodemon": "^3.1.14",
@@ -55,6 +56,6 @@
         "@minecraft/server-graphics": "1.0.0-beta.1.26.30-stable",
         "@minecraft/server-net": "1.0.0-beta.1.26.30-stable",
         "@minecraft/server-ui": "2.2.0-beta.1.26.30-stable",
-        "@minecraft/vanilla-data": "1.26.2"
+        "@minecraft/vanilla-data": "1.26.30"
     }
 }

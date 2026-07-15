@@ -3,6 +3,22 @@ import * as vanilla from "@minecraft/vanilla-data";
 import * as ui from "@minecraft/server-ui";
 
 /**
+ * Interfaz que establece los datos de registro de un evento en concreto.
+ * @interface EventRegister
+ * @template T
+ * @author HaJuegos - 11-03-2026
+ */
+interface EventRegister<T> {
+    /**
+     * Metodo subscribe a registrar con los eventos relacionados del callback original, devolviendo a su vez tambien los parametros o datos dependiendo el evento callback.
+     * @param {(args: T) => void} callback Evento principal relacional en cuestion. 
+     * @returns {(args: T) => void} El tipo de dato devuelto por el evento principal.
+     * @author HaJuegos - 15-07-2026
+     */
+    subscribe(callback: (args: T) => void): (args: T) => void;
+}
+
+/**
  * Todos los argumentos disponibles para especificar la funcionalidad de dañar un item o reducir su cantidad.
  * @interface ManualDamageItemParams
  * @author HaJuegos - 20-05-2026
@@ -292,6 +308,7 @@ interface CustomTimerParam {
 }
 
 export type {
+    EventRegister,
     ManualDamageItemParams,
     LockItemsInvParams,
     CustomFormParams,
