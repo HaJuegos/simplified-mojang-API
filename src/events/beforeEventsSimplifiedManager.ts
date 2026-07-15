@@ -376,6 +376,24 @@ class BeforeEventsSimplified {
             args.customCommandRegistry.registerCommand(commandData, callback);
         });
     }
+
+    /**
+     * Metodo auxiliar que registra una nueva dimension custom en el mundo. Basado en su prefix.
+     * @param {string} prefixDimension Prefix de la dimension en cuestion a crear.
+     * @returns {void}
+     * @author HaJuegos - 15-07-2026
+     * @public
+     * @example
+     * ```ts
+     * // Esto creara la nueva dimension 'ha:backrooms'. Pero es una dimension totalmente vacia. Debes crear todo a base de feature y feature rules.
+     * beforeEventsSimplified.createCustomDimension('ha:backrooms');
+     * ```
+     */
+    public createCustomDimension(prefixDimension: string): void {
+        this.onAddonStarts((args) => {
+            args.dimensionRegistry.registerCustomDimension(prefixDimension);
+        });
+    }
 }
 
 export const beforeEventsSimplified = new BeforeEventsSimplified();
