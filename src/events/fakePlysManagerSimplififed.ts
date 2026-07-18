@@ -66,10 +66,18 @@ class FakePlysManager {
             }
         });
 
-        return new Promise((resolve) => {
+        return new Promise((r) => {
             worldToolsSimplified.setDelay(() => {
                 try {
-                    const fakePly = this.testContext?.spawnSimulatedPlayer({ x: 0, y: 1, z: 0 }, namePly, gamemodePly);
+                    if (!this.testContext) {
+                        throw new Error("Hubo un error al ejecutar el comando 'gametest run'. Posiblemente a un error interno por lag o porque hace falta la estructura 'ha:void' en tu add-on.");
+                    }
+
+                    const fakePly = this.testContext.spawnSimulatedPlayer({ x: 0, y: 1, z: 0 }, namePly, gamemodePly);
+
+                    if (!fakePly) {
+                        throw new Error(`No se pudo spawnear el jugador ${namePly}. Verifica si todos los datos son correctos. Si todo esta bien, puede ser a un error interno.`);
+                    }
 
                     if (defaultSpawnLocation) {
                         fakePly?.teleport(defaultSpawnLocation);
@@ -77,12 +85,12 @@ class FakePlysManager {
                         fakePly?.runCommand(`tp @r[name=!"${fakePly?.name}"]`);
                     }
 
-                    resolve(fakePly);
+                    r(fakePly);
                 } catch (e) {
                     CatLogHandler.handleError(e, 'createFakePly', registrationTrace);
-                    resolve(undefined);
+                    r(undefined);
                 }
-            }, worldToolsSimplified.convertSecondsToTicks(1));
+            }, worldToolsSimplified.convertSecondsToTicks(1.15));
         });
     }
 }

@@ -2,6 +2,7 @@ import * as mc from "@minecraft/server";
 
 import { BaseEventManager } from "../core/eventsManager";
 import { CatLogHandler } from "../core/errorHandler";
+import { CustomFloatingTextParams } from "../core/customTypes";
 
 /**
  * Clase principal que otorga simplificaciones de las llamadas de world y sus utilidades de sus llamadas y/o variables.
@@ -217,7 +218,7 @@ class WorldToolsSimplified {
 
     /**
      * Metodo auxiliar que obtiene el score de un jugador en concreto de un objective de scoreboard. En caso de que el objective no este creado, se creara. De forma simplificada.
-     * @param {mc.Player} targetPly Jugador en concreto a obtener su score.
+     * @param {mc.Entity | mc.Player | string} targetEntity Target en concreto a obtener su score.
      * @param {string} idObj ID del objectivo el concreto a obtener el score.
      * @param {?string} [nameDisplayObj] (Opcional) Nombre del objectivo en caso de que el mismo no este creado, a asignar.
      * @returns {number} Devuelve el score total que tiene el jugador si todo esta bien, sino siempre sera 0.
@@ -230,7 +231,7 @@ class WorldToolsSimplified {
      * const score = worldToolsSimplified.getPlyScoreInObj(ply, 'conteo', 'Conteo');
      * ```
      */
-    public getPlyScoreInObj(targetPly: mc.Player, idObj: string, nameDisplayObj?: string): number {
+    public getScoreInObj(targetEntity: mc.Player | mc.Entity | string, idObj: string, nameDisplayObj?: string): number {
         const registrationTrace = new Error().stack;
 
         try {
@@ -241,11 +242,11 @@ class WorldToolsSimplified {
                 obj = scoreboard.addObjective(idObj, nameDisplayObj);
             }
 
-            if (!obj.hasParticipant(targetPly)) {
+            if (!obj.hasParticipant(targetEntity)) {
                 return 0;
             }
 
-            const score = obj.getScore(targetPly) ?? 0;
+            const score = obj.getScore(targetEntity) ?? 0;
 
             return score;
         } catch (e) {
@@ -256,7 +257,7 @@ class WorldToolsSimplified {
 
     /**
      * Metodo auxiliar que modifica el score de un jugador en concreto en un ojectivo. En caso de que no este creado el objectivo, se creara automaticamente. De forma simplificada.
-     * @param {mc.Player} targetPly Jugador en concreto a modificar.
+     * @param {mc.Entity | mc.Player | string} targetEntity Target en concreto a modificar.
      * @param {string} idObj ID del objectivo en concreto.
      * @param {('set' | 'add')} changeMode Metodo especifico a modificar del jugador. En caso de set, es que seria un valor no acumulable. Por ej: si antes tenia uno y se establece 2, pues sera 2 sin mas; Caso contrario con add, que es acumulativo y sirve formulas negativas. Por ej: Misma situacion, donde tienes 1 y adicionas 1 mas, pues dara 2.
      * @param {number} newScore El nuevo valor a añadir o cambiar.
@@ -270,7 +271,7 @@ class WorldToolsSimplified {
      * const newScore = worldToolsSimplified.changePlyScoreInObj(player, 'conteo', 'set', 1, 'Conteo');
      * ```
      */
-    public changePlyScoreInObj(targetPly: mc.Player, idObj: string, changeMode: 'set' | 'add', newScore: number, nameDisplayObj?: string): number | undefined {
+    public changeScoreInObj(targetEntity: mc.Player | mc.Entity | string, idObj: string, changeMode: 'set' | 'add', newScore: number, nameDisplayObj?: string): number | undefined {
         const registrationTrace = new Error().stack;
 
         try {
@@ -282,12 +283,12 @@ class WorldToolsSimplified {
             }
 
             if (changeMode == 'set') {
-                obj.setScore(targetPly, newScore);
+                obj.setScore(targetEntity, newScore);
             } else {
-                obj.addScore(targetPly, newScore);
+                obj.addScore(targetEntity, newScore);
             }
 
-            return obj.getScore(targetPly) ?? 0;
+            return obj.getScore(targetEntity) ?? 0;
         } catch (e) {
             CatLogHandler.handleError(e, 'changePlyScore', registrationTrace);
             return;
@@ -438,6 +439,241 @@ class WorldToolsSimplified {
         }
 
         return { red: r, green: g, blue: b, alpha: a };
+    }
+
+    /**
+     * Metodo auxiliar que obtiene los datos de una propiedad dinamica en concreto guardado en el mundo.
+     * @param {string} idProperty ID de la propiedad en concreto.
+     * @returns {(string | number | boolean | mc.Vector3 | undefined)} Los datos guardados en la propiedad, en caso de no estar creada, sera undefined.
+     * @remarks Este valor depende del UUID de tu add-on. Es decir, si hay dos add-ons en el mundo y los dos deciden guardar la misma propiedad, sera diferente en ambos. Por ej: Add-on1 guarda la propiedad y Add-on2 lo consulta, sera undefined pq solo existe en el Add-on1.
+     * @author HaJuegos - 18-07-2026
+     * @public
+     * @example
+     * ```ts
+     * worldToolsSimplified.getWorldDynamicProperty('ha:property'); // "string" | undefined.
+     * ```
+     */
+    public getWorldDynamicProperty(idProperty: string): string | number | boolean | mc.Vector3 | undefined {
+        return mc.world.getDynamicProperty(idProperty);
+    }
+
+    /**
+     * Metodo auxiliar que obtiene todos los IDs de propiedades dinamicas guardadas en el mundo.
+     * @returns {string[]} El array de todos los IDs registrados, en caso de no haber ninguno, estara vacio.
+     * @remarks Este valor depende del UUID de tu add-on. Es decir, si hay dos add-ons en el mundo y los dos deciden guardar la misma propiedad, sera diferente en ambos. Por ej: Add-on1 guarda la propiedad y Add-on2 lo consulta, sera undefined pq solo existe en el Add-on1.
+     * @author HaJuegos - 18-07-2026
+     * @public
+     * @example
+     * ```ts
+     * worldToolsSimplified.getAllWorldDynamicPropertiesIDs(); // ['ha:test','ha:test2','ha:test3'].
+     * ```
+     */
+    public getAllWorldDynamicPropertiesIDs(): string[] {
+        return mc.world.getDynamicPropertyIds();
+    }
+
+    /**
+     * Metodo auxiliar que obtiene los datos de una propiedad dinamica guardada en una entidad en concreto.
+     * @param {(mc.Entity | mc.Player)} targetEntity Entidad en cuestion a consultar.
+     * @param {string} idProperty ID en cuestion de la propiedad a consultar.
+     * @returns {(string | number | boolean | mc.Vector3 | undefined)} Devuelve el tipo de dato guardado en la propiedad, en caso de no existir, sera undefined.
+     * @remarks Este valor depende del UUID de tu add-on. Es decir, si hay dos add-ons en el mundo y los dos deciden guardar la misma propiedad, sera diferente en ambos. Por ej: Add-on1 guarda la propiedad y Add-on2 lo consulta, sera undefined pq solo existe en el Add-on1.
+     * @author HaJuegos - 18-07-2026
+     * @public
+     * @example
+     * ```ts
+     * worldToolsSimplified.getEntityDynamicProperty(entity, 'ha:test'); // "string" | undefined.
+     * ```
+     */
+    public getEntityDynamicProperty(targetEntity: mc.Entity | mc.Player, idProperty: string): string | number | boolean | mc.Vector3 | undefined {
+        return targetEntity.getDynamicProperty(idProperty);
+    };
+
+    /**
+     * Metodo auxiliar que obtiene todos los IDs de propiedades dinamicas en una entidad en concreto.
+     * @param {(mc.Entity | mc.Player)} targetEntity Entidad en concreto a consultar.
+     * @returns {string[]} Devuelve un Array con todos los IDs, en caso de no haber ninguno, sera vacio.
+     * @remarks Este valor depende del UUID de tu add-on. Es decir, si hay dos add-ons en el mundo y los dos deciden guardar la misma propiedad, sera diferente en ambos. Por ej: Add-on1 guarda la propiedad y Add-on2 lo consulta, sera undefined pq solo existe en el Add-on1.
+     * @author HaJuegos - 18-07-2026
+     * @public
+     * @example
+     * ```ts
+     * worldToolsSimplified.getEntityDynamicPropertiesIDs(entity); // ['ha:test1','ha:test2','ha:test3']
+     * ```
+     */
+    public getEntityDynamicPropertiesIDs(targetEntity: mc.Entity | mc.Player): string[] {
+        return targetEntity.getDynamicPropertyIds();
+    };
+
+    /**
+     * Metodo auxiliar que activa globalmente musica para todos los jugadores.
+     * @param {string} idMusic ID de la musica a reproducir.
+     * @param {?mc.MusicOptions} [options] (Opcional) Las condiciones para hacer sonar la musica.
+     * @returns {void}
+     * @author HaJuegos - 18-07-2026
+     * @public
+     * @example
+     * ```ts
+     * worldToolsSimplified.startGlobalMusic('music.pigstep');
+     * ```
+     */
+    public startGlobalMusic(idMusic: string, options?: mc.MusicOptions): void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            mc.world.playMusic(idMusic, options);
+        } catch (e) {
+            CatLogHandler.handleError(e, 'startGlobalMusic', registrationTrace);
+        }
+    }
+
+    /**
+     * Metodo auxiliar que detiene la musica global del mundo.
+     * @returns {void}
+     * @author HaJuegos - 18-07-2026
+     * @public
+     * @example
+     * ```ts
+     * worldToolsSimplified.stopGlobalMusic();
+     * ```
+     */
+    public stopGlobalMusic(): void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            mc.world.stopMusic();
+        } catch (e) {
+            CatLogHandler.handleError(e, 'stopGlobalMusic', registrationTrace);
+        }
+    }
+
+    /**
+     * Metodo auxiliar que obtiene o crea un area persistente en el mundo. Un /tickingarea, basado en las configuraciones de la misma, este es asincrono debido a que debe esperar la carga de chunks requeridas y los calculos que hace el juego para crear el radio. 
+     * @param {string} idArea ID del area a crear o obtener.
+     * @param {mc.TickingAreaOptions} options Parametros para la creacion del area en caso de no existir.
+     * @returns {Promise<mc.TickingArea | undefined>} Si todo sale bien, devuelve el area correctamente en caso de modificarlo, sino, sera undefined.
+     * @author HaJuegos - 18-07-2026
+     * @public
+     * @async
+     * @example
+     * ```ts
+     * // Esto crea una area persistente en el mundo y si todo sale bien, devuelve el tipo para modificarlo. En caso de ya existsir, pues no se crea.
+     * worldToolsSimplified.getOrCreateTickingArea('ha:area_persistente', {
+     *     dimension: Dimension,
+     *     to: { x: 0, y: 0, z: 0 },
+     *     from: { x: 0, y: 10, z: -10 }
+     * });
+     * ```
+     */
+    public async getOrCreateTickingArea(idArea: string, options: mc.TickingAreaOptions): Promise<mc.TickingArea | undefined> {
+        const registrationTrace = new Error().stack;
+
+        try {
+            let area = mc.world.tickingAreaManager.getTickingArea(idArea);
+
+            if (!area) {
+                await mc.world.tickingAreaManager.createTickingArea(idArea, options);
+
+                area = mc.world.tickingAreaManager.getTickingArea(idArea);
+            }
+
+            return area as mc.TickingArea;
+        } catch (e) {
+            CatLogHandler.handleError(e, 'getOrCreateTickingArea', registrationTrace);
+            return;
+        }
+    }
+
+    /**
+     * Metodo auxiliar que elimina un area persistente del mundo creado previamente.
+     * @param {(string | mc.TickingArea)} idArea Area en concreto a eliminar o tambien su ID.
+     * @returns {void}
+     * @author HaJuegos - 18-07-2026
+     * @public
+     * @example
+     * ```ts
+     * // Esto elimina dicha area, si existe, sino, pues no hace nada.
+     * worldToolsSimplified.deletedTickingArea('ha:area_persistente');
+     * ```
+     */
+    public deletedTickingArea(idArea: string | mc.TickingArea): void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            mc.world.tickingAreaManager.removeTickingArea(idArea);
+        } catch (e) {
+            CatLogHandler.handleError(e, 'deletedTickingArea', registrationTrace);
+        }
+    }
+
+    /**
+     * Metodo auxiliar que permite la creacion de textos flotantes custom en el mundo, con mucha personalizacion.
+     * @param {CustomFloatingTextParams} params Todos los parametros requeridos para la creacion de un texto flotante.
+     * @returns {mc.TextPrimitive} Si todo sale bien, devuelve el mismo texto flotante previamente creado para su modificacion.
+     * @author HaJuegos - 18-07-2026
+     * @public
+     * @example
+     * ```ts
+     * // Esto crea un texto flotante llamado "Hola soy un texto".
+     * const floatText = worldToolsSimplified.setAndGetFloatingText({
+     *     text: { rawtext: [{ text: 'Hola soy un texto' }] },
+     *     dimension: Dimension,
+     *     alwaysVisible: true,  // Siempre sera visible para todos a través de bloques.
+     *     location: { x: 0, y: 0, z: 0 },
+     *     rotation: { x: 0, y: 0, z: 0 },
+     *     duration: 1000,
+     *     scale: 1
+     * });
+     * ```
+     */
+    public setAndGetFloatingText(params: CustomFloatingTextParams): mc.TextPrimitive | undefined {
+        const registrationTrace = new Error().stack;
+
+        try {
+            const floatTxt = new mc.TextPrimitive(params.location, params.text);
+
+            floatTxt.depthTest = !params.alwaysVisible;
+
+            if (params.attachedTo) {
+                floatTxt.attachedTo = params.attachedTo;
+            }
+
+            if (params.scale != undefined) {
+                floatTxt.scale = params.scale;
+            }
+
+            if (params.duration != undefined) {
+                floatTxt.timeLeft = params.duration;
+            }
+
+            if (params.rotation) {
+                floatTxt.rotation = params.rotation;
+                floatTxt.useRotation = true;
+            }
+
+            if (params.toPlys) {
+                floatTxt.visibleTo = Array.isArray(params.toPlys) ? params.toPlys : [params.toPlys];
+            }
+
+            if (params.color) {
+                const finalColor = (typeof params.color == 'string') ? worldToolsSimplified.convertHexToRGBA('finalColor') : params.color;
+
+                floatTxt.color = finalColor;
+            }
+
+            if (params.backGroundColor) {
+                const finalColor = (typeof params.backGroundColor == 'string') ? worldToolsSimplified.convertHexToRGBA('finalColor') : params.backGroundColor;
+
+                floatTxt.backgroundColorOverride = finalColor;
+            }
+
+            mc.world.primitiveShapesManager.addText(floatTxt, params.dimension);
+
+            return floatTxt;
+        } catch (e) {
+            CatLogHandler.handleError(e, 'setAndGetFloatingText', registrationTrace);
+            return;
+        }
     }
 }
 

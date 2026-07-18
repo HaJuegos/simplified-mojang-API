@@ -3,6 +3,81 @@ import * as vanilla from "@minecraft/vanilla-data";
 import * as ui from "@minecraft/server-ui";
 
 /**
+ * Parametros principales y opcionales para la creacion de un texto flotante de forma simplifiada.
+ * @interface CustomFloatingTextParams
+ * @author HaJuegos - 18-07-2026
+ */
+interface CustomFloatingTextParams {
+    /**
+     * El texto que tendra el elemento en cuestion.
+     * @type {(string | mc.RawMessage)}
+     */
+    text: string | mc.RawMessage;
+
+    /**
+     * La ubicacion principal donde se mantendra el elemento en cuestion.
+     * @type {mc.Vector3}
+     */
+    location: mc.Vector3;
+
+    /**
+     * Si se establece true, este elemento es visible a través de paredes y entidades. En caso contrario, no. Como un nametag.
+     * @type {boolean}
+     */
+    alwaysVisible: boolean;
+
+    /**
+     * La dimension en concreto donde aparecera este elemento en cuestion.
+     * @type {mc.Dimension}
+     */
+    dimension: mc.Dimension;
+
+    /**
+     * (Opcional) El color que tomara el texto del elemento en cuestion. No es muy recomendable usarlo, para eso usa los codigos de color §.
+     * El valor puede ser un valor hexadecimal.
+     * @type {?(string | mc.RGBA)}
+     */
+    color?: string | mc.RGBA;
+
+    /**
+     * (Opcional) El color que tomara el fondo de este elemento, asi para poder cambiar ese tono gris aburrido que tiene.
+     * El valor puede ser un valor hexadecimal.
+     * @type {?(string | mc.RGBA)}
+     */
+    backGroundColor?: string | mc.RGBA;
+
+    /**
+     * (Opcional) Si es true, este elemento siempre estara conectado a una entidad, como un nametag. En caso contrario, pues no.
+     * @type {?boolean}
+     */
+    attachedTo?: mc.Entity;
+
+    /**
+     * (Opcional) Si se establece, se pone un limite de tiempo en segundos de cuanto durara este elemento en cuestion, en caso contrario, pues se quedara alli siempre.
+     * @type {?number}
+     */
+    duration?: number;
+
+    /**
+     * (Opcional) El tamaño que tendra este elemento en concreto, por defecto siempre es 1.
+     * @type {?number}
+     */
+    scale?: number;
+
+    /**
+     * (Opcional) La rotacion fija de este elemento en cuestion. Basado en coordenadas.
+     * @type {?mc.Vector3}
+     */
+    rotation?: mc.Vector3;
+
+    /**
+     * (Opcional) Si se establece, solo la lista de jugadores podra ver este elemento, en caso contrario, es visible para todos.
+     * @type {?mc.Player[] | mc.Player}
+     */
+    toPlys?: mc.Player[] | mc.Player;
+}
+
+/**
  * Interfaz que establece los datos de registro de un evento en concreto.
  * @interface EventRegister
  * @template T
@@ -308,6 +383,7 @@ interface CustomTimerParam {
 }
 
 export type {
+    CustomFloatingTextParams,
     EventRegister,
     ManualDamageItemParams,
     LockItemsInvParams,
