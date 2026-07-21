@@ -29,9 +29,7 @@ class FakePlysManager {
      * Eventos iniciales de la clase cuando es inicializada o llamada.
      * @constructor
      */
-    constructor () {
-        this.registerMainGametest();
-    }
+    constructor () { }
 
     /**
      * Metodo auxiliar que registra primero el contexto necesario de los gametest para podre generar los simulated players.
@@ -59,10 +57,9 @@ class FakePlysManager {
      * @param {string} namePly Nombre a asignar al jugador de pruebas.
      * @param {mc.GameMode} gamemodePly El modo de juego que tendra el jugador de pruebas.
      * @param {?mc.Vector3} [defaultSpawnLocation] (Opcional) Coordenadas donde aparecera el jugador de pruebas. Por defecto, ira a un jugador aleatorio
-     * @returns {gametest.SimulatedPlayer} Los datos del jugador falso generado.
+     * @returns {gametest.SimulatedPlayer | undefined} Los datos del jugador falso generado en caso de que todo salga bien, sino sera undefined.
      * @author HaJuegos - 13-03-2026
      * @public
-     * @async Es asincrono debido a que habra un al momento de spawnear el jugador falso. En caso de que no este creado el gametest run.
      * @gametestEvent Es un metodo gametest, usando estructuras de pruebas por medio del comando /gametest run.
      * @example
      * ```ts
@@ -74,6 +71,8 @@ class FakePlysManager {
         const registrationTrace = new Error().stack;
 
         try {
+            this.registerMainGametest();
+
             if (!this.isPlaced) {
                 dimension.runCommand(`gametest run ha:fakeplys`);
                 this.isPlaced = true;
@@ -89,7 +88,7 @@ class FakePlysManager {
                 if (defaultSpawnLocation) {
                     fakePly.tryTeleport(defaultSpawnLocation);
                 } else {
-                    fakePly.runCommand(`tp @r[nane=!"${namePly}"]`);
+                    fakePly.runCommand(`tp @r[name=!"${namePly}"]`);
                 }
             }, worldToolsSimplified.convertSecondsToTicks(1));
         } catch (e) {
