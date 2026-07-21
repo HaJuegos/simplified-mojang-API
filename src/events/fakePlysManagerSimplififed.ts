@@ -11,11 +11,11 @@ import { worldToolsSimplified } from "./worldToolsSimplifiedManager";
 class FakePlysManager {
     /**
      * Variable privada que contiene la informacion de un gametest command generado.
-     * @type {?gametest.Test}
+     * @type {gametest.Test | undefined}
      * @author HaJuegos - 14-03-2026
      * @private
      */
-    private testContext?: gametest.Test;
+    private testCxt?: gametest.Test | undefined = undefined;
 
     /**
      * Variable privada para verificar si el gametest run ya esta puesto en el mundo.
@@ -30,16 +30,32 @@ class FakePlysManager {
      * @constructor
      */
     constructor () {
-        gametest.register('ha', 'fakeplys', (test) => {
-            this.testContext = test;
+        this.registerMainGametest();
+    }
+
+    /**
+     * Metodo auxiliar que registra primero el contexto necesario de los gametest para podre generar los simulated players.
+     * @returns {void}
+     * @author HaJuegos - 21-07-2026
+     * @private
+     */
+    private registerMainGametest(): void {
+        const registrationTrace = new Error().stack;
+
+        gametest.register('ha', 'fakeplys', (args) => {
+            try {
+                this.testCxt = args;
+            } catch (e) {
+                CatLogHandler.handleError(e, 'createFakePly', registrationTrace);
+            }
         })
-            .maxTicks(99999999)
-            .maxAttempts(1)
+            .maxTicks(worldToolsSimplified.convertSecondsToTicks(99999))
             .structureName('ha:void');
     }
 
     /**
      * Metodo auxiliar que crea un nuevo tipo de jugador falso para metodos de pruebas.
+     * @param {mc.Dimension} dimension Dimension donde se generara el jugador de pruebas.
      * @param {string} namePly Nombre a asignar al jugador de pruebas.
      * @param {mc.GameMode} gamemodePly El modo de juego que tendra el jugador de pruebas.
      * @param {?mc.Vector3} [defaultSpawnLocation] (Opcional) Coordenadas donde aparecera el jugador de pruebas. Por defecto, ira a un jugador aleatorio
@@ -51,47 +67,35 @@ class FakePlysManager {
      * @example
      * ```ts
      * // Esto genera un jugador de pruebas con sus respectivos datos para usar.
-     * const fakePly = fakePlysSimplified.createFakePly('Jugador Prueba', mc.GameMode.Survival);
+     * const fakePly = fakePlysSimplified.createFakePly('Jugador Prueba', Dimension, mc.GameMode.Survival);
      * ```
      */
-    public async createFakePly(namePly: string, gamemodePly: mc.GameMode, defaultSpawnLocation?: mc.Vector3): Promise<gametest.SimulatedPlayer | undefined> {
+    public createFakePly(namePly: string, dimension: mc.Dimension, gamemodePly: mc.GameMode, defaultSpawnLocation?: mc.Vector3): gametest.SimulatedPlayer | undefined {
         const registrationTrace = new Error().stack;
 
-        worldToolsSimplified.setRun(() => {
-            const dime = mc.world.getDimension('overworld');
-
+        try {
             if (!this.isPlaced) {
-                dime.runCommand(`gametest run ha:fakeplys`);
+                dimension.runCommand(`gametest run ha:fakeplys`);
                 this.isPlaced = true;
             }
-        });
 
-        return new Promise((r) => {
             worldToolsSimplified.setDelay(() => {
-                try {
-                    if (!this.testContext) {
-                        throw new Error("Hubo un error al ejecutar el comando 'gametest run'. Posiblemente a un error interno por lag o porque hace falta la estructura 'ha:void' en tu add-on.");
-                    }
-
-                    const fakePly = this.testContext.spawnSimulatedPlayer({ x: 0, y: 1, z: 0 }, namePly, gamemodePly);
-
-                    if (!fakePly) {
-                        throw new Error(`No se pudo spawnear el jugador ${namePly}. Verifica si todos los datos son correctos. Si todo esta bien, puede ser a un error interno.`);
-                    }
-
-                    if (defaultSpawnLocation) {
-                        fakePly?.teleport(defaultSpawnLocation);
-                    } else {
-                        fakePly?.runCommand(`tp @r[name=!"${fakePly?.name}"]`);
-                    }
-
-                    r(fakePly);
-                } catch (e) {
-                    CatLogHandler.handleError(e, 'createFakePly', registrationTrace);
-                    r(undefined);
+                if (!this.testCxt) {
+                    throw new Error("No se pudo generar el jugador falso. No se creó previamente el ambiente necesario para poderlo generar. Vuelve a intentarlo nuevamente. ¿Tienes guardado en tus estructuras el archivo 'void'?");
                 }
-            }, worldToolsSimplified.convertSecondsToTicks(1.15));
-        });
+
+                const fakePly = this.testCxt.spawnSimulatedPlayer({ x: 0, y: 1, z: 0 }, namePly, gamemodePly);
+
+                if (defaultSpawnLocation) {
+                    fakePly.tryTeleport(defaultSpawnLocation);
+                } else {
+                    fakePly.runCommand(`tp @r[nane=!"${namePly}"]`);
+                }
+            }, worldToolsSimplified.convertSecondsToTicks(1));
+        } catch (e) {
+            CatLogHandler.handleError(e, 'createFakePly', registrationTrace);
+            return;
+        }
     }
 }
 
