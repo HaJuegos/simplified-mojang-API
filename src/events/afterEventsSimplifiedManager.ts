@@ -32,6 +32,7 @@ class AfterEventsSimplified {
     private onDropItem: BaseEventManager<mc.EntityItemDropAfterEvent>;
     private playerJoinsManager: BaseEventManager<mc.PlayerJoinAfterEvent>;
     private playerLeavesManager: BaseEventManager<mc.PlayerLeaveAfterEvent>;
+    private entityLoadWorld: BaseEventManager<mc.EntityLoadAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -62,6 +63,7 @@ class AfterEventsSimplified {
         this.onDropItem = new BaseEventManager<mc.EntityItemDropAfterEvent>(mc.world.afterEvents.entityItemDrop, "AfterEntityDropItem");
         this.playerJoinsManager = new BaseEventManager<mc.PlayerJoinAfterEvent>(mc.world.afterEvents.playerJoin, "AfterPlayerJoins");
         this.playerLeavesManager = new BaseEventManager<mc.PlayerLeaveAfterEvent>(mc.world.afterEvents.playerLeave, "AfterPlayerLeaves");
+        this.entityLoadWorld = new BaseEventManager<mc.EntityLoadAfterEvent>(mc.world.afterEvents.entityLoad, "AfterEntityLoadInWorld");
     }
 
     /**
@@ -519,6 +521,25 @@ class AfterEventsSimplified {
      */
     public onPlayerLeavesWorld(callback: (args: mc.PlayerLeaveAfterEvent) => void): void {
         this.playerLeavesManager.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad se carga en el mundo de forma simplificada.
+     * @param {(args: mc.EntityLoadAfterEvent) => void} callback Los eventos relacionados.
+     * @author HaJuegos - 21-07-2026 
+     * @public
+     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onEntityLoadInWorld((args) => {
+     *      const typeId = args.entity;
+     *
+     *      console.log(`${typeId} se cargo en el mundo previamente.`);
+     * });
+     * ```
+     */
+    public onEntityLoadInWorld(callback: (args: mc.EntityLoadAfterEvent) => void): void {
+        this.entityLoadWorld.register(callback);
     }
 }
 
