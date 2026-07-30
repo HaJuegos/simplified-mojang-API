@@ -125,7 +125,6 @@ class CustomEventsSimplified {
             const item = args.itemStack;
             const currentSlot = ply.selectedSlotIndex;
             const currentList = listOfItems();
-
             const isItemValid = currentList.some((listItem) => {
                 if (typeof listItem == "string") {
                     return item.typeId.includes(listItem);
@@ -136,11 +135,9 @@ class CustomEventsSimplified {
 
             if (isItemValid) {
                 args.cancel = true;
-
                 worldToolsSimplified.setRun(() => {
                     const plyInv = ply.getComponent(mc.EntityComponentTypes.Inventory)?.container as mc.Container;
                     const plyArmor = ply.getComponent(mc.EntityComponentTypes.Equippable) as mc.EntityEquippableComponent;
-
                     const itemCurrentlyInSlot = plyInv.getItem(currentSlot);
 
                     if (!itemCurrentlyInSlot || itemCurrentlyInSlot.typeId != item.typeId) {
@@ -148,6 +145,10 @@ class CustomEventsSimplified {
                     }
 
                     const itemOffhand = plyArmor.getEquipment(mc.EquipmentSlot.Offhand);
+
+                    if (itemOffhand && itemOffhand.typeId == itemCurrentlyInSlot.typeId) {
+                        return;
+                    }
 
                     if (itemOffhand) {
                         plyArmor.setEquipment(mc.EquipmentSlot.Offhand, itemCurrentlyInSlot);
