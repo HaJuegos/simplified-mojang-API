@@ -2,6 +2,79 @@ import * as mc from "@minecraft/server";
 import * as vanilla from "@minecraft/vanilla-data";
 import * as ui from "@minecraft/server-ui";
 
+type IconTextureWaypoint =
+    |
+    {
+        /**
+         * Formas vanillas creadas por defecto y que puedes usar.
+         * @type {mc.WaypointTexture}
+         */
+        shape: mc.WaypointTexture;
+    }
+    |
+    {
+        /**
+         * Ruta en concreto donde está localizado el icono custom.
+         * @type {string}
+         */
+        path: string;
+
+        /**
+         * Tamaño del icono en unidades relativas. Solo se permite de 0 a 1.
+         * @type {number}
+         */
+        iconWidth: number;
+
+        /**
+         * Tamaño del icono en unidades relativas. Solo se permite 0 a 1.
+         * @type {number}
+         */
+        iconHeight: number;
+    };
+
+/**
+ * Parámetros principales y opcionales para la creación de un punto de localización custom en la locator bar de uno o varios jugadores.
+ * @interface CustomWayPointsParams
+ * @author HaJuegos - 03-08-2026
+ */
+interface CustomWayPointsParams {
+    /**
+     * Jugador o lista de jugadores afectados por este nuevo punto de localizacion.
+     * @type {(mc.Player | mc.Player[])}
+     */
+    targetPlys: mc.Player | mc.Player[];
+
+    /**
+     * Ubicación concreta donde está este nuevo punto.
+     * @type {mc.Vector3}
+     */
+    location: mc.Vector3;
+
+    /**
+     * Dimensión en concreto donde está este nuevo punto.
+     * @type {mc.Dimension}
+     */
+    dimension: mc.Dimension;
+
+    /**
+     * Textura del icono en concreto de este nuevo punto. Puede ser totalmente custom de una textura del RP o, si no, una forma vanilla con colores personalizados.
+     * @type {IconTextureWaypoint}
+     */
+    iconTexture: IconTextureWaypoint;
+
+    /**
+     * (Opcional) El color que sobrepondrá el punto personalizado. Esto principalmente viene bien en caso de usar las formas vanillas.
+     * @type {?mc.RGB}
+     */
+    color?: mc.RGB;
+
+    /**
+     * (Opcional) Por defecto, el punto nuevo creado siempre es visible, pero si lo quieres crear y luego hacerlo visible por x motivo. También se puede.
+     * @type {?boolean}
+     */
+    visible?: boolean;
+}
+
 /**
  * Parametros principales y opcionales para la creacion de un texto flotante de forma simplifiada.
  * @interface CustomFloatingTextParams
@@ -383,6 +456,8 @@ interface CustomTimerParam {
 }
 
 export type {
+    IconTextureWaypoint,
+    CustomWayPointsParams,
     CustomFloatingTextParams,
     EventRegister,
     ManualDamageItemParams,

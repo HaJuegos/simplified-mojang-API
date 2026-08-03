@@ -2,7 +2,7 @@ import * as vanilla from '@minecraft/vanilla-data';
 import * as mc from '@minecraft/server';
 import * as ui from '@minecraft/server-ui';
 
-import { CustomFormParams, CustomTimerParam, LockItemsInvParams, ManualDamageItemParams } from '../core/customTypes';
+import { CustomFormParams, CustomTimerParam, CustomWayPointsParams, LockItemsInvParams, ManualDamageItemParams } from '../core/customTypes';
 import { CatLogHandler } from '../core/errorHandler';
 
 import { beforeEventsSimplified } from './beforeEventsSimplifiedManager';
@@ -763,6 +763,62 @@ class CustomEventsSimplified {
             }
         } catch (e) {
             CatLogHandler.handleError(e, 'lockItemsPly', registrationTrace);
+        }
+    }
+
+    /**
+     * Método auxiliar que simplifica y permite crear un nuevo punto de localización en el locator bar de forma custom con colores, formas y configuraciones personalizadas. Basado en jugador o jugadores que lo tengan visible.
+     * @param {CustomWayPointsParams} params Parámetros necesarios para la creación del punto de localización para el locatorbar.
+     * @returns {mc.LocationWaypoint} Devuelve el punto de localización custom creado si todo salió bien. Si no, será undefined.
+     * @author HaJuegos - 03-08-2026
+     * @public
+     * @example
+     * ```ts
+     * const customWayPoint: CustomWayPointsParams = {
+     *     targetPlys: ply,
+     *     location: ply.location,
+     *     dimension: ply.dimension,
+     *     // Este parametro puede ser un icono con forma y colores vanilla o sino, una textura custom.
+     *     iconTexture: {
+     *         path: 'textura.png',
+     *         iconWidth: 1,
+     *         iconHeight: 1
+     *     }
+     * }
+     * 
+     * customEventsManager.createCustomWayPoint(customWayPoint);
+     * ```
+     */
+    public createCustomWayPoint(params: CustomWayPointsParams): mc.LocationWaypoint | undefined {
+        const registrationTrace = new Error().stack;
+
+        try {
+            const { targetPlys, location, dimension, iconTexture, color, visible } = params;
+
+            const texture: mc.WaypointTexture | mc.CustomTexture = 'shape' in iconTexture ? iconTexture.shape : { path: iconTexture.path, iconWidth: iconTexture.iconWidth, iconHeight: iconTexture.iconHeight };
+
+            const selectTexture: mc.WaypointTextureSelector = {
+                textureBoundsList: [{ lowerBound: 0, texture }]
+            };
+
+            const point = new mc.LocationWaypoint({ dimension, x: location.x, y: location.y, z: location.z },
+                selectTexture,
+                color
+            );
+
+            if (visible == false) {
+                point.isEnabled = false;
+            }
+
+            const plys = Array.isArray(targetPlys) ? targetPlys : [targetPlys];
+
+            for (const ply of plys) {
+                ply.locatorBar.addWaypoint(point);
+            }
+
+            return point;
+        } catch (e) {
+            CatLogHandler.handleError(e, 'customWaypoint', registrationTrace);
         }
     }
 }
