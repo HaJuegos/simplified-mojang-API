@@ -1,12 +1,11 @@
-import { BaseEventManager } from "../core/eventsManager";
-
 import * as mc from "@minecraft/server";
+
+import { BaseEventManager } from "../core/eventsManager";
 
 /**
  * Clase principal que maneja los eventos before de forma simplificada para mejor manejo de errores.
  * @class BeforeEventsSimplified
  * @author HaJuegos - 11-03-2026
- * @export
  */
 class BeforeEventsSimplified {
     private startUpManager: BaseEventManager<mc.StartupEvent>;
@@ -22,6 +21,7 @@ class BeforeEventsSimplified {
     private entityHurtManager: BaseEventManager<mc.EntityHurtBeforeEvent>;
     private entityItemPickUpManager: BaseEventManager<mc.EntityItemPickupBeforeEvent>;
     private entityHealing: BaseEventManager<mc.EntityHealBeforeEvent>;
+    private entityRemove: BaseEventManager<mc.EntityRemoveBeforeEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -41,19 +41,20 @@ class BeforeEventsSimplified {
         this.entityHurtManager = new BaseEventManager<mc.EntityHurtBeforeEvent>(mc.world.beforeEvents.entityHurt, "BeforeEtntityHurt");
         this.entityItemPickUpManager = new BaseEventManager<mc.EntityItemPickupBeforeEvent>(mc.world.beforeEvents.entityItemPickup, "BeforeEntityItemPickup");
         this.entityHealing = new BaseEventManager<mc.EntityHealBeforeEvent>(mc.world.beforeEvents.entityHeal, "BeforeEntityHealing");
+        this.entityRemove = new BaseEventManager<mc.EntityRemoveBeforeEvent>(mc.world.beforeEvents.entityRemove, "BeforeEntityRemove");
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando el add-on se carga por primera vez
-     * @param {(args: mc.StartupEvent) => void} callback Los argumentos del evento y su logica.
+     * Método auxiliar que ejecuta los eventos relacionados cuando el add-on se carga por primera vez
+     * @param {(args: mc.StartupEvent) => void} callback Los argumentos del evento y su lógica.
      * @returns {void}
      * @author HaJuegos - 11-03-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * beforeEventsSimplified.onAddonStarts((args) => {
-     *   console.warn('El addon esta iniciando');
+     *     console.warn('El addon está iniciando');
      * });
      * ```
     */
@@ -62,16 +63,16 @@ class BeforeEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un mundo o servidor se cierra de forma simplificada.
-     * @param {(args: mc.ShutdownEvent) => void} callback Los argumentos del evento y su logica.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un mundo o servidor se cierra de forma simplificada.
+     * @param {(args: mc.ShutdownEvent) => void} callback Los argumentos del evento y su lógica.
      * @returns {void}
      * @author HaJuegos - 11-03-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * beforeEventsSimplified.onAddonStops((args) => {
-     *   console.warn('El addon se esta detendiendo');
+     *     console.warn('El addon se está deteniendo');
      * });
      * ```
     */
@@ -80,35 +81,35 @@ class BeforeEventsSimplified {
     }
 
     /**
-    * Metodo auxiliar que ejecuta los eventos relacionados cuando se interactua con un bloque antes de que pase de forma simplificada.
-    * @param {(args: mc.PlayerInteractWithBlockBeforeEvent) => void} callback Los argumentos del evento y su logica.
+     * Método auxiliar que ejecuta los eventos relacionados cuando se interactúa con un bloque antes de que pase de forma simplificada.
+     * @param {(args: mc.PlayerInteractWithBlockBeforeEvent) => void} callback Los argumentos del evento y su lógica.
      * @returns {void}
-    * @author HaJuegos - 11-03-2026
-    * @public
-    * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
-    * @example
-    * ```ts
-    * beforeEventsSimplified.onInteractBlock((args) => {
-    *   console.warn(`Se esta interactuando con el bloque ${args.block.typeId}`);
-    * });
-    * ```
-   */
+     * @author HaJuegos - 11-03-2026
+     * @public
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onInteractBlock((args) => {
+     *     console.warn(`Se está interactuando con el bloque ${args.block.typeId}`);
+     * });
+     * ```
+    */
     public onInteractBlock(callback: (args: mc.PlayerInteractWithBlockBeforeEvent) => void): void {
         this.interactBlockManager.register(callback);
     }
 
     /**
-     * Metodo auxiliar que controla los eventos del chat, manejando los mensajes enviados antes de que se muestren.
-     * @param {(args: mc.ChatSendBeforeEvent) => void} callback Los argumentos del evento y su logica.
+     * Método auxiliar que controla los eventos del chat, manejando los mensajes enviados antes de que se muestren.
+     * @param {(args: mc.ChatSendBeforeEvent) => void} callback Los argumentos del evento y su lógica.
      * @returns {void}
      * @author HaJuegos - 14-03-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * beforeEventsSimplified.chatManager((args) => {
-     *    console.warn(`El usuario ${args.sender.name} ha enviado el mensaje ${args.message}`);
-     *    args.cancel = true; // El mensaje que se envio por el jugador, es cancelada.
+     *     console.warn(`El usuario ${args.sender.name} ha enviado el mensaje ${args.message}`);
+     *     args.cancel = true; // El mensaje que envió el jugador es cancelado.
      * });
      * ```
      */
@@ -117,17 +118,17 @@ class BeforeEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando antes de usar un item forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando se va a usar un item de forma simplificada.
      * @param {(args: mc.ItemUseBeforeEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 15-03-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * beforeEventsSimplified.onUseItem((args) => {
-     *   console.warn(`Se esta usando el item ${args.itemStack.typeId}.`);
-     *   args.cancel = true;
+     *     console.warn(`Se está usando el item ${args.itemStack.typeId}.`);
+     *     args.cancel = true;
      * });
      * ```
      */
@@ -136,21 +137,21 @@ class BeforeEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando algo esta apunto de explotar de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando algo está a punto de explotar de forma simplificada.
      * @param {(args: mc.ExplosionBeforeEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 17-03-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * beforeEventsSimplified.onExplosion((args) => {
-     *   const source = args.source;
-     * 
-     *   if (source && source.typeId == 'minecraft:creeper') {
-     *     console.warn(`Un creeper esta apunto de explotar.`);
-     *     args.cancel = true; // Ya no va a explotar.
-     *   }
+     *     const source = args.source;
+     *     
+     *     if (source && source.typeId == 'minecraft:creeper') {
+     *         console.warn(`Un creeper está a punto de explotar.`);
+     *         args.cancel = true; // Ya no va a explotar.
+     *     }
      * });
      * ```
      */
@@ -159,19 +160,19 @@ class BeforeEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador va a interactuar con una entidad de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un jugador va a interactuar con una entidad de forma simplificada.
      * @param {(args: mc.PlayerInteractWithEntityBeforeEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 20-03-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * beforeEventsSimplified.onInteractEntity((args) => {
      *     const ply = args.player;
      *     const hitEntity = args.target;
      * 
-     *     console.warn(`${ply.name} esta interactuando con ${hitEntity.typeId}.`);
+     *     console.warn(`${ply.name} está interactuando con ${hitEntity.typeId}.`);
      * 
      *     args.cancel = true; // ya no se puede.
      * });
@@ -182,16 +183,16 @@ class BeforeEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un efecto esta apunto de darse a una entidad de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un efecto está a punto de darse a una entidad de forma simplificada.
      * @param {(args: mc.EffectAddBeforeEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 20-03-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * beforeEventsSimplified.onEffectAdds((args) => {
-     *     console.warn(`${args.entity.typeId} tendra el efecto ${args.effect.displayName}.`);
+     *     console.warn(`${args.entity.typeId} tendrá el efecto ${args.effect.displayName}.`);
      *     args.cancel = true; // Ahora ya no sucede.
      * });
      * ```
@@ -201,12 +202,12 @@ class BeforeEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador va a colocar un bloque de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un jugador va a colocar un bloque de forma simplificada.
      * @param {(args: mc.PlayerPlaceBlockBeforeEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 20-03-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * beforeEventsSimplified.onPlaceBlock((args) => {
@@ -220,12 +221,12 @@ class BeforeEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador va a romper un bloque de forma simplificada. 
+     * Método auxiliar que ejecuta los eventos relacionados cuando un jugador va a romper un bloque de forma simplificada. 
      * @param {(args: mc.PlayerBreakBlockBeforeEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 23-03-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * beforeEventsSimplified.onBreakBlock((args) => {
@@ -239,12 +240,12 @@ class BeforeEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad va a ser lastimada de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando una entidad va a ser lastimada de forma simplificada.
      * @param {(args: mc.EntityHurtBeforeEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 19-06-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * beforeEventsSimplified.onEntityHurt((args) => {
@@ -265,12 +266,12 @@ class BeforeEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad va a agarrar un item forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando una entidad va a agarrar un item forma simplificada.
      * @param {(args: mc.EntityItemPickupBeforeEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 19-06-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * beforeEventsSimplified.onItemPickupEntity((args) => {
@@ -287,12 +288,12 @@ class BeforeEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad se va a curar de diferentes formas de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando una entidad se va a curar de diferentes formas de forma simplificada.
      * @param {(args: mc.EntityHealBeforeEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 19-06-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * beforeEventsSimplified.onEntityHeal((args) => {
@@ -308,28 +309,49 @@ class BeforeEventsSimplified {
         this.entityHealing.register(callback);
     }
 
+    /**
+     * Método auxiliar que ejecuta los eventos relacionados cuando una entidad va a ser removida del mundo de forma simplificada.
+     * @param {(args: mc.EntityRemoveBeforeEvent) => void} callback Los eventos relacionados.
+     * @returns {void}
+     * @public
+     * @author HaJuegos - 06-08-2026
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onEntityRemoved((args) => {
+     *      const entityRemoved = args.removedEntity;
+     * 
+     *      console.log(`${entityRemoved.typeId} va a ser eliminado del mundo.`);
+     *      args.cancel = true; // Ya no se eliminará.      
+     * });
+     * ```
+     */
+    public onEntityRemoved(callback: (args: mc.EntityRemoveBeforeEvent) => void): void {
+        this.entityRemove.register(callback);
+    }
+
     // Metodos no auxiliares
 
     /**
-     * Metodo auxiliar que registra y ejecuta los eventos relacionados cuando se quiere registrar un custom component de un bloque.
-     * @param {string} nameComponent Nombre del componente en cuestion a registrar.
+     * Método auxiliar que registra y ejecuta los eventos relacionados cuando se quiere registrar un custom component de un bloque.
+     * @param {string} nameComponent Nombre del componente en cuestión a registrar.
      * @param {mc.BlockCustomComponent} eventsComponent Los eventos del componente que se van a ejecutar.
      * @author HaJuegos - 17-03-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
-     * // Metodo casual
+     * // Método casual
      * beforeEventsSimplified.createBlockComponent('ha:custom_component', {
      *    onBreak(arg) {
-     *       console.warn(`El bloque ${args.block.typeId} se rompio.`);
+     *       console.warn(`El bloque ${args.block.typeId} se rompió.`);
      *    }
      * } as mc.BlockCustomComponent);
      * 
-     * // Metodo mas ordenado
+     * // Método más ordenado
      * const events: mc.BlockCustomComponent = {
      *    onBreak(arg) {
-     *       console.warn(`El bloque ${args.block.typeId} se rompio.`);
+     *       console.warn(`El bloque ${args.block.typeId} se rompió.`);
      *    }
      * }
      * 
@@ -343,22 +365,22 @@ class BeforeEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que registra y ejecuta los eventos relacionados cuando se quiere registrar un custom component de un item.
-     * @param {string} nameComponent Nombre del componente en cuestion a registrar.
+     * Método auxiliar que registra y ejecuta los eventos relacionados cuando se quiere registrar un custom component de un item.
+     * @param {string} nameComponent Nombre del componente en cuestión a registrar.
      * @param {mc.ItemCustomComponent} eventsComponent Los eventos del componente que se van a ejecutar.
      * @author HaJuegos - 17-03-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
-     * // Metodo casual
+     * // Método casual
      * beforeEventsSimplified.createItemComponent('ha:custom_component', {
      *    onConsume(arg) {
      *       console.warn(`El item ${args.itemStack.typeId} fue consumido.`);
      *    }
      * } as mc.ItemCustomComponent);
      * 
-     * // Metodo mas ordenado
+     * // Método más ordenado
      * const events: mc.ItemCustomComponent = {
      *    onConsume(arg) {
      *       console.warn(`El item ${args.itemStack.typeId} fue consumido.`);
@@ -375,13 +397,13 @@ class BeforeEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que registra y ejecuta los eventos relacionados cuando se quiere registrar un comando custom al juego.
+     * Método auxiliar que registra y ejecuta los eventos relacionados cuando se quiere registrar un comando custom al juego.
      * @param {mc.CustomCommand} commandData Los datos del comando a registrar
-     * @param {(origin: mc.CustomCommandOrigin, ...args: any[]) => mc.CustomCommandResult | undefined} callback Los eventos a ejecutar despues de haber sido activado o usado el comando. 
-     * @param {?Record<string, string[]>} [customEnums] (Opcional) Opciones o valores que se registran junto con el comando en caso de ser necesario. Por ej: para que aparezca "ha juegos" al momento de poner este comando, lo concidere un valor rellenable automatico.
+     * @param {(origin: mc.CustomCommandOrigin, ...args: any[]) => mc.CustomCommandResult | undefined} callback Los eventos a ejecutar después de haber sido activado o usado el comando. 
+     * @param {?Record<string, string[]>} [customEnums] (Opcional) Opciones o valores que se registran junto con el comando en caso de ser necesario. Por ej: para que aparezca "ha juegos" al momento de poner este comando, lo considere un valor rellenable automático.
      * @author HaJuegos - 17-03-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * const commandData: mc.CustomCommand = {
@@ -414,15 +436,15 @@ class BeforeEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que registra una nueva dimension custom en el mundo. Basado en su prefix.
-     * @param {string} prefixDimension Prefix de la dimension en cuestion a crear.
+     * Método auxiliar que registra una nueva dimensión custom en el mundo. Basado en su prefix.
+     * @param {string} prefixDimension Prefix de la dimensión en cuestión a crear.
      * @returns {void}
      * @author HaJuegos - 15-07-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
-     * // Esto creara la nueva dimension 'ha:backrooms'. Pero es una dimension totalmente vacia. Debes crear todo a base de feature y feature rules.
+     * // Esto creará la nueva dimensión 'ha:backrooms'. Pero es una dimensión totalmente vacía. Debes crear todo a base de feature y feature rules.
      * beforeEventsSimplified.createCustomDimension('ha:backrooms');
      * ```
      */

@@ -4,7 +4,7 @@ import * as debug from '@minecraft/debug-utilities';
 import { worldToolsSimplified } from './worldToolsSimplifiedManager';
 
 /**
- * Clase que maneja los eventos principales simplifcados de herramientas de depuracion posibles para los add-ons.
+ * Clase que maneja los eventos principales simplificados de herramientas de depuración posibles para los add-ons.
  * @author HaJuegos - 14-03-2026
  */
 class DebugToolsSimplified {
@@ -31,16 +31,16 @@ class DebugToolsSimplified {
     constructor () { }
 
     /**
-     * Metodo auxiliar que activa las hitboxes de todas las entidades cercanas en un radio de 50 bloques a un jugador en concreto.
-     * @param {mc.Player} ply Jugador en concreto a conciderar.
-     * @param {number} [maxRadiusHitboxs=50] (Opcional) El radio maximo a conciderar para visualizar las hitboxes. Por defecto sera 50.
+     * Método auxiliar que activa las hitboxes de todas las entidades cercanas en un radio de 50 bloques a un jugador en concreto.
+     * @param {mc.Player} ply Jugador en concreto a considerar.
+     * @param {number} [maxRadiusHitboxs=50] (Opcional) El radio máximo a considerar para visualizar las hitboxes. Por defecto será 50.
      * @author HaJuegos - 14-03-2026 
      * @public
      * @example
      * ```ts
      * const plys = world.getAllPlayers();
      * 
-     * debugToolsSimplified.showHitboxes(plys[0]); // Solo este jugador podra ver las hitboxes.
+     * debugToolsSimplified.showHitboxes(plys[0]); // Solo este jugador podrá ver las hitboxes.
      * ```
      */
     public showHitboxes(ply: mc.Player, maxRadiusHitboxs: number = 50): void {
@@ -111,7 +111,7 @@ class DebugToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que desactiva las hitboxes creadas en el mundo para todos los jugadores.
+     * Método auxiliar que desactiva las hitboxes creadas en el mundo para todos los jugadores.
      * @author HaJuegos - 14-03-2026 
      * @public
      * @example
@@ -159,13 +159,13 @@ class DebugToolsSimplified {
     }
 
     /**
-     * Metodo que altera el estado de activo o desactivado del watchDogTerminate, en caso de lag spikes con scripts, para permitir el cierre o no del mundo o servidor cuando pase. Esto es solo recomendable usarlo en testeos, no se recomienda desactivarlo en mundos/servidores casuales o normales.
-     * @param {boolean} newState El estado proximo a cambiar.
+     * Método que altera el estado de activo o desactivado del watchDogTerminate, en caso de lag spikes con scripts, para permitir el cierre o no del mundo o servidor cuando pase. Esto es solo recomendable usarlo en testeos, no se recomienda desactivarlo en mundos/servidores casuales o normales.
+     * @param {boolean} newState El estado próximo a cambiar.
      * @author HaJuegos - 14-03-2026
      * @public
      * @example
      * ```ts
-     * debugToolsSimplified.watchDogState(false) // ya no habra cierre por lag spikes o problemas con scripts
+     * debugToolsSimplified.watchDogState(false) // ya no habrá cierre por lag spikes o problemas con scripts
      * ```
      */
     public watchDogState(newState: boolean): void {

@@ -1,4 +1,5 @@
 import * as mc from "@minecraft/server";
+import * as vanilla from "@minecraft/vanilla-data";
 
 import { BaseEventManager } from "../core/eventsManager";
 import { CatLogHandler } from "../core/errorHandler";
@@ -21,13 +22,13 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que programa la ejecucion de una logica para el siguiente tick del juego. Ideal principalmente para los eventos before para saltarse la ejecucion restringida.
-     * @param {() => void} callback Los eventos o logica en cuestion a ejecutar. 
+     * Método auxiliar que programa la ejecución de una lógica para el siguiente tick del juego. Ideal principalmente para los eventos before para saltarse la ejecución restringida.
+     * @param {() => void} callback Los eventos o lógica en cuestión a ejecutar. 
      * @returns {Promise<void>} 
      * @author HaJuegos - 15-03-2026
-     * @async Es un metodo asincrono, principalmente para terminar el flujo despeus de que ocurra los eventos.
+     * @async Es un método asíncrono, principalmente para terminar el flujo después de que ocurra los eventos.
      * @public
-     * @systemEvent Metodo que usa los eventos del modulo "system" herramientas auxiliares fuera de los eventos sensores de "world".
+     * @systemEvent Método que usa los eventos del módulo "system" herramientas auxiliares fuera de los eventos sensores de "world".
      * @example
      * ```ts
      * beforeEventsSimplified.onUseItem((args) => {
@@ -36,7 +37,7 @@ class WorldToolsSimplified {
      *    const plyArmor = ply.getComponent(EntityComponentTypes.Equippable)
      * 
      *    worldToolsSimplified.setRun(() => {
-     *        // Esto ya funciona porque pasa despues de un tick y no hay restrinciones.
+     *        // Esto ya funciona porque pasa después de un tick y no hay restricciones.
      *        plyArmor.setEquipment(EquipmentSlot.Offhand, item);
      *    });
      * });
@@ -62,19 +63,19 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que establece una serie de eventos con un pequeño retraso determinado. Luego de terminar el retraso, elimina la tarea para no dejarlo en memoria.
-     * @param {() => void} callback Los eventos en cuestion a ejecutar.
-     * @param {number} ticksDelay Los tiempos en ticks que se tardara para ejecutarse.
+     * Método auxiliar que establece una serie de eventos con un pequeño retraso determinado. Luego de terminar el retraso, elimina la tarea para no dejarlo en memoria.
+     * @param {() => void} callback Los eventos en cuestión a ejecutar.
+     * @param {number} ticksDelay Los tiempos en ticks que se tardará para ejecutarse.
      * @returns {Promise<void>} 
      * @author HaJuegos - 13-03-2026
-     * @async Es un metodo asincrono, debido a que se limpia despues de la ejecucion.
+     * @async Es un método asíncrono, debido a que se limpia después de la ejecución.
      * @public
-     * @systemEvent Metodo que usa los eventos del modulo "system" herramientas auxiliares fuera de los eventos sensores de "world".
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @systemEvent Método que usa los eventos del módulo "system" herramientas auxiliares fuera de los eventos sensores de "world".
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * worldToolsSimplified.setDelay(() => {
-     *    console.warn('Este evento se ejecutara despues de 5 segundos');
+     *    console.warn('Este evento se ejecutará después de 5 segundos');
      * } worldToolsSimplified.convertSecondsToTicks(5))
      * ```
      */
@@ -99,18 +100,18 @@ class WorldToolsSimplified {
     };
 
     /**
-     * Metodo auxiliar que establece una serie de eventos en concreto que se mantendran en loop.
+     * Método auxiliar que establece una serie de eventos en concreto que se mantendrán en loop.
      * @param {() => void} callback Los eventos en concreto.
-     * @param {number} loopTicks El numero en ticks que se repetira este loop.
+     * @param {number} loopTicks El número en ticks que se repetirá este loop.
      * @returns {number} Devuelve el ID de la memoria, del proceso loop creado.
      * @author HaJuegos - 13-03-2026
      * @public
-     * @systemEvent Metodo que usa los eventos del modulo "system" herramientas auxiliares fuera de los eventos sensores de "world".
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @systemEvent Método que usa los eventos del módulo "system" herramientas auxiliares fuera de los eventos sensores de "world".
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * worldToolsSimplified.setLoop(() => {
-     *    console.warn('Este evento se ejecutara cada 1 segundo');
+     *    console.warn('Este evento se ejecutará cada 1 segundo');
      * } worldToolsSimplified.convertSecondsToTicks(1))
      * ```
      */
@@ -127,12 +128,12 @@ class WorldToolsSimplified {
     };
 
     /**
-     * Metodo auxiliar que detiene un proceso looping creado previamente por medio de su ID generado en memoria.
+     * Método auxiliar que detiene un proceso looping creado previamente por medio de su ID generado en memoria.
      * @param {number} runID ID del proceso generado.
      * @author HaJuegos - 13-03-2026
      * @public
-     * @systemEvent Metodo que usa los eventos del modulo "system" herramientas auxiliares fuera de los eventos sensores de "world".
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @systemEvent Método que usa los eventos del módulo "system" herramientas auxiliares fuera de los eventos sensores de "world".
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * // Se crea el evento primero, generado su ID en memoria.
@@ -149,7 +150,7 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que envia un mensaje global al mundo en formato string o rawmessage.
+     * Método auxiliar que envía un mensaje global al mundo en formato string o rawmessage.
      * @public
      * @param {string | mc.RawMessage | (string | mc.RawMessage)[]} message Mensaje o RawMessage en concreto a enviar. 
      * @author HaJuegos - 12-03-2026
@@ -167,12 +168,12 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que maneja la logica de los eventos cuando se ejecuta el comando scriptevent.
-     * @param {((args: mc.ScriptEventCommandMessageAfterEvent) => void)} callback La logica del evento en concreto.
+     * Método auxiliar que maneja la lógica de los eventos cuando se ejecuta el comando scriptevent.
+     * @param {((args: mc.ScriptEventCommandMessageAfterEvent) => void)} callback La lógica del evento en concreto.
      * @author HaJuegos - 14-03-2026
      * @public
-     * @systemEvent Metodo que usa los eventos del modulo "system" herramientas auxiliares fuera de los eventos sensores de "world".
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @systemEvent Método que usa los eventos del módulo "system" herramientas auxiliares fuera de los eventos sensores de "world".
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * worldToolsSimplified.listenerScriptEvents((args) => {
@@ -185,13 +186,13 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que obtiene un objective de scoreboard, en caso de no encontrarlo, pues lo crea. Para devolver el mismo objectivo de forma simplificada.
-     * @param {string} idObj ID del objectivo a encontrar o crear en cuestion.
+     * Método auxiliar que obtiene un objective de scoreboard, en caso de no encontrarlo, pues lo crea. Para devolver el mismo objectivo de forma simplificada.
+     * @param {string} idObj ID del objectivo a encontrar o crear en cuestión.
      * @param {?string} [nameDisplayObj] (Opcional) Nombre del objectivo a colocar cuando se cree.
-     * @returns {(mc.ScoreboardObjective | undefined)} Devuelve el objectivo si todo salio correcto, sino sera un error. 
+     * @returns {(mc.ScoreboardObjective | undefined)} Devuelve el objectivo si todo salió correcto, sino será un error. 
      * @author HaJuegos - 31-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * // Esto obtiene y crea el objectivo en caso de no estar creado.
@@ -217,17 +218,17 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que obtiene el score de un jugador en concreto de un objective de scoreboard. En caso de que el objective no este creado, se creara. De forma simplificada.
+     * Método auxiliar que obtiene el score de un jugador en concreto de un objective de scoreboard. En caso de que el objective no esté creado, se creará. De forma simplificada.
      * @param {mc.Entity | mc.Player | string} targetEntity Target en concreto a obtener su score.
      * @param {string} idObj ID del objectivo el concreto a obtener el score.
-     * @param {?string} [nameDisplayObj] (Opcional) Nombre del objectivo en caso de que el mismo no este creado, a asignar.
-     * @returns {number} Devuelve el score total que tiene el jugador si todo esta bien, sino siempre sera 0.
+     * @param {?string} [nameDisplayObj] (Opcional) Nombre del objectivo en caso de que el mismo no esté creado, a asignar.
+     * @returns {number} Devuelve el score total que tiene el jugador si todo esta bien, sino siempre será 0.
      * @author HaJuegos - 31-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
-     * // Esto crea el objective en caso de no estar creado y luego, obtiene el score que tiene el jugador, en este caso seria 0.
+     * // Esto crea el objective en caso de no estar creado y luego, obtiene el score que tiene el jugador, en este caso sería 0.
      * const score = worldToolsSimplified.getPlyScoreInObj(ply, 'conteo', 'Conteo');
      * ```
      */
@@ -256,18 +257,18 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que modifica el score de un jugador en concreto en un ojectivo. En caso de que no este creado el objectivo, se creara automaticamente. De forma simplificada.
+     * Método auxiliar que modifica el score de un jugador en concreto en un objectivo. En caso de que no esté creado el objectivo, se creará automáticamente. De forma simplificada.
      * @param {mc.Entity | mc.Player | string} targetEntity Target en concreto a modificar.
      * @param {string} idObj ID del objectivo en concreto.
-     * @param {('set' | 'add')} changeMode Metodo especifico a modificar del jugador. En caso de set, es que seria un valor no acumulable. Por ej: si antes tenia uno y se establece 2, pues sera 2 sin mas; Caso contrario con add, que es acumulativo y sirve formulas negativas. Por ej: Misma situacion, donde tienes 1 y adicionas 1 mas, pues dara 2.
+     * @param {('set' | 'add')} changeMode Método específico a modificar del jugador. En caso de set, es que sería un valor no acumulable. Por ej: si antes tenía uno y se establece 2, pues será 2 sin más; Caso contrario con add, que es acumulativo y sirve fórmulas negativas. Por ej: Misma situación, donde tienes 1 y adicionas 1 más, pues dará 2.
      * @param {number} newScore El nuevo valor a añadir o cambiar.
      * @param {?string} [nameDisplayObj] (Opcional) Nombre del objectivo en caso de no estar creado.
-     * @returns {(number | undefined)} El nuevo score cambiado del jugador si todo sale correcto, sino sera un error.
+     * @returns {(number | undefined)} El nuevo score cambiado del jugador si todo sale correcto, sino será un error.
      * @author HaJuegos - 31-03-2026
      * @public
      * @example
      * ```ts
-     * // Este metodo realizara lo siguiente: En caso de que conteo no exista como objectivo, lo crea, luego, establece al jugador en concreto 1 en el objectivo y por ultimo, devuelve dicho valor modificado.
+     * // Este método realizará lo siguiente: En caso de que conteo no exista como objectivo, lo crea, luego, establece al jugador en concreto 1 en el objectivo y por último, devuelve dicho valor modificado.
      * const newScore = worldToolsSimplified.changePlyScoreInObj(player, 'conteo', 'set', 1, 'Conteo');
      * ```
      */
@@ -296,17 +297,17 @@ class WorldToolsSimplified {
     };
 
     /**
-     * Metodo auxiliar que muestra un objective creado en concreto, en caso de no estar creado, lo hara; A una zona de la pantalla, ya sea como sidebar o list de forma simplificada. 
-     * @param {string} idObj ID del objective en cuestion a obtener o crear.
-     * @param {mc.DisplaySlotId} displaySlot Slot donde se establecera el objectivo. 
-     * @param {?string} [nameDisplayObj] (Opcional) Nombre del objectivo que tendra en caso de que no este creado.
+     * Método auxiliar que muestra un objective creado en concreto, en caso de no estar creado, lo hará; A una zona de la pantalla, ya sea como sidebar o list de forma simplificada. 
+     * @param {string} idObj ID del objective en cuestión a obtener o crear.
+     * @param {mc.DisplaySlotId} displaySlot Slot donde se establecerá el objectivo. 
+     * @param {?string} [nameDisplayObj] (Opcional) Nombre del objectivo que tendrá en caso de que no esté creado.
      * @param {?mc.ObjectiveSortOrder} [order] (Opcional) Orden del mismo objectivo.
      * @author HaJuegos - 31-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
-     * // Esto mostrara a conteo en el sidebar de la pantalla de orden desendente. En caso de no estar creado, lo crea primero.
+     * // Esto mostrará a conteo en el sidebar de la pantalla de orden descendente. En caso de no estar creado, lo crea primero.
      * worldToolsSimplified.setObjInDisplay('conteo', mc.DisplaySlotId.Sidebar, 'Conteo', mc.ObjectiveSortOrder.Descending);
      * ```
      */
@@ -328,11 +329,11 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que limpia los objectives asignados a una parte de la pantallas de forma simplificada.
-     * @param {mc.DisplaySlotId} displaySlot El slot a limpiar en cuesiton.
+     * Método auxiliar que limpia los objectives asignados a una parte de la pantallas de forma simplificada.
+     * @param {mc.DisplaySlotId} displaySlot El slot a limpiar en cuestión.
      * @author HaJuegos - 31-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * // Se quita al objective que se mostraba en sidebar.
@@ -352,7 +353,7 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que convierte segundos a ticks de forma simple.
+     * Método auxiliar que convierte segundos a ticks de forma simple.
      * @public
      * @param {number} seconds Los segundos a convertir.
      * @returns {number} Los ticks convertidos.
@@ -368,7 +369,7 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que convierte ticks a segundos de forma simple.
+     * Método auxiliar que convierte ticks a segundos de forma simple.
      * @public
      * @param {number} ticks Los ticks a convertir.
      * @returns {number} Los segundos convertidos.
@@ -384,7 +385,7 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que convierte un color hexadecimal a RGB.
+     * Método auxiliar que convierte un color hexadecimal a RGB.
      * @param {string} hexcolor El color hexadecimal (ej. "#00000F").
      * @returns {mc.RGB} El objeto RGB correspondiente.
      * @author HaJuegos - 14-03-2026
@@ -409,7 +410,7 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que convierte un color hexadecimal a RGBA.
+     * Método auxiliar que convierte un color hexadecimal a RGBA.
      * @param {string} hexcolor El color hexadecimal (ej. "#00000FFF" para 8 dígitos, o "#00000F" asumiendo a=255).
      * @returns {mc.RGBA} El objeto RGBA correspondiente.
      * @author HaJuegos - 14-03-2026
@@ -442,10 +443,10 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que obtiene los datos de una propiedad dinamica en concreto guardado en el mundo.
+     * Método auxiliar que obtiene los datos de una propiedad dinámica en concreto guardado en el mundo.
      * @param {string} idProperty ID de la propiedad en concreto.
-     * @returns {(string | number | boolean | mc.Vector3 | undefined)} Los datos guardados en la propiedad, en caso de no estar creada, sera undefined.
-     * @remarks Este valor depende del UUID de tu add-on. Es decir, si hay dos add-ons en el mundo y los dos deciden guardar la misma propiedad, sera diferente en ambos. Por ej: Add-on1 guarda la propiedad y Add-on2 lo consulta, sera undefined pq solo existe en el Add-on1.
+     * @returns {(string | number | boolean | mc.Vector3 | undefined)} Los datos guardados en la propiedad, en caso de no estar creada, será undefined.
+     * @remarks Este valor depende del UUID de tu add-on. Es decir, si hay dos add-ons en el mundo y los dos deciden guardar la misma propiedad, será diferente en ambos. Por ej: Add-on1 guarda la propiedad y Add-on2 lo consulta, será undefined porque solo existe en el Add-on1.
      * @author HaJuegos - 18-07-2026
      * @public
      * @example
@@ -458,9 +459,9 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que obtiene todos los IDs de propiedades dinamicas guardadas en el mundo.
-     * @returns {string[]} El array de todos los IDs registrados, en caso de no haber ninguno, estara vacio.
-     * @remarks Este valor depende del UUID de tu add-on. Es decir, si hay dos add-ons en el mundo y los dos deciden guardar la misma propiedad, sera diferente en ambos. Por ej: Add-on1 guarda la propiedad y Add-on2 lo consulta, sera undefined pq solo existe en el Add-on1.
+     * Método auxiliar que obtiene todos los IDs de propiedades dinámicas guardadas en el mundo.
+     * @returns {string[]} El array de todos los IDs registrados, en caso de no haber ninguno, estará vacío.
+     * @remarks Este valor depende del UUID de tu add-on. Es decir, si hay dos add-ons en el mundo y los dos deciden guardar la misma propiedad, será diferente en ambos. Por ej: Add-on1 guarda la propiedad y Add-on2 lo consulta, será undefined porque solo existe en el Add-on1.
      * @author HaJuegos - 18-07-2026
      * @public
      * @example
@@ -473,11 +474,11 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que obtiene los datos de una propiedad dinamica guardada en una entidad en concreto.
-     * @param {(mc.Entity | mc.Player)} targetEntity Entidad en cuestion a consultar.
-     * @param {string} idProperty ID en cuestion de la propiedad a consultar.
-     * @returns {(string | number | boolean | mc.Vector3 | undefined)} Devuelve el tipo de dato guardado en la propiedad, en caso de no existir, sera undefined.
-     * @remarks Este valor depende del UUID de tu add-on. Es decir, si hay dos add-ons en el mundo y los dos deciden guardar la misma propiedad, sera diferente en ambos. Por ej: Add-on1 guarda la propiedad y Add-on2 lo consulta, sera undefined pq solo existe en el Add-on1.
+     * Método auxiliar que obtiene los datos de una propiedad dinámica guardada en una entidad en concreto.
+     * @param {(mc.Entity | mc.Player)} targetEntity Entidad en cuestión a consultar.
+     * @param {string} idProperty ID en cuestión de la propiedad a consultar.
+     * @returns {(string | number | boolean | mc.Vector3 | undefined)} Devuelve el tipo de dato guardado en la propiedad, en caso de no existir, será undefined.
+     * @remarks Este valor depende del UUID de tu add-on. Es decir, si hay dos add-ons en el mundo y los dos deciden guardar la misma propiedad, será diferente en ambos. Por ej: Add-on1 guarda la propiedad y Add-on2 lo consulta, será undefined porque solo existe en el Add-on1.
      * @author HaJuegos - 18-07-2026
      * @public
      * @example
@@ -490,10 +491,10 @@ class WorldToolsSimplified {
     };
 
     /**
-     * Metodo auxiliar que obtiene todos los IDs de propiedades dinamicas en una entidad en concreto.
+     * Método auxiliar que obtiene todos los IDs de propiedades dinámicas en una entidad en concreto.
      * @param {(mc.Entity | mc.Player)} targetEntity Entidad en concreto a consultar.
-     * @returns {string[]} Devuelve un Array con todos los IDs, en caso de no haber ninguno, sera vacio.
-     * @remarks Este valor depende del UUID de tu add-on. Es decir, si hay dos add-ons en el mundo y los dos deciden guardar la misma propiedad, sera diferente en ambos. Por ej: Add-on1 guarda la propiedad y Add-on2 lo consulta, sera undefined pq solo existe en el Add-on1.
+     * @returns {string[]} Devuelve un Array con todos los IDs, en caso de no haber ninguno, será vacío.
+     * @remarks Este valor depende del UUID de tu add-on. Es decir, si hay dos add-ons en el mundo y los dos deciden guardar la misma propiedad, será diferente en ambos. Por ej: Add-on1 guarda la propiedad y Add-on2 lo consulta, será undefined porque solo existe en el Add-on1.
      * @author HaJuegos - 18-07-2026
      * @public
      * @example
@@ -506,9 +507,9 @@ class WorldToolsSimplified {
     };
 
     /**
-     * Metodo auxiliar que activa globalmente musica para todos los jugadores.
-     * @param {string} idMusic ID de la musica a reproducir.
-     * @param {?mc.MusicOptions} [options] (Opcional) Las condiciones para hacer sonar la musica.
+     * Método auxiliar que activa globalmente música para todos los jugadores.
+     * @param {string} idMusic ID de la música a reproducir.
+     * @param {?mc.MusicOptions} [options] (Opcional) Las condiciones para hacer sonar la música.
      * @returns {void}
      * @author HaJuegos - 18-07-2026
      * @public
@@ -528,7 +529,7 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que detiene la musica global del mundo.
+     * Método auxiliar que detiene la música global del mundo.
      * @returns {void}
      * @author HaJuegos - 18-07-2026
      * @public
@@ -548,16 +549,16 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que obtiene o crea un area persistente en el mundo. Un /tickingarea, basado en las configuraciones de la misma, este es asincrono debido a que debe esperar la carga de chunks requeridas y los calculos que hace el juego para crear el radio. 
+     * Método auxiliar que obtiene o crea un area persistente en el mundo. Un /tickingarea, basado en las configuraciones de la misma, este es asíncrono debido a que debe esperar la carga de chunks requeridas y los cálculos que hace el juego para crear el radio. 
      * @param {string} idArea ID del area a crear o obtener.
-     * @param {mc.TickingAreaOptions} options Parametros para la creacion del area en caso de no existir.
-     * @returns {Promise<mc.TickingArea | undefined>} Si todo sale bien, devuelve el area correctamente en caso de modificarlo, sino, sera undefined.
+     * @param {mc.TickingAreaOptions} options Parametros para la creación del area en caso de no existir.
+     * @returns {Promise<mc.TickingArea | undefined>} Si todo sale bien, devuelve el area correctamente en caso de modificarlo, sino, será undefined.
      * @author HaJuegos - 18-07-2026
      * @public
      * @async
      * @example
      * ```ts
-     * // Esto crea una area persistente en el mundo y si todo sale bien, devuelve el tipo para modificarlo. En caso de ya existsir, pues no se crea.
+     * // Esto crea una area persistente en el mundo y si todo sale bien, devuelve el tipo para modificarlo. En caso de ya existir, pues no se crea.
      * worldToolsSimplified.getOrCreateTickingArea('ha:area_persistente', {
      *     dimension: Dimension,
      *     to: { x: 0, y: 0, z: 0 },
@@ -585,7 +586,7 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que elimina un area persistente del mundo creado previamente.
+     * Método auxiliar que elimina un area persistente del mundo creado previamente.
      * @param {(string | mc.TickingArea)} idArea Area en concreto a eliminar o tambien su ID.
      * @returns {void}
      * @author HaJuegos - 18-07-2026
@@ -607,23 +608,25 @@ class WorldToolsSimplified {
     }
 
     /**
-     * Metodo auxiliar que permite la creacion de textos flotantes custom en el mundo, con mucha personalizacion.
-     * @param {CustomFloatingTextParams} params Todos los parametros requeridos para la creacion de un texto flotante.
-     * @returns {mc.TextPrimitive} Si todo sale bien, devuelve el mismo texto flotante previamente creado para su modificacion.
+     * Método auxiliar que permite la creación de textos flotantes custom en el mundo, con mucha personalización.
+     * @param {CustomFloatingTextParams} params Todos los parámetros requeridos para la creación de un texto flotante.
+     * @returns {mc.TextPrimitive} Si todo sale bien, devuelve el mismo texto flotante previamente creado para su modificación.
      * @author HaJuegos - 18-07-2026
      * @public
      * @example
      * ```ts
      * // Esto crea un texto flotante llamado "Hola soy un texto".
-     * const floatText = worldToolsSimplified.setAndGetFloatingText({
+     * const floatText: CustomFloatingTextParams = {
      *     text: { rawtext: [{ text: 'Hola soy un texto' }] },
      *     dimension: Dimension,
-     *     alwaysVisible: true,  // Siempre sera visible para todos a través de bloques.
+     *     alwaysVisible: true,  // Siempre será visible para todos a través de bloques.
      *     location: { x: 0, y: 0, z: 0 },
      *     rotation: { x: 0, y: 0, z: 0 },
      *     duration: 1000,
      *     scale: 1
-     * });
+     * };
+     * 
+     * worldToolsSimplified.setAndGetFloatingText(floatText);
      * ```
      */
     public setAndGetFloatingText(params: CustomFloatingTextParams): mc.TextPrimitive | undefined {
@@ -672,6 +675,77 @@ class WorldToolsSimplified {
             return floatTxt;
         } catch (e) {
             CatLogHandler.handleError(e, 'setAndGetFloatingText', registrationTrace);
+            return;
+        }
+    }
+
+    /**
+     * Método auxiliar que obtiene las dimensiones vanillas o custom por el método world.
+     * @param {(vanilla.MinecraftDimensionTypes | string)} dimensionID El ID vanilla o custom en cuestión a obtener de la dimensión.
+     * @returns {(mc.Dimension | undefined)} Si todo sale bien, devuelve la dimensión en concreto, sino, será undefined.
+     * @public
+     * @author HaJuegos - 06-08-2026
+     * @example
+     * ```ts
+     * // Todas las formas de obtener dimensiones.
+     * const over = worldToolsSimplified.getDimension(vanilla.MinecraftDimensionTypes.Overworld);
+     * const end = worldToolsSimplified.getDimension(vanilla.MinecraftDimensionTypes.TheEnd);
+     * const customDime = worldToolsSimplified.getDimension('ha:custom_dimension');
+     * ```
+     */
+    public getDimension(dimensionID: vanilla.MinecraftDimensionTypes | string): mc.Dimension | undefined {
+        const registrationTrace = new Error().stack;
+
+        try {
+            mc.world.getDimension(dimensionID);
+        } catch (e) {
+            CatLogHandler.handleError(e, 'getDimension', registrationTrace);
+            return;
+        }
+    }
+
+    /**
+     * Método auxiliar que obtiene todos los jugadores en el mundo independientemente de las dimensiones.
+     * @returns {(mc.Player[] | undefined)} Si todo sale bien, devuelve de array de todos los jugadores, sino, será undefined.
+     * @public
+     * @author HaJuegos - 06-08-2026
+     * @example
+     * ```ts
+     * // Obtiene todos los jugadores del mundo.
+     * worldToolsSimplified.getAllPlysGlobal();
+     * ```
+     */
+    public getAllPlysGlobal(): mc.Player[] | undefined {
+        const registrationTrace = new Error().stack;
+
+        try {
+            mc.world.getAllPlayers();
+        } catch (e) {
+            CatLogHandler.handleError(e, 'getAllPlys', registrationTrace);
+            return;
+        }
+    }
+
+    /**
+     * Método auxiliar que envía un evento script globalmente por medio de, scripts vaya.
+     * @param {string} idScript ID del script en concreto a enviar.
+     * @param {?string} [msg] (Opcional) Mensaje del script en concreto a enviar como argumento adicional.
+     * @returns {void}
+     * @public
+     * @author HaJuegos - 06-08-2026
+     * @example
+     * ```ts
+     * // Envía un script de prueba al addon de forma global.
+     * worldToolsSimplified.sendScriptEventGlobal('ha:test_script');
+     * ```
+     */
+    public sendScriptEventGlobal(idScript: string, msg?: string): void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            mc.system.sendScriptEvent(idScript, msg ? msg : '');
+        } catch (e) {
+            CatLogHandler.handleError(e, 'sendScriptEventGlobal', registrationTrace);
             return;
         }
     }

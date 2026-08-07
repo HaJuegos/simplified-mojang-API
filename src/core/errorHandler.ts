@@ -1,15 +1,14 @@
 /**
  * Clase que controla el manejo de errores y situaciones de la API en concreto.
  * @author HaJuegos - 31-03-2026
- * @export
  */
 export class CatLogHandler {
     constructor () { }
 
     /**
-     * Metodo principal que convierte y modifica los eventos para cuando hay un error en la API, siendo mas detallada al respecto y con guias.
-     * @param {*} e Error en concreto que sucedio.
-     * @param {string} ctxName Evento en concreto donde sucedio el error.
+     * Método principal que convierte y modifica los eventos para cuando hay un error en la API, siendo más detallada al respecto y con guías.
+     * @param {*} e Error en concreto que sucedió.
+     * @param {string} ctxName Evento en concreto donde sucedió el error.
      * @param {?string} [registrationTrace] (Opcional) El track en concreto donde haya sucedido el error.
      * @author HaJuegos - 31-03-2026 
      * @public

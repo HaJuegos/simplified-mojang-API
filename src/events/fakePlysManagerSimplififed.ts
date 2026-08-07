@@ -10,7 +10,7 @@ import { worldToolsSimplified } from "./worldToolsSimplifiedManager";
  */
 class FakePlysManager {
     /**
-     * Variable privada que contiene la informacion de un gametest command generado.
+     * Variable privada que contiene la información de un gametest command generado.
      * @type {gametest.Test | undefined}
      * @author HaJuegos - 14-03-2026
      * @private
@@ -18,7 +18,7 @@ class FakePlysManager {
     private testCxt?: gametest.Test | undefined = undefined;
 
     /**
-     * Variable privada para verificar si el gametest run ya esta puesto en el mundo.
+     * Variable privada para verificar si el gametest run ya está puesto en el mundo.
      * @type {boolean}
      * @author HaJuegos - 02-04-2026
      * @private
@@ -32,7 +32,7 @@ class FakePlysManager {
     constructor () { }
 
     /**
-     * Metodo auxiliar que registra primero el contexto necesario de los gametest para podre generar los simulated players.
+     * Método auxiliar que registra primero el contexto necesario de los gametest para poder generar los simulated players.
      * @returns {void}
      * @author HaJuegos - 21-07-2026
      * @private
@@ -52,15 +52,15 @@ class FakePlysManager {
     }
 
     /**
-     * Metodo auxiliar que crea un nuevo tipo de jugador falso para metodos de pruebas.
-     * @param {mc.Dimension} dimension Dimension donde se generara el jugador de pruebas.
+     * Método auxiliar que crea un nuevo tipo de jugador falso para métodos de pruebas.
+     * @param {mc.Dimension} dimension Dimensión donde se generará el jugador de pruebas.
      * @param {string} namePly Nombre a asignar al jugador de pruebas.
-     * @param {mc.GameMode} gamemodePly El modo de juego que tendra el jugador de pruebas.
-     * @param {?mc.Vector3} [defaultSpawnLocation] (Opcional) Coordenadas donde aparecera el jugador de pruebas. Por defecto, ira a un jugador aleatorio
-     * @returns {gametest.SimulatedPlayer | undefined} Los datos del jugador falso generado en caso de que todo salga bien, sino sera undefined.
+     * @param {mc.GameMode} gamemodePly El modo de juego que tendrá el jugador de pruebas.
+     * @param {?mc.Vector3} [defaultSpawnLocation] (Opcional) Coordenadas donde aparecerá el jugador de pruebas. Por defecto, irá a un jugador aleatorio
+     * @returns {gametest.SimulatedPlayer | undefined} Los datos del jugador falso generado en caso de que todo salga bien, sino será undefined.
      * @author HaJuegos - 13-03-2026
      * @public
-     * @gametestEvent Es un metodo gametest, usando estructuras de pruebas por medio del comando /gametest run.
+     * @gametestEvent Es un método gametest, usando estructuras de pruebas por medio del comando /gametest run.
      * @example
      * ```ts
      * // Esto genera un jugador de pruebas con sus respectivos datos para usar.

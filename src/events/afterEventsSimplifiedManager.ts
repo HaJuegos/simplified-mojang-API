@@ -1,6 +1,6 @@
-import { BaseEventManager } from "../core/eventsManager";
-
 import * as mc from "@minecraft/server";
+
+import { BaseEventManager } from "../core/eventsManager";
 
 /**
  * Clase principal que maneja los eventos after de forma simplificada para mejor manejo de errores.
@@ -34,6 +34,7 @@ class AfterEventsSimplified {
     private playerLeavesManager: BaseEventManager<mc.PlayerLeaveAfterEvent>;
     private entityLoadWorld: BaseEventManager<mc.EntityLoadAfterEvent>;
     private entityHealh: BaseEventManager<mc.EntityHealAfterEvent>;
+    private entityRemove: BaseEventManager<mc.EntityRemoveAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -66,19 +67,23 @@ class AfterEventsSimplified {
         this.playerLeavesManager = new BaseEventManager<mc.PlayerLeaveAfterEvent>(mc.world.afterEvents.playerLeave, "AfterPlayerLeaves");
         this.entityLoadWorld = new BaseEventManager<mc.EntityLoadAfterEvent>(mc.world.afterEvents.entityLoad, "AfterEntityLoadInWorld");
         this.entityHealh = new BaseEventManager<mc.EntityHealAfterEvent>(mc.world.afterEvents.entityHeal, "AfterEntityHealing");
+        this.entityRemove = new BaseEventManager<mc.EntityRemoveAfterEvent>(mc.world.afterEvents.entityRemove, "AfterEntityRemove");
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionado cuando una entidad muere de forma simplificada.
-     * @param {(args: mc.EntityDieAfterEvent) => void} callback Los argumentos del evento y su logica.
+     * Método auxiliar que ejecuta los eventos relacionado cuando una entidad muere de forma simplificada.
+     * @param {(args: mc.EntityDieAfterEvent) => void} callback Los argumentos del evento y su lógica.
      * @returns {void}
      * @author HaJuegos - 11-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
-     * afterEventsSimplified.onEntityDie((event) => {
-     *   console.warn(`La entidad ${args.entity.typeId} murio en ${args.location}`);
+     * afterEventsSimplified.onEntityDie((args) => {
+     *     const entity = args.deadEntity;
+     *     const source = args.damageSource;
+     * 
+     *     console.warn(`La entidad ${entity.typeId} murió en ${entity.location} debido a ${source.cause}.`);
      * });
      * ```
      */
@@ -87,16 +92,19 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionado cuando un jugador respawnea de forma simplificada.
-     * @param {(args: mc.PlayerSpawnAfterEvent) => void} callback Los argumentos del evento y su logica.
+     * Método auxiliar que ejecuta los eventos relacionado cuando un jugador respawnea de forma simplificada.
+     * @param {(args: mc.PlayerSpawnAfterEvent) => void} callback Los argumentos del evento y su lógica.
      * @returns {void}
      * @author HaJuegos - 11-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onPlayerSpawns((args) => {
-     *   console.warn(`El Jugador ${args.player.name} spawneo en ${args.player.location}`);
+     *     const ply = args.player;
+     *     const firstSpawn = args.initialSpawn;
+     * 
+     *     console.warn(`El Jugador ${ply.name} spawneó en ${ply.location}. (Primera aparicion: ${firstSpawn})`);
      * });
      * ```
      */
@@ -105,16 +113,16 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un mundo se termino de cargar de forma simplificada.
-     * @param {(args: mc.WorldLoadAfterEvent) => void} callback Los argumentos del evento y su logica.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un mundo se terminó de cargar de forma simplificada.
+     * @param {(args: mc.WorldLoadAfterEvent) => void} callback Los argumentos del evento y su lógica.
      * @returns {void}
      * @author HaJuegos - 11-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onWorldReady(() => {
-     *   console.warn(`El mundo se ha cargado correctamente`);
+     *     console.warn(`El mundo se ha cargado correctamente`);
      * });
      * ```
      */
@@ -123,16 +131,16 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando se recibe un mensaje en el chat de forma simplificada.
-     * @param {(args: mc.ChatSendAfterEvent) => void} callback Los argumentos y logica a ejecutar en el evento.
+     * Método auxiliar que ejecuta los eventos relacionados cuando se recibe un mensaje en el chat de forma simplificada.
+     * @param {(args: mc.ChatSendAfterEvent) => void} callback Los argumentos y lógica a ejecutar en el evento.
      * @returns {void}
      * @author HaJuegos - 14-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onSendMessageChat((args) => {
-     *    console.warn(`El usuario ${args.sender.name} envio el mensaje ${args.message}`);
+     *     console.warn(`El usuario ${args.sender.name} envio el mensaje ${args.message}`);
      * });
      * ```
      */
@@ -141,16 +149,19 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando ya se usa el item de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando ya se usa el item de forma simplificada.
      * @param {(args: mc.ItemUseAfterEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 15-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onUseItem((args) => {
-     *   console.warn(`Se ha usado el item ${args.itemStack.typeId}.`);
+     *     const ply = args.source;
+     *     const item = args.itemStack;
+     *     
+     *     console.warn(`El Jugador ${ply.name} uso el item ${item.typeId}`);
      * });
      * ```
      */
@@ -159,19 +170,19 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando algo exploto de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando algo explotó de forma simplificada.
      * @param {(args: mc.ExplosionAfterEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 17-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onExplodes((args) => {
      *     const source = args.source;
      * 
      *     if (source && source.typeId == 'minecraft:creeper') {
-     *        console.warn(`Un creeper ha explotado.`);
+     *        console.warn(`Un creeper explotó.`);
      *     }
      * });
      * ```
@@ -181,12 +192,12 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un proyectil golpea una entidad de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un proyectil golpea una entidad de forma simplificada.
      * @param {(args: mc.ProjectileHitEntityAfterEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 18-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onProjectileHitEntity((args) => {
@@ -202,12 +213,12 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un proyectil golpea un bloque de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un proyectil golpea un bloque de forma simplificada.
      * @param {(args: mc.ProjectileHitBlockAfterEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 18-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onProjectileHitBlock((args) => {
@@ -223,12 +234,12 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando se golpea una entidad de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando se golpea una entidad de forma simplificada.
      * @param {(args: mc.EntityHitEntityAfterEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 18-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onHitEntity((args) => {
@@ -244,12 +255,12 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando se lastima una entidad de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando se lastima una entidad de forma simplificada.
      * @param {(args: mc.EntityHurtAfterEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 18-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onHurtEntity((args) => {
@@ -267,12 +278,12 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando la vida de una entidad cambia de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando la vida de una entidad cambia de forma simplificada.
      * @param {(args: mc.EntityHealthChangedAfterEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 19-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onHealthEntityChange((args) => {
@@ -285,12 +296,12 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador cambia de dimension de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un jugador cambia de dimensión de forma simplificada.
      * @param {(args: mc.PlayerDimensionChangeAfterEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 20-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onChangeDimension((args) => {
@@ -298,7 +309,7 @@ class AfterEventsSimplified {
      *     const fromDime = args.fromDimension;
      *     const toDime = args.toDimension;
      * 
-     *     console.warn(`${ply.name} estaba en el ${fromDime.id} y ahora esta en ${toDime.id}.`);
+     *     console.warn(`${ply.name} estaba en el ${fromDime.id} y ahora está en ${toDime.id}.`);
      * });
      * ```
      */
@@ -307,19 +318,19 @@ class AfterEventsSimplified {
     };
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador interactuo con una entidad de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un jugador interactuó con una entidad de forma simplificada.
      * @param {(args: mc.PlayerInteractWithEntityAfterEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 20-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onInteractEntity((args) => {
      *     const ply = args.player;
      *     const hitEntity = args.target;
      * 
-     *     console.warn(`${ply.name} interactuo con ${hitEntity.typeId}.`);
+     *     console.warn(`${ply.name} interactuó con ${hitEntity.typeId}.`);
      * });
      * ```
      */
@@ -328,19 +339,19 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador interactuo con un bloque de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un jugador interactuó con un bloque de forma simplificada.
      * @param {(args: mc.PlayerInteractWithBlockAfterEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 20-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onInteractBlock((args) => {
      *     const ply = args.player;
      *     const block = args.block;
      * 
-     *     console.warn(`${ply.name} interactuo con el bloque ${block.typeId}.`);
+     *     console.warn(`${ply.name} interactuó con el bloque ${block.typeId}.`);
      * });
      * ```
      */
@@ -349,12 +360,12 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad spawnea de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando una entidad spawnea de forma simplificada.
      * @param {(args: mc.EntitySpawnAfterEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 20-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onEntitySpawns((args) => {
@@ -367,12 +378,12 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un efecto es añadido en una entidad o jugador de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un efecto es añadido en una entidad o jugador de forma simplificada.
      * @param {(args: mc.EffectAddAfterEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 20-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onAddsEffect((args) => {
@@ -385,12 +396,12 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un bloque es colocando de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un bloque es colocado de forma simplificada.
      * @param {(args: mc.PlayerPlaceBlockAfterEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 20-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onPlaceBlock((args) => {
@@ -403,12 +414,12 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un bloque es roto de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un bloque es roto de forma simplificada.
      * @param {(args: mc.PlayerBreakBlockAfterEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 23-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onBreakBlock((args) => {
@@ -421,12 +432,12 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad ejecuta uno o varios de sus eventos de su JSON para cambiar componentes, o tambien por comandos como /event. De forma mas simple, sirve como un log de cuales component groups cambio la entidad en ese instante.
+     * Método auxiliar que ejecuta los eventos relacionados cuando una entidad ejecuta uno o varios de sus eventos de su JSON para cambiar componentes, o también por comandos como /event. De forma más simple, sirve como un log de cuales component groups cambió la entidad en ese instante.
      * @param {(args: mc.DataDrivenEntityTriggerAfterEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 26-03-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.getEntityEvents((args) => {
@@ -444,12 +455,12 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un item se remueve o añade a un inventario de un jugador de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un item se remueve o añade a un inventario de un jugador de forma simplificada.
      * @param {(args: mc.PlayerInventoryItemChangeAfterEvent) => void} callback Los eventos relacionados a ejecutar.
      * @returns {void}
      * @author HaJuegos - 01-04-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onPlyInvChange((args) => {
@@ -459,7 +470,7 @@ class AfterEventsSimplified {
      *     const slotI = args.slot;
      *     const invType = args.inventoryType;
      * 
-     *     console.warn(`${ply.name} previamente tenia el item ${previusItem.typeId} en el slot ${slotI} en el inventario ${invType}; Y ahora tiene el item ${newItem.typeId} en su lugar`);
+     *     console.warn(`${ply.name} previamente tenía el item ${previusItem.typeId} en el slot ${slotI} en el inventario ${invType}; Y ahora tiene el item ${newItem.typeId} en su lugar`);
      * });
      * ```
      */
@@ -468,12 +479,12 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Meteodo auxiliar que ejecuta los eventos relacionados cuando una entidad obtiene items de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando una entidad obtiene items de forma simplificada.
      * @param {(args: mc.EntityItemPickupAfterEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 19-06-2026
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onGetItemEntity((args) => {
@@ -489,12 +500,12 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad dropea items de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando una entidad dropea items de forma simplificada.
      * @param {(args: mc.EntityItemDropAfterEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 19-06-2026 
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onDropItemEntity((args) => {
@@ -510,18 +521,18 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador se une al mundo de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un jugador se une al mundo de forma simplificada.
      * @param {(args: mc.PlayerJoinAfterEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 21-06-2026 
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onPlayerJoinsWorld((args) => {
      *      const name = args.playerName;
      *      
-     *      console.log(`${name} entro al mundo.`);
+     *      console.log(`${name} entró al mundo.`);
      * });
      * ```
      */
@@ -530,18 +541,18 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando un jugador se va del mundo de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando un jugador se va del mundo de forma simplificada.
      * @param {(args: mc.PlayerLeaveAfterEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 21-06-2026 
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onPlayerLeavesWorld((args) => {
      *      const name = args.playerName;
      *
-     *      console.log(`${name} salio del mundo.`);
+     *      console.log(`${name} salió del mundo.`);
      * });
      * ```
      */
@@ -550,18 +561,18 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad se carga en el mundo de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando una entidad se carga en el mundo de forma simplificada.
      * @param {(args: mc.EntityLoadAfterEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 21-07-2026 
      * @public
-     * @afterEvent Metodo que detecta el evento despues de que suceda. Obteniendo la informacion sin permitir modificarla en su mayoria.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onEntityLoadInWorld((args) => {
      *      const typeId = args.entity;
      *
-     *      console.log(`${typeId} se cargo en el mundo previamente.`);
+     *      console.log(`${typeId} se cargó en el mundo previamente.`);
      * });
      * ```
      */
@@ -570,24 +581,45 @@ class AfterEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad se curo de diferentes formas de forma simplificada.
+     * Método auxiliar que ejecuta los eventos relacionados cuando una entidad se curó de diferentes formas de forma simplificada.
      * @param {(args: mc.EntityHealBeforeEvent) => void} callback Los eventos relacionados.
      * @returns {void}
      * @author HaJuegos - 19-06-2026
      * @public
-     * @beforeEvent Metodo que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
      * @example
      * ```ts
      * afterEventsSimplified.onEntityHeals((args) => {
      *      const sourceHealh = args.healSource;
      *      const entity = args.healedEntity;
      * 
-     *      console.log(`${entity.typeId} se regenero por via ${sourceHealh.cause}.`);      
+     *      console.log(`${entity.typeId} se regeneró por vía ${sourceHealh.cause}.`);      
      * });
      * ```
      */
     public onEntityHeals(callback: (args: mc.EntityHealAfterEvent) => void): void {
         this.entityHealh.register(callback);
+    }
+
+    /**
+     * Método auxiliar que ejecuta los eventos relacionados cuando una entidad es removida del mundo detectando solo su ID de forma simplificada.
+     * @param {(args: mc.EntityRemoveAfterEvent) => void} callback Los eventos relacionados.
+     * @returns {void}
+     * @public
+     * @author HaJuegos - 06-08-2026
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
+     * @example
+     * ```ts
+     * afterEventsSimplified.onEntityRemove((args) => {
+     *      const typeID = args.typeId;
+     *      const entityID = args.removedEntityId;
+     * 
+     *      console.log(`${typeId} fue eliminado del mundo, su id era ${entityID}.`);      
+     * });
+     * ```
+     */
+    public onEntityRemove(callback: (args: mc.EntityRemoveAfterEvent) => void): void {
+        this.entityRemove.register(callback);
     }
 }
 

@@ -39,7 +39,7 @@ type IconTextureWaypoint =
  */
 interface CustomWayPointsParams {
     /**
-     * Jugador o lista de jugadores afectados por este nuevo punto de localizacion.
+     * Jugador o lista de jugadores afectados por este nuevo punto de localización.
      * @type {(mc.Player | mc.Player[])}
      */
     targetPlys: mc.Player | mc.Player[];
@@ -76,19 +76,19 @@ interface CustomWayPointsParams {
 }
 
 /**
- * Parametros principales y opcionales para la creacion de un texto flotante de forma simplifiada.
+ * Parámetros principales y opcionales para la creación de un texto flotante de forma simplifiada.
  * @interface CustomFloatingTextParams
  * @author HaJuegos - 18-07-2026
  */
 interface CustomFloatingTextParams {
     /**
-     * El texto que tendra el elemento en cuestion.
+     * El texto que tendrá el elemento en cuestión.
      * @type {(string | mc.RawMessage)}
      */
     text: string | mc.RawMessage;
 
     /**
-     * La ubicacion principal donde se mantendra el elemento en cuestion.
+     * La ubicación principal donde se mantendrá el elemento en cuestión.
      * @type {mc.Vector3}
      */
     location: mc.Vector3;
@@ -100,51 +100,51 @@ interface CustomFloatingTextParams {
     alwaysVisible: boolean;
 
     /**
-     * La dimension en concreto donde aparecera este elemento en cuestion.
+     * La dimension en concreto donde aparecerá este elemento en cuestión.
      * @type {mc.Dimension}
      */
     dimension: mc.Dimension;
 
     /**
-     * (Opcional) El color que tomara el texto del elemento en cuestion. No es muy recomendable usarlo, para eso usa los codigos de color §.
+     * (Opcional) El color que tomará el texto del elemento en cuestión. No es muy recomendable usarlo, para eso usa los códigos de color §.
      * El valor puede ser un valor hexadecimal.
      * @type {?(string | mc.RGBA)}
      */
     color?: string | mc.RGBA;
 
     /**
-     * (Opcional) El color que tomara el fondo de este elemento, asi para poder cambiar ese tono gris aburrido que tiene.
+     * (Opcional) El color que tomará el fondo de este elemento, así para poder cambiar ese tono gris aburrido que tiene.
      * El valor puede ser un valor hexadecimal.
      * @type {?(string | mc.RGBA)}
      */
     backGroundColor?: string | mc.RGBA;
 
     /**
-     * (Opcional) Si es true, este elemento siempre estara conectado a una entidad, como un nametag. En caso contrario, pues no.
+     * (Opcional) Si es true, este elemento siempre estará conectado a una entidad, como un nametag. En caso contrario, pues no.
      * @type {?boolean}
      */
     attachedTo?: mc.Entity;
 
     /**
-     * (Opcional) Si se establece, se pone un limite de tiempo en segundos de cuanto durara este elemento en cuestion, en caso contrario, pues se quedara alli siempre.
+     * (Opcional) Si se establece, se pone un límite de tiempo en segundos de cuanto durará este elemento en cuestión, en caso contrario, pues se quedará allí siempre.
      * @type {?number}
      */
     duration?: number;
 
     /**
-     * (Opcional) El tamaño que tendra este elemento en concreto, por defecto siempre es 1.
+     * (Opcional) El tamaño que tendrá este elemento en concreto, por defecto siempre es 1.
      * @type {?number}
      */
     scale?: number;
 
     /**
-     * (Opcional) La rotacion fija de este elemento en cuestion. Basado en coordenadas.
+     * (Opcional) La rotación fija de este elemento en cuestión. Basado en coordenadas.
      * @type {?mc.Vector3}
      */
     rotation?: mc.Vector3;
 
     /**
-     * (Opcional) Si se establece, solo la lista de jugadores podra ver este elemento, en caso contrario, es visible para todos.
+     * (Opcional) Si se establece, solo la lista de jugadores podrá ver este elemento, en caso contrario, es visible para todos.
      * @type {?mc.Player[] | mc.Player}
      */
     toPlys?: mc.Player[] | mc.Player;
@@ -158,8 +158,8 @@ interface CustomFloatingTextParams {
  */
 interface EventRegister<T> {
     /**
-     * Metodo subscribe a registrar con los eventos relacionados del callback original, devolviendo a su vez tambien los parametros o datos dependiendo el evento callback.
-     * @param {(args: T) => void} callback Evento principal relacional en cuestion. 
+     * Método subscribe a registrar con los eventos relacionados del callback original, devolviendo a su vez también los parámetros o datos dependiendo el evento callback.
+     * @param {(args: T) => void} callback Evento principal relacional en cuestión. 
      * @returns {(args: T) => void} El tipo de dato devuelto por el evento principal.
      * @author HaJuegos - 15-07-2026
      */
@@ -185,32 +185,32 @@ interface ManualDamageItemParams {
     item: mc.ItemStack;
 
     /**
-     * (Opcional, por defecto estara 'inv') El tipo de inventario a consultar y cambiar el item afectado.
+     * (Opcional, por defecto estará 'inv') El tipo de inventario a consultar y cambiar el item afectado.
      * @type {?('inv' | 'armor')}
      */
     specificInv?: 'inv' | 'armor';
 
     /**
-     * (Opcional, por defecto, sera el slot de la mano) El slot en especifico a afectar su respectivo item.
+     * (Opcional, por defecto, será el slot de la mano) El slot en específico a afectar su respectivo item.
      * @type {?(number | mc.EquipmentSlot)}
      */
     specificSlot?: number | mc.EquipmentSlot;
 
     /**
-     * (Opcional, por defecto sera 1) La cantidad especifica a reducir el item si es el caso.
+     * (Opcional, por defecto será 1) La cantidad especifica a reducir el item si es el caso.
      * @type {?number}
      */
     specificAmount?: number;
 
     /**
-     * (Opcional, por defecto sera 1) La cantidad de daño especifica a la durabilidad del item si es el caso.
+     * (Opcional, por defecto será 1) La cantidad de daño especifica a la durabilidad del item si es el caso.
      * @type {?number}
      */
     specificDamageDurability?: number;
 }
 
 /**
- * Todos los parametros disponibles para la seleccion de bloqueo especifico para los items.
+ * Todos los parámetros disponibles para la selección de bloqueo específico para los items.
  * @interface LockItemsInvParams
  * @author HaJuegos - 18-05-2026
  */
@@ -240,7 +240,7 @@ interface LockItemsInvParams {
     keepInDeath?: boolean;
 
     /**
-     * Tipo de seleccion de los items por slot a bloquear o insertar.
+     * Tipo de selección de los items por slot a bloquear o insertar.
      * @type {{
      *         allSlots?: boolean;
      *         specificSlots?: number[];
@@ -252,23 +252,20 @@ interface LockItemsInvParams {
      */
     itemsSelection: {
         /**
-         * (Opcional) Si es verdadero, todos los items de todos los slots se veran afectados.
+         * (Opcional) Si es verdadero, todos los items de todos los slots se verán afectados.
          * @type {?boolean}
          */
         allSlots?: boolean;
 
         /**
-         * (Opcional) Si es verdadero, solo los items de estos slots en especifico se veran afectados.
+         * (Opcional) Si es verdadero, solo los items de estos slots en específico se verán afectados.
          * @type {?number[]}
          */
         specificSlots?: number[] | mc.EquipmentSlot[];
 
         /**
-         * (Opcional) Si se elije esta opcion, la seleccion de items sera aleatoria, elije un minimo y maximo de slots a seleccionar de forma aleatoria.
-         * @type {?{
-         *             minSlots: number;
-         *             maxSlots: number;
-         *         }}
+         * (Opcional) Si se elige esta opción, la selección de items será aleatoria, elige un mínimo y máximo de slots a seleccionar de forma aleatoria.
+         * @type {?{minSlots: number; maxSlots: number; }}
          */
         randomSlots?: {
             minSlots: number;
@@ -276,7 +273,7 @@ interface LockItemsInvParams {
         };
 
         /**
-         * (Opcional) Si se asigna esta opcion, sera una lista de items que no se veran afectados por este sistema.
+         * (Opcional) Si se asigna esta opción, será una lista de items que no se verán afectados por este sistema.
          * @type {?(string[] | vanilla.MinecraftItemTypes[] | mc.ItemStack[])}
          */
         whitelistItems?: string[] | vanilla.MinecraftItemTypes[] | mc.ItemStack[];
@@ -284,13 +281,13 @@ interface LockItemsInvParams {
 }
 
 /**
- * Los parametros disponibles para la creacion de un formulario custom en concreto.
+ * Los parámetros disponibles para la creación de un formulario custom en concreto.
  * @interface CustomFormParams
  * @author HaJuegos - 16-04-2026
  */
 interface CustomFormParams {
     /**
-     * Texto o traduccion del titulo del formulario en concreto a crear.
+     * Texto o traducción del título del formulario en concreto a crear.
      * @type {(string | mc.RawMessage)}
      */
     titleForm: string | mc.RawMessage;
@@ -349,7 +346,7 @@ interface CustomFormParams {
         onClose?: (ply: mc.Player, reasonClose: ui.FormCancelationReason) => void;
 
         /**
-         * (Opcional) Los eventos relacionados cuando se da click a un boton en el formulario.
+         * (Opcional) Los eventos relacionados cuando se da click a un botón en el formulario.
          * @type {?(ply: mc.Player, indexBtn: number) => void}
          */
         onClickBtn?: (ply: mc.Player, indexBtn: number) => void;
@@ -363,29 +360,28 @@ interface CustomFormParams {
 }
 
 /**
- * Los parametros disponibles para la creacion de los botones para un formulario en cuestion.
+ * Los parámetros disponibles para la creación de los botones para un formulario en cuestión.
  * @interface ButtonFormBase
  * @author HaJuegos - 15-04-2026
  */
 interface ButtonFormBase {
     /**
-     * Texto o traduccion del boton en concreto.
+     * Texto o traducción del botón en concreto.
      * @type {(mc.RawMessage | string)}
      */
     buttomText: mc.RawMessage | string;
 
     /**
-     * (Opcional) Ruta del icono en concreto a poner en el boton.
+     * (Opcional) Ruta del icono en concreto a poner en el botón.
      * @type {?string}
      */
     iconButtomUI?: string;
 }
 
 /**
- * Los parametros disponibles al momento de crear un timer a tiempo real.
+ * Los parámetros disponibles al momento de crear un timer a tiempo real.
  * @interface CustomTimerParam
  * @author HaJuegos - 05-04-2026
- * @export
  */
 interface CustomTimerParam {
     /**
@@ -395,7 +391,7 @@ interface CustomTimerParam {
     sourcePly: mc.Player;
 
     /**
-     * Identificador unico del timer para registrarlo en el jugador.
+     * Identificador único del timer para registrarlo en el jugador.
      * @type {string}
      */
     timerId: string;

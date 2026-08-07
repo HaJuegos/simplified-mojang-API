@@ -17,7 +17,7 @@ export class BaseEventManager<T> {
     private callbacks: Array<{ fn: (args: T) => void; trance?: string; }> = [];
 
     /**
-     * Boolean que detecta si ya esta registrado previamente o no un evento relacional con su listener correspondido.
+     * Boolean que detecta si ya está registrado previamente o no un evento relacional con su listener correspondido.
      * @type {boolean}
      * @private
      * @author HaJuegos - 15-07-2026
@@ -34,8 +34,8 @@ export class BaseEventManager<T> {
     constructor (private evnSignal: EventRegister<T>, private evnName: string) { }
 
     /**
-     * Metodo que registra el callback para los eventos relacionales del evento final. Internamente solo existe un unico subcrite por evento; Entonces los callbacks adiccionales se agregan a un array y se ejecutan dentro del mismo listener.
-     * @param callback La logica individual del evento final.
+     * Método que registra el callback para los eventos relacionales del evento final. Internamente solo existe un único suscrito por evento; Entonces los callbacks adicionales se agregan a un array y se ejecutan dentro del mismo listener.
+     * @param callback La lógica individual del evento final.
      * @version 2 Cambio total de instancias en su formato de registro para optimizaciones internas.
      * @returns {void}
      * @public
@@ -62,8 +62,8 @@ export class BaseEventManager<T> {
     }
 
     /**
-     * Metodo que elimina un callback previamente registrado.
-     * @param {(args: T) => void} callback Referencia exacta a la funcion registrada en el register.
+     * Método que elimina un callback previamente registrado.
+     * @param {(args: T) => void} callback Referencia exacta a la función registrada en el register.
      * @public
      * @author HaJuegos - 15-07-2026
      */

@@ -10,7 +10,7 @@ import { worldToolsSimplified } from './worldToolsSimplifiedManager';
 import { afterEventsSimplified } from './afterEventsSimplifiedManager';
 
 /**
- * Clase que contiene todos los metodos de mecanicas universales usadas en sus add-ons.
+ * Clase que contiene todos los metodos de mecánicas universales usadas en sus add-ons.
  * @author HaJuegos - 15-03-2026
  */
 class CustomEventsSimplified {
@@ -29,11 +29,11 @@ class CustomEventsSimplified {
     constructor () { }
 
     /**
-     * Metodo auxiliar que simplifica la logica de la creacion de un formulario UI custom en cuestion.
-     * @param {CustomFormParams} formParams Los parametros del formulario en concreto necesarios para crear el formulario.
-     * @returns {Promise<ui.ActionFormData | void>} Se devuelve el mismo formulario creado en caso de que todo este bien.
+     * Método auxiliar que simplifica la lógica de la creación de un formulario UI custom en cuestión.
+     * @param {CustomFormParams} formParams Los parámetros del formulario en concreto necesarios para crear el formulario.
+     * @returns {Promise<ui.ActionFormData | void>} Se devuelve el mismo formulario creado en caso de que todo esté bien.
      * @author HaJuegos - 16-04-2026
-     * @async Este metodo es asincrono debido a las acciones que puede realizar el usuario cuando se muestre o no el formulario. Principalmente para los eventos.
+     * @async Este método es asíncrono debido a las acciones que puede realizar el usuario cuando se muestre o no el formulario. Principalmente para los eventos.
      * @public
      * @example
      * ```ts
@@ -44,7 +44,7 @@ class CustomEventsSimplified {
      *          showPly: {
      *              targetPly: player,
      *              onShow: (ply) => {
-     *                  console.log(`${ply.name} abrio el formulario.`);
+     *                  console.log(`${ply.name} abrió el formulario.`);
      *              }
      *          }
      *      }
@@ -108,15 +108,15 @@ class CustomEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que simplifica la logica de los fast items, cuando usas tu item con tu tecla de interaccion, este cambiara a tu mano secundaria. 
+     * Método auxiliar que simplifica la lógica de los fast items, cuando usas tu item con tu tecla de interacción, este cambiará a tu mano secundaria. 
      * @param {(mc.ItemStack[] | string[])} listOfItems La lista de items a validar para este sistema.
      * @returns {void}
      * @author HaJuegos - 15-03-2026
-     * @version 2 Cambio de obtencion de items permitidos para hacerlo dinamico si es requerido.
+     * @version 2 Cambio de obtención de items permitidos para hacerlo dinámico si es requerido.
      * @public
      * @example
      * ```ts
-     * customEventsManager.fastItemsSystem(() => ['totem']); // Ahora el totem es conciderado un fast item para cambiar a la mano secundaria con un click.
+     * customEventsManager.fastItemsSystem(() => ['totem']); // Ahora el totem es considerado un fast item para cambiar a la mano secundaria con un click.
      * ```
      */
     public fastItemsSystem(listOfItems: () => mc.ItemStack[] | string[]): void {
@@ -165,13 +165,13 @@ class CustomEventsSimplified {
     };
 
     /**
-     * Metodo auxiliar que simplifica la logica de dañar un item o reducir un stack de items en un inventario de un jugador en concreto, dependiendo el caso.
-     * @param {ManualDamageItemParams} params Los parametros necesarios para este metodo.
+     * Método auxiliar que simplifica la lógica de dañar un item o reducir un stack de items en un inventario de un jugador en concreto, dependiendo el caso.
+     * @param {ManualDamageItemParams} params Los parámetros necesarios para este método.
      * @author HaJuegos - 17-03-2026 
      * @public
      * @example
      * ```ts
-     * // Esto hara que un item en la mano reduzca su stock o sea dañado bajando su durabilidad. Dependiendo el tipo de item.
+     * // Esto hará que un item en la mano reduzca su stock o sea dañado bajando su durabilidad. Dependiendo el tipo de item.
      * customEventsManager.manualDamageItem({ ply: player, item: item });
      * ```
      */
@@ -232,19 +232,19 @@ class CustomEventsSimplified {
     };
 
     /**
-     * Metodo auxiliar que simplifica la logica de detectar en el inventario del jugador, si tiene uno o varios items en concreto de forma explicita o no.
-     * @param {mc.Player} plySource Jugador en cuestion.
+     * Método auxiliar que simplifica la lógica de detectar en el inventario del jugador, si tiene uno o varios items en concreto de forma explícita o no.
+     * @param {mc.Player} plySource Jugador en cuestión.
      * @param {(string | string[] | vanilla.MinecraftItemTypes | vanilla.MinecraftItemTypes[] )} itemsToDetect Item o items a buscar. 
-     * @param {boolean?} exactItems (Opcional) Busca explicitamente el nombre del item palabra por palabra. Por defecto esta apagado, entonces buscara items sin importar si tienen diferencias. Por ej: Si se busca 'diamond'; minecraft:diamond y minecraft:diamond_sword serian true.
-     * @returns {boolean} Devuelve true en caso de tener ese item, sino, sera false.
+     * @param {boolean?} exactItems (Opcional) Busca explícitamente el nombre del item palabra por palabra. Por defecto está apagado, entonces buscará items sin importar si tienen diferencias. Por ej: Si se busca 'diamond'; minecraft:diamond y minecraft:diamond_sword serían true.
+     * @returns {boolean} Devuelve true en caso de tener ese item, sino, será false.
      * @author HaJuegos - 18-03-2026
      * @public
      * @example
      * ```ts
-     * // Esto es true si el jugador tiene un item llamado totem o mas de forma no explicita.
+     * // Esto es true si el jugador tiene un item llamado totem o más de forma no explícita.
      * customEventsManager.plyHasItems(player, 'totem');
      * 
-     * // Esto es true si el jugador tiene un totem de la inmortalidad de forma explicita.
+     * // Esto es true si el jugador tiene un totem de la inmortalidad de forma explícita.
      * customEventsManager.plyHasItems(player, vanilla.MinecraftItemTypes.TotemOfUndying, true);
      * ```
      */
@@ -299,7 +299,7 @@ class CustomEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que simplifica la logica al detectar el uso de un totem, ejecutando los eventos relacionados.
+     * Método auxiliar que simplifica la lógica al detectar el uso de un totem, ejecutando los eventos relacionados.
      * @param {(entity: mc.Entity | mc.Player) => void} callback Los eventos relacionados a ejecutar.
      * @author HaJuegos - 19-03-2026
      * @public
@@ -325,13 +325,13 @@ class CustomEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que simplifica la logica de randomizar el inventario de un jugador, cambiando totalmente las ubicaciones de los items en el mismo inventario.
-     * @param {mc.Player} ply Jugador en cuestion.
+     * Método auxiliar que simplifica la lógica de randomizar el inventario de un jugador, cambiando totalmente las ubicaciones de los items en el mismo inventario.
+     * @param {mc.Player} ply Jugador en cuestión.
      * @author HaJuegos - 30-03-2026
      * @public
      * @example
      * ```ts
-     * // Ahora el inventario estara totalmente desordenado. Solo el inventario, no armadura.
+     * // Ahora el inventario estará totalmente desordenado. Solo el inventario, no armadura.
      * customEventsManager.randomizeInvPly(player);
      * ```
      */
@@ -372,21 +372,21 @@ class CustomEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que genera un timer basado en tiempo real. Este consiste en minutos iniciales (tambien horas) iniciando el timer guardando los valores en tiempo real en el jugador asignado que va a ver el timer. Devolviendo y ejecutando codigo basado en el timer.
-     * @param {CustomTimerParam} paramsTimer Los parametros y eventos a ejecutar mientras el timer se ejecuta.
+     * Método auxiliar que genera un timer basado en tiempo real. Este consiste en minutos iniciales (también horas) iniciando el timer guardando los valores en tiempo real en el jugador asignado que va a ver el timer. Devolviendo y ejecutando código basado en el timer.
+     * @param {CustomTimerParam} paramsTimer Los parámetros y eventos a ejecutar mientras el timer se ejecuta.
      * @author HaJuegos - 05-04-2026 
      * @public
      * @example
      * ```ts
      * const paramsTimer: CustomTimerParam = {
      *     sourcePLy: player, // Jugador que tiene el timer
-     *     timerID: 'ha:timer_unique', // Identificador unico del timer, por si se usa en mas de una ocasión
+     *     timerID: 'ha:timer_unique', // Identificador único del timer, por si se usa en más de una ocasión
      *     initialMns: 2, // Los Minutos iniciales del timer o minutos a mostrar del timer.
      *     forceRestart: true, // (Opcional) Si es necesario en caso de cambio del valor, por ej, nuevos valores de minutos o segundos, pues hace que el timer se reinicie.
      *     
      *     // (Opcional) Eventos relacionales cuando el timer pasa un segundo.
      *     onSecondPass: (ply, timer) => {
-     *         console.log(`Ha pasado un segundo, el tiempo ahora esta en ${timer}`);
+     *         console.log(`Ha pasado un segundo, el tiempo ahora está en ${timer}`);
      *     },
      * };
      * 
@@ -535,8 +535,8 @@ class CustomEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que fuerza la eliminacion y dropeo de un item en concreto de un slot del inventario de un jugador.
-     * @param {mc.Player} ply Jugador en concreto a conciderar.
+     * Método auxiliar que fuerza la eliminación y dropeo de un item en concreto de un slot del inventario de un jugador.
+     * @param {mc.Player} ply Jugador en concreto a considerar.
      * @param {(number | number[])} slots El o los slots en concreto a cambiar eliminar.
      * @param {?mc.ItemStack} itemToRemplace (Opcional) Un item a poner en su lugar al item a dropear o eliminar.
      * @param {?(string[] | vanilla.MinecraftItemTypes[] | mc.ItemStack[])} whitelistItems (Opcional) Lista de items que no se pueden dropear o eliminar en este sistema.
@@ -594,8 +594,8 @@ class CustomEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que fuerza la eliminacion y dropeo de un item en concreto de un slot del equipamento de un jugador.
-     * @param {mc.Player} ply Jugador en concreto a conciderar.
+     * Método auxiliar que fuerza la eliminación y dropeo de un item en concreto de un slot del equipamiento de un jugador.
+     * @param {mc.Player} ply Jugador en concreto a considerar.
      * @param {(mc.EquipmentSlot | mc.EquipmentSlot[])} slots El o los slots en concreto a cambiar eliminar.
      * @param {?mc.ItemStack} itemToRemplace (Opcional) Un item a poner en su lugar al item a dropear o eliminar.
      * @param {?(string[] | vanilla.MinecraftItemTypes[] | mc.ItemStack[])} whitelistItems (Opcional) Lista de items que no se pueden dropear o eliminar en este sistema.
@@ -653,8 +653,8 @@ class CustomEventsSimplified {
     }
 
     /**
-     * Metodo auxiliar que permite el cambio de estado y propiedades a uno o varios items de uno o varios inventarios a un jugador en concreto. Simplificando los lockMode de los items.
-     * @param {LockItemsInvParams} params Los parametros en concreto para integrar.
+     * Método auxiliar que permite el cambio de estado y propiedades a uno o varios items de uno o varios inventarios a un jugador en concreto. Simplificando los lockMode de los items.
+     * @param {LockItemsInvParams} params Los parámetros en concreto para integrar.
      * @returns {void}
      * @author HaJuegos - 19-05-2026
      * @public
