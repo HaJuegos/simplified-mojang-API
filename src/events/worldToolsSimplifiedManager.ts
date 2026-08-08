@@ -697,7 +697,7 @@ class WorldToolsSimplified {
         const registrationTrace = new Error().stack;
 
         try {
-            mc.world.getDimension(dimensionID);
+            return mc.world.getDimension(dimensionID);
         } catch (e) {
             CatLogHandler.handleError(e, 'getDimension', registrationTrace);
             return;
@@ -719,7 +719,7 @@ class WorldToolsSimplified {
         const registrationTrace = new Error().stack;
 
         try {
-            mc.world.getAllPlayers();
+            return mc.world.getAllPlayers();
         } catch (e) {
             CatLogHandler.handleError(e, 'getAllPlys', registrationTrace);
             return;
