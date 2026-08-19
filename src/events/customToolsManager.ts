@@ -301,8 +301,11 @@ class CustomEventsSimplified {
     /**
      * Método auxiliar que simplifica la lógica al detectar el uso de un totem, ejecutando los eventos relacionados.
      * @param {(entity: mc.Entity | mc.Player) => void} callback Los eventos relacionados a ejecutar.
-     * @author HaJuegos - 19-03-2026
+     * @returns {void}
+     * @version 2 Ahora es un beforeEvent por uso de BeforeOnEntityHeal.
+     * @author HaJuegos - 19-08-2026
      * @public
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
      * @example
      * ```ts
      * // Este evento solo se va a ejecutar cuando una entidad o jugador usa un totem.
@@ -313,14 +316,13 @@ class CustomEventsSimplified {
      * ```
      */
     public onEntityUseTotem(callback: (entity: mc.Entity | mc.Player) => void): void {
-        afterEventsSimplified.onHealthEntityChange((args) => {
-            const entity = args.entity;
-            const newValue = args.newValue;
-            const oldValue = args.oldValue;
+        beforeEventsSimplified.onEntityHeal((args) => {
+            const entity = args.healedEntity;
+            const cause = args.healSource;
 
-            if (oldValue <= 0 && newValue >= 1) {
-                callback(entity);
-            }
+            if (cause.cause != mc.EntityHealCause.TotemOfUndying) return;
+
+            callback(entity);
         });
     }
 
