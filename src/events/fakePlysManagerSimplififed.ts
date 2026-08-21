@@ -57,17 +57,18 @@ class FakePlysManager {
      * @param {string} namePly Nombre a asignar al jugador de pruebas.
      * @param {mc.GameMode} gamemodePly El modo de juego que tendrá el jugador de pruebas.
      * @param {?mc.Vector3} [defaultSpawnLocation] (Opcional) Coordenadas donde aparecerá el jugador de pruebas. Por defecto, irá a un jugador aleatorio
-     * @returns {gametest.SimulatedPlayer | undefined} Los datos del jugador falso generado en caso de que todo salga bien, sino será undefined.
+     * @returns {Promise<gametest.SimulatedPlayer | undefined>} Los datos del jugador falso generado en caso de que todo salga bien, sino será undefined.
      * @author HaJuegos - 13-03-2026
      * @public
+     * @async Método asíncrono, por lo que este método necesita una ejecución principal y esperar esta misma para devolver el resultado final.
      * @gametestEvent Es un método gametest, usando estructuras de pruebas por medio del comando /gametest run.
      * @example
      * ```ts
      * // Esto genera un jugador de pruebas con sus respectivos datos para usar.
-     * const fakePly = fakePlysSimplified.createFakePly('Jugador Prueba', Dimension, mc.GameMode.Survival);
+     * const fakePly = await fakePlysSimplified.createFakePly('Jugador Prueba', Dimension, mc.GameMode.Survival);
      * ```
      */
-    public createFakePly(namePly: string, dimension: mc.Dimension, gamemodePly: mc.GameMode, defaultSpawnLocation?: mc.Vector3): gametest.SimulatedPlayer | undefined {
+    public async createFakePly(namePly: string, dimension: mc.Dimension, gamemodePly: mc.GameMode, defaultSpawnLocation?: mc.Vector3): Promise<gametest.SimulatedPlayer | undefined> {
         const registrationTrace = new Error().stack;
 
         try {
@@ -78,19 +79,27 @@ class FakePlysManager {
                 this.isPlaced = true;
             }
 
-            worldToolsSimplified.setDelay(() => {
-                if (!this.testCxt) {
-                    throw new Error("No se pudo generar el jugador falso. No se creó previamente el ambiente necesario para poderlo generar. Vuelve a intentarlo nuevamente. ¿Tienes guardado en tus estructuras el archivo 'void'?");
-                }
+            return await new Promise<gametest.SimulatedPlayer | undefined>((resolve, reject) => {
+                worldToolsSimplified.setDelay(() => {
+                    try {
+                        if (!this.testCxt) {
+                            throw new Error("No se pudo generar el jugador falso. No se creó previamente el ambiente necesario para poderlo generar. Vuelve a intentarlo nuevamente. ¿Tienes guardado en tus estructuras el archivo 'void'?");
+                        }
 
-                const fakePly = this.testCxt.spawnSimulatedPlayer({ x: 0, y: 1, z: 0 }, namePly, gamemodePly);
+                        const fakePly = this.testCxt.spawnSimulatedPlayer({ x: 0, y: 1, z: 0 }, namePly, gamemodePly);
 
-                if (defaultSpawnLocation) {
-                    fakePly.tryTeleport(defaultSpawnLocation);
-                } else {
-                    fakePly.runCommand(`tp @r[name=!"${namePly}"]`);
-                }
-            }, worldToolsSimplified.convertSecondsToTicks(1));
+                        if (defaultSpawnLocation) {
+                            fakePly.tryTeleport(defaultSpawnLocation);
+                        } else {
+                            fakePly.runCommand(`tp @r[name=!"${namePly}"]`);
+                        }
+
+                        resolve(fakePly);
+                    } catch (e) {
+                        reject(e);
+                    }
+                }, worldToolsSimplified.convertSecondsToTicks(1));
+            });
         } catch (e) {
             CatLogHandler.handleError(e, 'createFakePly', registrationTrace);
             return;
