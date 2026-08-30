@@ -35,6 +35,9 @@ class AfterEventsSimplified {
     private entityLoadWorld: BaseEventManager<mc.EntityLoadAfterEvent>;
     private entityHealh: BaseEventManager<mc.EntityHealAfterEvent>;
     private entityRemove: BaseEventManager<mc.EntityRemoveAfterEvent>;
+    private entityTamed: BaseEventManager<mc.EntityTamedAfterEvent>;
+    private soundCompleted: BaseEventManager<mc.SoundCompletedAfterEvent>;
+    private weatherChange: BaseEventManager<mc.WeatherChangeAfterEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -68,6 +71,9 @@ class AfterEventsSimplified {
         this.entityLoadWorld = new BaseEventManager<mc.EntityLoadAfterEvent>(mc.world.afterEvents.entityLoad, "AfterEntityLoadInWorld");
         this.entityHealh = new BaseEventManager<mc.EntityHealAfterEvent>(mc.world.afterEvents.entityHeal, "AfterEntityHealing");
         this.entityRemove = new BaseEventManager<mc.EntityRemoveAfterEvent>(mc.world.afterEvents.entityRemove, "AfterEntityRemove");
+        this.entityTamed = new BaseEventManager<mc.EntityTamedAfterEvent>(mc.world.afterEvents.entityTamed, "AfterEntityTamed");
+        this.soundCompleted = new BaseEventManager<mc.SoundCompletedAfterEvent>(mc.world.afterEvents.soundCompleted, "AfterSoundFinish");
+        this.weatherChange = new BaseEventManager<mc.WeatherChangeAfterEvent>(mc.world.afterEvents.weatherChange, "AfterWeatherChange");
     }
 
     /**
@@ -620,6 +626,66 @@ class AfterEventsSimplified {
      */
     public onEntityRemove(callback: (args: mc.EntityRemoveAfterEvent) => void): void {
         this.entityRemove.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad es domada de forma simplificada.
+     * @param {(args: mc.EntityTamedAfterEvent) => void} callback Los eventos relacionados.
+     * @returns {void}
+     * @author HaJuegos - 30-08-2026
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
+     * @public
+     * @example
+     * ```ts
+     * afterEventsSimplified.onTamedEntity((args) => {
+     *      const { tamingEntity: sourceEntity, entity } = args
+     * 
+     *      console.log(`${sourceEntity.typeId} ha domando a la entidad ${entity.typeId}.`);      
+     * });
+     * ```
+     */
+    public onTamedEntity(callback: (args: mc.EntityTamedAfterEvent) => void): void {
+        this.entityTamed.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando un sonido termina de forma simplificada.
+     * @param {(args: mc.SoundCompletedAfterEvent) => void} callback Los eventos relacionados.
+     * @returns {void}
+     * @author HaJuegos - 30-08-2026
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
+     * @public
+     * @example
+     * ```ts
+     * afterEventsSimplified.onSoundFinish((args) => {
+     *      const { soundInstanceId: idSound } = args
+     * 
+     *      console.log(`${idSound} ha terminado o ha dejado de sonar.`);      
+     * });
+     * ```
+     */
+    public onSoundFinish(callback: (args: mc.SoundCompletedAfterEvent) => void): void {
+        this.soundCompleted.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando el clima ha cambiado en una dimension de forma simplificada.
+     * @param {(args: mc.WeatherChangeAfterEvent) => void} callback Los eventos relacionados.
+     * @returns {void}
+     * @author HaJuegos - 30-08-2026
+     * @afterEvent Método que detecta el evento después de que suceda. Obteniendo la información sin permitir modificarla en su mayoría.
+     * @public
+     * @example
+     * ```ts
+     * afterEventsSimplified.onWeatherChange((args) => {
+     *      const { dimension, newWeather, previousWeather } = args
+     * 
+     *      console.log(`En la dimension ${dimension.id} el clima ha pasado de ${previousWeather} a ${newWeather}.`);      
+     * });
+     * ```
+     */
+    public onWeatherChange(callback: (args: mc.WeatherChangeAfterEvent) => void): void {
+        this.weatherChange.register(callback);
     }
 }
 

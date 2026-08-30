@@ -22,6 +22,8 @@ class BeforeEventsSimplified {
     private entityItemPickUpManager: BaseEventManager<mc.EntityItemPickupBeforeEvent>;
     private entityHealing: BaseEventManager<mc.EntityHealBeforeEvent>;
     private entityRemove: BaseEventManager<mc.EntityRemoveBeforeEvent>;
+    private entityTamed: BaseEventManager<mc.EntityTamedBeforeEvent>;
+    private weatherChange: BaseEventManager<mc.WeatherChangeBeforeEvent>;
 
     /**
      * Eventos que se inicializan cuando la clase es llamada o inicializada.
@@ -42,6 +44,8 @@ class BeforeEventsSimplified {
         this.entityItemPickUpManager = new BaseEventManager<mc.EntityItemPickupBeforeEvent>(mc.world.beforeEvents.entityItemPickup, "BeforeEntityItemPickup");
         this.entityHealing = new BaseEventManager<mc.EntityHealBeforeEvent>(mc.world.beforeEvents.entityHeal, "BeforeEntityHealing");
         this.entityRemove = new BaseEventManager<mc.EntityRemoveBeforeEvent>(mc.world.beforeEvents.entityRemove, "BeforeEntityRemove");
+        this.entityTamed = new BaseEventManager<mc.EntityTamedBeforeEvent>(mc.world.beforeEvents.entityTamed, "BeforeEntityTamed");
+        this.weatherChange = new BaseEventManager<mc.WeatherChangeBeforeEvent>(mc.world.beforeEvents.weatherChange, "BeforeWeatherChange");
     }
 
     /**
@@ -328,6 +332,50 @@ class BeforeEventsSimplified {
      */
     public onEntityRemoved(callback: (args: mc.EntityRemoveBeforeEvent) => void): void {
         this.entityRemove.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando una entidad va a ser domada de forma simplificada.
+     * @param {(args: mc.EntityTamedBeforeEvent) => void} callback Los eventos relacionados.
+     * @returns {void}
+     * @author HaJuegos - 30-08-2026
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @public
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onEntityTame((args) => {
+     *      const { tamingEntity: sourceEntity, entity } = args
+     * 
+     *      console.log(`${sourceEntity.typeId} va a domar a la entidad ${entity.typeId}.`);
+     * 
+     *      args.cancel = true; // Ya no puede ser domada.
+     * });
+     * ```
+     */
+    public onEntityTame(callback: (args: mc.EntityTamedBeforeEvent) => void): void {
+        this.entityTamed.register(callback);
+    }
+
+    /**
+     * Metodo auxiliar que ejecuta los eventos relacionados cuando el clima va a cambiar de forma simplificada.
+     * @param {(args: mc.WeatherChangeBeforeEvent) => void} callback Los eventos relacionados.
+     * @returns {void}
+     * @author HaJuegos - 30-08-2026
+     * @beforeEvent Método que detecta el evento antes de que suceda. Permitiendo cancelar o personalizar el evento antes de que se vea en el juego.
+     * @public
+     * @example
+     * ```ts
+     * beforeEventsSimplified.onWeatherChange((args) => {
+     *      const { previousWeather, newWeather } = args
+     * 
+     *      console.log(`El clima va a pasar de ${previousWeather} a ${newWeather}.`);
+     * 
+     *      args.cancel = true; // Ya no va a ocurrir.
+     * });
+     * ```
+     */
+    public onWeatherChange(callback: (args: mc.WeatherChangeBeforeEvent) => void): void {
+        this.weatherChange.register(callback);
     }
 
     // Metodos no auxiliares

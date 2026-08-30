@@ -749,6 +749,52 @@ class WorldToolsSimplified {
             return;
         }
     }
+
+    /**
+     * Metodo auxiliar que cambia el estado de las trampas en el mundo. Pasando de false o true dependiendo el argumento asignado.
+     * @param {boolean} state El nuevo estado que cambiara la opcion.
+     * @returns {void}
+     * @author HaJuegos - 30-08-2026
+     * @public
+     * @example
+     * ```ts
+     * // Ahora en el mundo si estara permitido las trampas de forzada.
+     * worldToolsSimplified.changeWorldCheats(true);
+     * ```
+     */
+    public changeWorldCheats(state: boolean): void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            mc.world.allowCheats = state;
+        } catch (e) {
+            CatLogHandler.handleError(e, 'changeWorldCheats', registrationTrace);
+            return;
+        }
+    }
+
+    /**
+     * Metodo auxiliar que cambia el estado de la dificultad en el mundo, dependiendo el argumento asignado.
+     * @param {boolean} state El nuevo estado que cambiara la opcion.
+     * @returns {void}
+     * @author HaJuegos - 30-08-2026
+     * @public
+     * @example
+     * ```ts
+     * // Ahora en el mundo estara en dificil de forma forzada.
+     * worldToolsSimplified.changeWorldDifficulty(mc.Difficulty.Hard);
+     * ```
+     */
+    public changeWorldDifficulty(state: mc.Difficulty): void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            mc.world.setDifficulty(state);
+        } catch (e) {
+            CatLogHandler.handleError(e, 'changeWorldDifficulty', registrationTrace);
+            return;
+        }
+    }
 }
 
 export const worldToolsSimplified = new WorldToolsSimplified();
