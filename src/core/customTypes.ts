@@ -243,11 +243,13 @@ interface LockItemsInvParams {
      * Tipo de selección de los items por slot a bloquear o insertar.
      * @type {{
      *         allSlots?: boolean;
-     *         specificSlots?: number[];
+     *         specificSlots?: number[] | mc.EquipmentSlot[];
      *         randomSlots?: {
      *             minSlots: number;
      *             maxSlots: number;
      *         };
+     *         blockedItems?: (string | vanilla.MinecraftItemTypes | mc.ItemStack)[];
+     *         allowedItems?: string[] | vanilla.MinecraftItemTypes[] | mc.ItemStack[];
      *     }}
      */
     itemsSelection: {
@@ -273,10 +275,16 @@ interface LockItemsInvParams {
         };
 
         /**
+         * (Opcional) Si se asigna, sera una lista de items que se veran afectados por este sistema.
+         * @type {?(string | vanilla.MinecraftItemTypes | mc.ItemStack)[]}
+         */
+        blockedItems?: (string | vanilla.MinecraftItemTypes | mc.ItemStack)[];
+
+        /**
          * (Opcional) Si se asigna esta opción, será una lista de items que no se verán afectados por este sistema.
          * @type {?(string[] | vanilla.MinecraftItemTypes[] | mc.ItemStack[])}
          */
-        whitelistItems?: string[] | vanilla.MinecraftItemTypes[] | mc.ItemStack[];
+        allowedItems?: string[] | vanilla.MinecraftItemTypes[] | mc.ItemStack[];
     };
 }
 

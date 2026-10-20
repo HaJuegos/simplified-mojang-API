@@ -705,11 +705,11 @@ class CustomEventsSimplified {
              * @returns {boolean} Devuelve un boolean dependiendo el caso para usar o no este item en el sistema.
              * @author HaJuegos - 19-05-2026
              */
-            const checkWhitelist = (item: mc.ItemStack): boolean => {
-                if (!itemsSelection.whitelistItems) return false;
+            const getAndMatchItem = (item: mc.ItemStack, list?: (string | vanilla.MinecraftItemTypes | mc.ItemStack)[]): boolean => {
+                if (!list) return false;
 
-                return itemsSelection.whitelistItems.some(wItem => {
-                    const id = typeof wItem == 'string' ? wItem : wItem.typeId;
+                return list.some(entry => {
+                    const id = typeof entry == 'string' ? entry : (entry.typeId ?? entry);
 
                     return id == item.typeId;
                 });
@@ -721,8 +721,16 @@ class CustomEventsSimplified {
                 for (const slot of slots) {
                     const item = inv.getItem(slot);
 
-                    if (item && !checkWhitelist(item) && validChange(item.lockMode, lockMethod)) {
-                        selectItems.push({ type: 'inv', slot: slot, item: item });
+                    if (item && validChange(item.lockMode, lockMethod)) {
+                        if (itemsSelection.blockedItems && !getAndMatchItem(item, itemsSelection.blockedItems)) {
+                            continue;
+                        }
+
+                        if (itemsSelection.allowedItems && getAndMatchItem(item, itemsSelection.allowedItems)) {
+                            continue;
+                        }
+
+                        selectItems.push({ type: 'inv', slot: slot, item: item, });
                     }
                 }
             }
@@ -734,7 +742,15 @@ class CustomEventsSimplified {
                 for (const slot of slots) {
                     const item = armorInv.getEquipment(slot);
 
-                    if (item && !checkWhitelist(item) && validChange(item.lockMode, lockMethod)) {
+                    if (item && validChange(item.lockMode, lockMethod)) {
+                        if (itemsSelection.blockedItems && !getAndMatchItem(item, itemsSelection.blockedItems)) {
+                            continue;
+                        }
+
+                        if (itemsSelection.allowedItems && getAndMatchItem(item, itemsSelection.allowedItems)) {
+                            continue;
+                        }
+
                         selectItems.push({ type: 'armor', slot: slot, item: item });
                     }
                 }

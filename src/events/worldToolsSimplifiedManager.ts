@@ -459,6 +459,28 @@ class WorldToolsSimplified {
     }
 
     /**
+     * Metodo auxiliar que establece una propiedad dinamica al mundo con un valor en concreto.
+     * @param {string} idProperty ID de la propiedad en concreto.
+     * @param {(string | number | boolean | mc.Vector3)} value Valor en concreto a definir a la propiedad.
+     * @returns {void}
+     * @author HaJuegos - 01-10-2026
+     * @public
+     * @example
+     * ```ts
+     * worldToolsSimplified.setWorldDynamicProperty('ha:property', 'Prueba!'); // Se guarda en las propiedades del mundo. (NBT)
+     * ```
+     */
+    public setWorldDynamicProperty(idProperty: string, value: string | number | boolean | mc.Vector3): void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            mc.world.setDynamicProperty(idProperty, value);
+        } catch (e) {
+            CatLogHandler.handleError(e, 'setWorldDynamicProperty', registrationTrace);
+        }
+    }
+
+    /**
      * Método auxiliar que obtiene todos los IDs de propiedades dinámicas guardadas en el mundo.
      * @returns {string[]} El array de todos los IDs registrados, en caso de no haber ninguno, estará vacío.
      * @remarks Este valor depende del UUID de tu add-on. Es decir, si hay dos add-ons en el mundo y los dos deciden guardar la misma propiedad, será diferente en ambos. Por ej: Add-on1 guarda la propiedad y Add-on2 lo consulta, será undefined porque solo existe en el Add-on1.
@@ -489,6 +511,31 @@ class WorldToolsSimplified {
     public getEntityDynamicProperty(targetEntity: mc.Entity | mc.Player, idProperty: string): string | number | boolean | mc.Vector3 | undefined {
         return targetEntity.getDynamicProperty(idProperty);
     };
+
+    /**
+     * Metodo auxiliar que establece una propiedad dinamica en la entidad con un valor en concreto.
+     * @param {(mc.Entity | mc.Player)} targetEntity Entidad en concreto.
+     * @param {string} idProperty ID de la propiedad en concreto a guardar.
+     * @param {(string | number | boolean | mc.Vector3)} value Valor de la propiedad en concreto a guardar.
+     * @returns {void}
+     * @author HaJuegos - 01-10-2026
+     * @public
+     * @example
+     * ```ts
+     * const entity = Entity as mc.Entity
+     * 
+     * worldToolsSimplified.setEntityDynamicProperty(entity, 'ha:test', 'Prueba!'); // Se define la propiedad con dicho valor en las propiedades de la entidad. (NBT)
+     * ```
+     */
+    public setEntityDynamicProperty(targetEntity: mc.Entity | mc.Player, idProperty: string, value: string | number | boolean | mc.Vector3): void {
+        const registrationTrace = new Error().stack;
+
+        try {
+            targetEntity.setDynamicProperty(idProperty, value);
+        } catch (e) {
+            CatLogHandler.handleError(e, 'setEntityDynamicProperty', registrationTrace);
+        }
+    }
 
     /**
      * Método auxiliar que obtiene todos los IDs de propiedades dinámicas en una entidad en concreto.
