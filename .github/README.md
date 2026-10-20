@@ -4,6 +4,10 @@
 > ⚠️ **WORK IN PROGRESS!** ⚠️
 > This repository is constantly evolving and undergoing active updates, so some features or simplified methods may be missing or not yet implemented. Please keep this in mind when using it!
 
+> [!WARNING]
+> 🌐 **COMMENTS IN SPANISH!** 🌐
+> All code comments in this repository are written in **Spanish** and I do not plan to translate them. Identifiers, documentation and public API names are in English.
+
 A simple tool that makes it easier to use the Mojang scripting API for Minecraft Bedrock, by providing pre-built and simplified classes.
 
 ## What is this?
@@ -174,5 +178,12 @@ customEventsManager.startTimerLocal(paramsTimer);
 
 Found a bug or want to wrap a new Mojang method? PRs are welcome!
 
-> Author: HaJuegos
-> License: MIT
+- Read the [Contributing Guide](CONTRIBUTING.md) before opening a pull request.
+- Please follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+- Report vulnerabilities privately, as described in the [Security Policy](SECURITY.md).
+- See what changed in each release in the [Changelog](CHANGELOG.md).
+
+## Author & License
+
+Author: [HaJuegos](https://github.com/HaJuegos)
+License: [MIT](LICENSE.md)
