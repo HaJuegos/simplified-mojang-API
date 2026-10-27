@@ -29,7 +29,13 @@ or
 pnpm install simplified-mojang-api@latest
 ```
 
-> (Make sure you also have the base @minecraft/server stuff installed!)
+This package declares the following **peer dependencies**, so make sure they are installed in your project with matching versions:
+
+- `@minecraft/server`
+- `@minecraft/server-ui`
+- `@minecraft/server-gametest`
+- `@minecraft/debug-utilities`
+- `@minecraft/vanilla-data`
 
 ## Build Setup:
 
@@ -43,6 +49,12 @@ First, you need to install `esbuild` as a development dependency in your project
 
 ```bash
 npm install --save-dev esbuild
+```
+
+or
+
+```bash
+pnpm add -D esbuild
 ```
 
 ### 2. Prepare your Folder Structure
@@ -79,10 +91,22 @@ Now you are ready to compile! Open your terminal and use one of these commands:
 npm run compile
 ```
 
+or
+
+```bash
+pnpm compile
+```
+
 - **To auto-compile (Recommended):** (Run this while you are coding. It will stay open and automatically re-compile every time you save a file!)
 
 ```bash
 npm run watch
+```
+
+or
+
+```bash
+pnpm watch
 ```
 
 ## Available Modules
@@ -178,12 +202,15 @@ customEventsManager.startTimerLocal(paramsTimer);
 
 Found a bug or want to wrap a new Mojang method? PRs are welcome!
 
-- Read the [Contributing Guide](CONTRIBUTING.md) before opening a pull request.
-- Please follow the [Code of Conduct](CODE_OF_CONDUCT.md).
-- Report vulnerabilities privately, as described in the [Security Policy](SECURITY.md).
-- See what changed in each release in the [Changelog](CHANGELOG.md).
+- **Getting Started:** Read the [Contributing Guide](.github/CONTRIBUTING.md) before opening a pull request.
+- **Community Guidelines:** Please follow the [Code of Conduct](.github/CODE_OF_CONDUCT.md).
+- **Security:** Report vulnerabilities privately, as described in the [Security Policy](.github/SECURITY.md).
+- **Releases:** See what changed in each release in the [Changelog](.github/CHANGELOG.md).
+
+---
 
 ## Author & License
 
-Author: [HaJuegos](https://github.com/HaJuegos)
-License: [MIT](LICENSE.md)
+Developed by **[HaJuegos](https://github.com/HaJuegos)**.
+
+This project is licensed under the **[MIT License](LICENSE.md)**.

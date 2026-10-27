@@ -1,4 +1,4 @@
-name: Publicar en NPM automáticamente
+name: Publicar en NPM
 
 on:
     release:
@@ -16,13 +16,27 @@ jobs:
             - name: Clonar el repositorio
               uses: actions/checkout@v4
 
+            - name: Configurar pnpm
+              uses: pnpm/action-setup@v4
+
             - name: Configurar Node.js
               uses: actions/setup-node@v4
               with:
                   node-version: "24.x"
+                  registry-url: "https://registry.npmjs.org"
+                  cache: pnpm
+
+            - name: Tomar la versión desde el tag
+              run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version --allow-same-version
 
             - name: Instalar dependencias
-              run: npm install --legacy-peer-deps
+              run: pnpm install --frozen-lockfile
 
-            - name: Publicar la nueva versión en NPM
-              run: npm publish --provenance --tag latest
+            - name: Comprobar tipos
+              run: pnpm typecheck
+
+            - name: Compilar
+              run: pnpm build
+
+            - name: Publicar en NPM
+              run: npm publish --provenance --access public --tag latest

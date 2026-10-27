@@ -15,18 +15,21 @@ Before opening an issue, search the existing ones to avoid duplicates.
 
 ## Development setup
 
-Requirements: Node.js 24+ and npm or pnpm.
+Requirements: Node.js 20+ and npm or pnpm.
 
 ```bash
 git clone https://github.com/HaJuegos/simplified-mojang-API.git
 cd simplified-mojang-API
 npm install --legacy-peer-deps
+npm run typecheck
 npm run build
 ```
 
 ## Project structure
 
 ```text
+scripts/     Build scripts (clean + esbuild bundle)
+structures/  Assets shipped with the package (used by the fake players)
 src/
  ┣ core/     Base utilities: types, error handler, events manager
  ┣ events/   Simplified wrappers (after/before events, world tools, debug, fake players, custom tools)

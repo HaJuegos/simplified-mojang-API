@@ -3,45 +3,83 @@ description: Create a report to help us improve the API and fix bugs
 title: "[Bug]: "
 labels: ["bug", "triage"]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Thank you for taking the time to report this bug! Please provide as much information as possible so we can fix it quickly.
-  
-  - type: input
-    id: api_version
-    attributes:
-      label: API version
-      description: Which version of `simplified-mojang-api` are you using? (e.g., 0.0.32)
-      placeholder: "0.0.32"
-    validations:
-      required: true
+    - type: markdown
+      attributes:
+          value: |
+              Thank you for taking the time to report this bug! Please provide as much information as possible so we can fix it quickly.
 
-  - type: input
-    id: mc_version
-    attributes:
-      label: Minecraft version
-      description: In which version of Bedrock does this happen? (e.g., 26.2)
-      placeholder: "26.2"
-    validations:
-      required: true
+    - type: input
+      id: api_version
+      attributes:
+          label: API version
+          description: Which version of `simplified-mojang-api` are you using?
+          placeholder: "0.0.68"
+      validations:
+          required: true
 
-  - type: textarea
-    id: description
-    attributes:
-      label: Bug Description
-      description: A clear and concise description of what is going wrong
-    validations:
-      required: true
+    - type: input
+      id: mc_version
+      attributes:
+          label: Minecraft version
+          description: In which version of Bedrock does this happen?
+          placeholder: "26.50"
+      validations:
+          required: true
 
-  - type: textarea
-    id: logs
-    attributes:
-      label: Logs provided by the API in the console
-      description: The API includes an error handler that provides detailed information about what happened, so if an error occurred, please provide us with the specific error message so we can pinpoint exactly what went wrong
-      value: |
-        ```text
-        // Paste the log here
-        ```
-    validations:
-      required: false
+    - type: textarea
+      id: description
+      attributes:
+          label: Bug Description
+          description: A clear and concise description of what is going wrong.
+      validations:
+          required: true
+
+    - type: textarea
+      id: reproduction
+      attributes:
+          label: Steps to Reproduce
+          description: Explain step-by-step how to reproduce this behavior.
+          placeholder: |
+              1. Call `customEventsManager.startTimerLocal(...)`
+              2. Join / leave the world
+              3. See the unexpected behavior
+      validations:
+          required: true
+
+    - type: textarea
+      id: expected
+      attributes:
+          label: Expected Behavior
+          description: A clear and concise description of what you expected to happen.
+      validations:
+          required: true
+
+    - type: textarea
+      id: code-snippet
+      attributes:
+          label: Code Example
+          description: Relevant TypeScript code that triggers the issue.
+          render: typescript
+      validations:
+          required: false
+
+    - type: textarea
+      id: logs
+      attributes:
+          label: Logs provided by the API in the console
+          description: The API includes an error handler that provides detailed information about what happened, so if an error occurred, please provide us with the specific error message so we can pinpoint exactly what went wrong.
+          value: |
+              ```text
+              // Paste the log here
+              ```
+      validations:
+          required: false
+
+    - type: input
+      id: environment
+      attributes:
+          label: Environment Details
+          description: Node.js version, package manager (npm/pnpm) and TypeScript version.
+          placeholder: "Node v24.x, npm v11.x, TypeScript v5.9"
+      validations:
+          required: false
