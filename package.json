@@ -30,7 +30,7 @@
     "scripts": {
         "build": "node scripts/clean.mjs && node scripts/bundle.mjs && tsc --emitDeclarationOnly",
         "typecheck": "tsc --noEmit",
-        "prepublishOnly": "npm run build"
+        "prepublishOnly": "pnpm build"
     },
     "author": "HaJuegos",
     "license": "MIT",
@@ -75,5 +75,6 @@
     },
     "engines": {
         "node": ">=20"
-    }
+    },
+    "packageManager": "pnpm@12.15.0"
 }
