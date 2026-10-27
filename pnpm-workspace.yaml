@@ -1,10 +1,10 @@
 allowBuilds:
   esbuild: true
 minimumReleaseAgeExclude:
-  - '@minecraft/debug-utilities@1.0.0-beta.1.26.40-stable || 1.0.0-beta.1.26.50-stable'
-  - '@minecraft/server-gametest@1.0.0-beta.1.26.40-stable || 1.0.0-beta.1.26.50-stable'
-  - '@minecraft/server-graphics@1.0.0-beta.1.26.40-stable || 1.1.0-beta.1.26.50-stable'
-  - '@minecraft/server-net@1.0.0-beta.1.26.40-stable || 1.0.0-beta.1.26.50-stable'
-  - '@minecraft/server-ui@2.2.0-beta.1.26.40-stable || 2.3.0-beta.1.26.50-stable'
-  - '@minecraft/server@2.10.0-beta.1.26.40-stable || 2.11.0-beta.1.26.50-stable'
-  - '@minecraft/vanilla-data@1.26.40 || 1.26.50'
+  - '@minecraft/debug-utilities@1.0.0-beta.1.26.40-stable || 1.0.0-beta.1.26.50-stable || 1.0.0-beta.1.26.60-stable'
+  - '@minecraft/server-gametest@1.0.0-beta.1.26.40-stable || 1.0.0-beta.1.26.50-stable || 1.0.0-beta.1.26.60-stable'
+  - '@minecraft/server-graphics@1.0.0-beta.1.26.40-stable || 1.1.0-beta.1.26.50-stable || 1.1.0-beta.1.26.60-stable'
+  - '@minecraft/server-net@1.0.0-beta.1.26.40-stable || 1.0.0-beta.1.26.50-stable || 1.0.0-beta.1.26.60-stable'
+  - '@minecraft/server-ui@2.2.0-beta.1.26.40-stable || 2.3.0-beta.1.26.50-stable || 2.4.0-beta.1.26.60-stable'
+  - '@minecraft/server@2.10.0-beta.1.26.40-stable || 2.11.0-beta.1.26.50-stable || 2.12.0-beta.1.26.60-stable'
+  - '@minecraft/vanilla-data@1.26.40 || 1.26.50 || 1.26.60'
