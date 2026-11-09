@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.71] - 2026-11-09
+
+### Added
+
+- The ability to allow distance-based variations in the texture of a custom waypoint has been added to the createCustomWayPoint event as a new parameter option.
+
 ## [0.0.70] - 2026-11-09
 
 ### Added

@@ -1,6 +1,6 @@
 {
     "name": "simplified-mojang-api",
-    "version": "0.0.70",
+    "version": "0.0.71",
     "description": "A TypeScript API that simplifies the event logic and common tools of Mojang's Minecraft Bedrock Script API (@minecraft/server), for informal or professional use.",
     "type": "module",
     "main": "./dist/index.js",

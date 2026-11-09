@@ -791,6 +791,7 @@ class CustomEventsSimplified {
      * @param {CustomWayPointsParams} params Parámetros necesarios para la creación del punto de localización para el locatorbar.
      * @returns {mc.LocationWaypoint} Devuelve el punto de localización custom creado si todo salió bien. Si no, será undefined.
      * @author HaJuegos - 03-08-2026
+     * @version 2 - Se agrega la posibilidad de añadir mas variantes por distancia. - HaJuegos - 09-11-26
      * @public
      * @example
      * ```ts
@@ -813,12 +814,20 @@ class CustomEventsSimplified {
         const registrationTrace = new Error().stack;
 
         try {
-            const { targetPlys, location, dimension, iconTexture, color, visible } = params;
+            const { targetPlys, location, dimension, iconTextures, color, visible } = params;
 
-            const texture: mc.WaypointTexture | mc.CustomTexture = 'shape' in iconTexture ? iconTexture.shape : { path: iconTexture.path, iconWidth: iconTexture.iconWidth, iconHeight: iconTexture.iconHeight };
+            const texturesList = iconTextures.map(({ setTexture, minDistance, maxDistance }) => ({
+                lowerBound: minDistance,
+                upperBound: maxDistance,
+                texture: 'shape' in setTexture ? setTexture.shape : {
+                    path: setTexture.path,
+                    iconWidth: setTexture.iconWidth,
+                    iconHeight: setTexture.iconHeight
+                }
+            }));
 
             const selectTexture: mc.WaypointTextureSelector = {
-                textureBoundsList: [{ lowerBound: 0, texture }]
+                textureBoundsList: texturesList
             };
 
             const point = new mc.LocationWaypoint({ dimension, x: location.x, y: location.y, z: location.z },

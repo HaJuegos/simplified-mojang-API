@@ -2,35 +2,35 @@ import * as mc from "@minecraft/server";
 import * as vanilla from "@minecraft/vanilla-data";
 import * as ui from "@minecraft/server-ui";
 
-type IconTextureWaypoint =
-    |
-    {
-        /**
-         * Formas vanillas creadas por defecto y que puedes usar.
-         * @type {mc.WaypointTexture}
-         */
-        shape: mc.WaypointTexture;
-    }
-    |
-    {
-        /**
-         * Ruta en concreto donde está localizado el icono custom.
-         * @type {string}
-         */
-        path: string;
+/**
+ * Tipados generales para la creacion de un locator point custom.
+ * @author HaJuegos - 09-11-2026
+ */
+type IconTextureWaypoint = {
+    /**
+     * Formas vanillas creadas por defecto y que puedes usar.
+     * @type {mc.WaypointTexture}
+     */
+    shape: mc.WaypointTexture;
+} | {
+    /**
+     * Ruta en concreto donde está localizado el icono custom.
+     * @type {string}
+     */
+    path: string;
 
-        /**
-         * Tamaño del icono en unidades relativas. Solo se permite de 0 a 1.
-         * @type {number}
-         */
-        iconWidth: number;
+    /**
+     * Tamaño del icono en unidades relativas. Solo se permite de 0 a 1.
+     * @type {number}
+     */
+    iconWidth: number;
 
-        /**
-         * Tamaño del icono en unidades relativas. Solo se permite 0 a 1.
-         * @type {number}
-         */
-        iconHeight: number;
-    };
+    /**
+     * Tamaño del icono en unidades relativas. Solo se permite 0 a 1.
+     * @type {number}
+     */
+    iconHeight: number;
+};
 
 /**
  * Parámetros principales y opcionales para la creación de un punto de localización custom en la locator bar de uno o varios jugadores.
@@ -57,10 +57,10 @@ interface CustomWayPointsParams {
     dimension: mc.Dimension;
 
     /**
-     * Textura del icono en concreto de este nuevo punto. Puede ser totalmente custom de una textura del RP o, si no, una forma vanilla con colores personalizados.
-     * @type {IconTextureWaypoint}
+     * Texturas del icono en concreto de este nuevo punto. Puede ser totalmente custom de una textura del RP o, si no, una forma vanilla con colores personalizados.
+     * @type {IconTexturesCustomWayPoints[]}
      */
-    iconTexture: IconTextureWaypoint;
+    iconTextures: IconTexturesCustomWayPoints[];
 
     /**
      * (Opcional) El color que sobrepondrá el punto personalizado. Esto principalmente viene bien en caso de usar las formas vanillas.
@@ -74,6 +74,32 @@ interface CustomWayPointsParams {
      */
     visible?: boolean;
 }
+
+/**
+ * Parametros para la creacion de variaciones de texturas de un waypoint custom.
+ * @interface IconTexturesCustomWayPoints
+ * @author HaJuegos - 09-11-2026
+ */
+interface IconTexturesCustomWayPoints {
+    /**
+     * Parametros para la asignacion de la textura de esta variante en concreto.
+     * @type {IconTextureWaypoint}
+     */
+    setTexture: IconTextureWaypoint;
+
+    /**
+     * Distancia minima para hacer aparecer esta variante de textura.
+     * @type {number}
+     */
+    minDistance: number;
+
+    /**
+     * Distancia maxima para hacer aparecer esta variante de textura.
+     * @type {number}
+     */
+    maxDistance: number;
+}
+
 
 /**
  * Parámetros principales y opcionales para la creación de un texto flotante de forma simplifiada.
