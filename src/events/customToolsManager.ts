@@ -113,6 +113,8 @@ class CustomEventsSimplified {
      * @returns {void}
      * @author HaJuegos - 15-03-2026
      * @version 2 Cambio de obtención de items permitidos para hacerlo dinámico si es requerido.
+     * @version 3 Se deja de mantener este metodo para futuras versiones posteriores a la 26.70. Motivo: El juego lo integro nativamente.
+     * @deprecated Ya no es necesario usar esto. Ya es parte del juego vanilla a partir de la version 26.70+.
      * @public
      * @example
      * ```ts
